@@ -1,5 +1,5 @@
-function RandomNumber(arr) {
+function RandomIndex(arr) {
     let num = Math.floor(Math.random() * arr.length)
-    return num
+    return arr[num]
 }
-module.exports = { RandomNumber };
+module.exports = { RandomIndex };
