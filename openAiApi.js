@@ -1,9 +1,9 @@
 export async function getRecommendation(client, z, zodResponseFormat) {
 
     // test input. Will eventually be user input
-    const input = `I was born on 21 February 1995. I'm currently raging beacuse I was in car crash. 
-    In other news I have recently watched all creatures great and small, marley & me, Happy Gilmore 
-    and I've also read atomic habits.
+    const input = `I am 29 years old. I'm currently quite melancholic. 
+    In other news I have recently watched Hannibal with Mads Mikkelsen & Zone of Interest. I recently read Game of Thrones while
+    listening to The Gaslight Anthem.
 `;
 
 // Zod object for visual media.
@@ -15,7 +15,8 @@ const visualMedia = z.object({
 // Zod object for written media.
 const writtenMedia = z.object({
     author: z.string(),
-    title: z.string()
+    title: z.string(),
+    isbnCode: z.string()
 });
 
 // Zod object for musical media.
@@ -32,12 +33,12 @@ z.array(z.string()) = an array of strings. You could also have an array of numbe
 objects following the pattern defined above. z.enum(moods) means the result has to match one of the elements of the array given
 to enum*/
 const recommendSchema = z.object({
-  birthday: z.string(),
   age: z.number(),
   mood: z.enum(moods),
   filmRecommendations: z.array(visualMedia),
   tvRecommedations: z.array(visualMedia),
-  bookRecommendations : z.array(writtenMedia),
+  bookRecommendations: z.array(writtenMedia),
+  musicRecommendations: z.array(musicMedia),
   genres: z.array(z.string())
 });
 
@@ -46,7 +47,7 @@ let response = await client.chat.completions.create({
         messages: [
             {
                 role: "system",
-                content: "You are an expert media critic. You will recommend 3 films, 3 tv-shows, 3 books & 3 albums based on the films, tv shows, books & music the user has recently interacted with. The recommendations should be similar genres, directors or feeling to what they input. You will not recommend a film, show or book they have mentioned. Please match their mood to one fo those allowed in the JSON Schema"
+                content: "You are an expert media critic. You will recommend 1 item each for the following categories - films, tv shows, books  & music. The recommendations should be based on their input with the recommendations being similar genres, directors or vibe to what they input. You will not recommend a film, show or book they have mentioned. Please match their mood to one of those allowed in the JSON Schema."
             },
             {
                 role: "user",
@@ -56,16 +57,5 @@ let response = await client.chat.completions.create({
         // Use the zodresponseformat & pass it the final schema with a title. Makes the ai use this format. 
         response_format: zodResponseFormat(recommendSchema, "recommendations")
     });
-    /*
-    const data = response.choices[0].message.content;
-
-    const result = genreSchema.safeParse(data)
-    if (result.success) {
-        // If valid, log the validated product data
-        console.log("Validated Product:", result.data);
-      } else {
-        // If invalid, log the error
-        console.error("Validation Error:", result.error);
-      } */
-    return console.log("Returned message", response.choices[0].message.content);
+    return JSON.parse(response.choices[0].message.content);
 };
