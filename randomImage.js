@@ -1,18 +1,25 @@
-import fs from "fs"
+import fs from "fs";
+import path from "path";
+
 
 export async function randomImage() {
-    // Use readdir to get array of Image files from Images directory. import.meta.dirname === __dirname
     try {
-        let images = await fs.promises.readdir(import.meta.dirname  + '/Images');
+
+        const imagesDir = path.join(import.meta.dirname, 'public', 'Images');
+        let images = await fs.promises.readdir(imagesDir);
+        
         if (images.length === 0) {
             throw new Error("No images found");
         } else {
-            // Gets random Image file
+            // Select a random image file
             let num = Math.floor(Math.random() * images.length);
-            return images[num];
-        };
-    } catch(error) {
+            const selectedImage = images[num];
+
+            // Return the relative URL for the image (since it's inside the public directory)
+            return `/Images/${selectedImage}`;
+        }
+    } catch (error) {
         console.error("Error:", error.message);
         return null;
     }
-};
+}
