@@ -16,13 +16,15 @@ import { zodResponseFormat } from "openai/helpers/zod";
 
 import { getRecommendation } from "./openAiApi.js";
 import { getBooks } from "./bookApi.js";
+import { randomImage } from "./randomImage.js";
 
 const client = new OpenAI({
     apiKey: process.env.API_KEY
 });
 
-getBooks(getRecommendation(client, zod, zodResponseFormat));
-
+// console.log(await randomImage());
+// console.log(await getRecommendation(client, zod, zodResponseFormat));
+// console.log(await getBooks(getRecommendation(client, zod, zodResponseFormat)));
 app.listen(PORT,() => {
     console.log(`Server is listening at http://localhost:${PORT}`)
 });

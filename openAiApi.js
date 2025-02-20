@@ -47,7 +47,7 @@ let response = await client.chat.completions.create({
         messages: [
             {
                 role: "system",
-                content: "You are an expert media critic. You will recommend 1 item each for the following categories - films, tv shows, books  & music. The recommendations should be based on their input with the recommendations being similar genres, directors or vibe to what they input. You will not recommend a film, show or book they have mentioned. Please match their mood to one of those allowed in the JSON Schema."
+                content: "You are an expert media critic. You will recommend 1 item each for the following categories; films, tv-shows, books & music. The recommendations should be based on the user input with the recommendations being similar genres, directors or vibe to what they input. You will not recommend a film, show or book they have mentioned. Please match their mood to one of those allowed in the JSON Schema."
             },
             {
                 role: "user",
@@ -57,5 +57,7 @@ let response = await client.chat.completions.create({
         // Use the zodresponseformat & pass it the final schema with a title. Makes the ai use this format. 
         response_format: zodResponseFormat(recommendSchema, "recommendations")
     });
-    return JSON.parse(response.choices[0].message.content);
+    // Response as JSON
+    let data =  JSON.parse(response.choices[0].message.content);
+    return data;
 };
