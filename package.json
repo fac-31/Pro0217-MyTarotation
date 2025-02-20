@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "You say your age, birth month &amp; what you've watched/ read recently. Fortune teller who gives you capybara-inpsired tarot cards. When turned over - they have recommended 3 alternative media",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
@@ -11,7 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "openai": "^4.85.1"
+    "openai": "^4.85.1",
+    "zod": "^3.24.2"
   }
 }
