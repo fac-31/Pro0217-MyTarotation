@@ -17,5 +17,7 @@ export async function getBooks(recommend) {
             // Return the works book object that includes description as Json object
             return blurb.json()
         })
+        console.log(title, isbn, bookObject)
     return title, isbn, bookObject
 }
+
