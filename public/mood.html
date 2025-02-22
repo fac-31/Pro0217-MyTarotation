@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Fortune Teller - Mood</title>
 </head>
+
 <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
-    
+
 
     <nav class="w-full bg-white shadow-md flex items-center fixed top-0 left-0 h-16 px-4">
-        <a href="#" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
+        <a href="/fortunes" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
     </nav>
-    
+
 
     <div class="flex flex-col items-center justify-center h-full w-full mt-20">
-        
-        
+
+
         <div class="relative flex flex-col items-center">
             <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
                 <img src="" alt="" id="fortuneteller-img">
@@ -25,16 +27,17 @@
                 <p class="text-red-500 text-sm">How are you feeling?</p>
             </div>
         </div>
-        
- 
+
+
         <div class="flex flex-col items-center mt-6">
             <label for="mood" class="text-black mb-2">Mood</label>
             <input type="text" id="mood" name="mood" class="border border-black px-4 py-2 rounded-md">
         </div>
-        
-   
+
+
         <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg mt-6">Get Fortune</button>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>

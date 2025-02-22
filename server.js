@@ -2,8 +2,6 @@ import express from "express";
 
 const app = express();
 
-import { router } from './routes/fortunesRoute.js';
-
 const PORT = process.env.PORT || 3000;
 
 import dotenv from "dotenv";
@@ -21,6 +19,8 @@ import zod from "zod";
 
 import { zodResponseFormat } from "openai/helpers/zod";
 
+import { router } from './routes/fortunesRoute.js';
+
 import { getRecommendation } from "./openAiApi.js";
 import { getBooks } from "./bookApi.js";
 import { randomImage } from "./randomImage.js";
@@ -33,18 +33,19 @@ const client = new OpenAI({
     apiKey: process.env.API_KEY
 });
 
+app.use("/fortunes", router);
 
-app.get("/", (req, res) => {
-	res.sendFile(__dirname + "/public/fortune.html");
-});
+// app.get("/", (req, res) => {
+// 	res.sendFile(__dirname + "/public/fortune.html");
+// });
 
-app.get("/new", (req, res) => {
-	res.sendFile(__dirname + "/public/new-fortune.html");
-});
+// app.get("/new", (req, res) => {
+// 	res.sendFile(__dirname + "/public/new-fortune.html");
+// });
 
-app.get("/mood", (req, res) => {
-	res.sendFile(__dirname + "/public/mood.html");
-});
+// app.get("/mood", (req, res) => {
+// 	res.sendFile(__dirname + "/public/mood.html");
+// });
 
 app.get('/get-image', async (req, res) => {
     const imageUrl = await randomImage();

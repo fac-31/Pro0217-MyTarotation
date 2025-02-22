@@ -142,6 +142,6 @@ export async function getRecommendation(client, z, zodResponseFormat) {
 }
 
 // Test the function
-getRecommendation(client, z, zodResponseFormat)
-    .then(data => console.log(data))
-    .catch(error => console.error(error));
+// getRecommendation(client, z, zodResponseFormat)
+//     .then(data => console.log(data))
+//     .catch(error => console.error(error));
