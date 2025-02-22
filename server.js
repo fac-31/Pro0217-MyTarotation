@@ -1,51 +1,22 @@
 import express from "express";
+import "dotenv/config";
 
+// App and PORT Setup
 const app = express();
-
 const PORT = process.env.PORT || 3000;
 
-import dotenv from "dotenv";
+// Import Routers
+import { router as fortuneRouter } from './routes/fortunesRoute.js';
 
-dotenv.config();
-
-import OpenAI from "openai";
-
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-import zod from "zod";
-
-import { zodResponseFormat } from "openai/helpers/zod";
-
-import { router } from './routes/fortunesRoute.js';
-
-import { getRecommendation } from "./openAiApi.js";
-import { getBooks } from "./bookApi.js";
+// Import Other Functions
 import { randomImage } from "./randomImage.js";
 
-
+// Set up Middleware
 app.use(express.json());
 app.use(express.static("public"));
 
-const client = new OpenAI({
-    apiKey: process.env.API_KEY
-});
-
-app.use("/fortunes", router);
-
-// app.get("/", (req, res) => {
-// 	res.sendFile(__dirname + "/public/fortune.html");
-// });
-
-// app.get("/new", (req, res) => {
-// 	res.sendFile(__dirname + "/public/new-fortune.html");
-// });
-
-// app.get("/mood", (req, res) => {
-// 	res.sendFile(__dirname + "/public/mood.html");
-// });
+// Use Routers
+app.use("/fortunes", fortuneRouter);
 
 app.get('/get-image', async (req, res) => {
     const imageUrl = await randomImage();
@@ -57,10 +28,12 @@ app.get('/get-image', async (req, res) => {
 });
 
 
-
+// TEST FUNCTIONS
 // console.log(await randomImage());
 // console.log(await getRecommendation(client, zod, zodResponseFormat));
 // console.log(await getBooks(getRecommendation(client, zod, zodResponseFormat)));
+
+// Run HTTP Server
 app.listen(PORT,() => {
     console.log(`Server is listening at http://localhost:${PORT}`)
 });
