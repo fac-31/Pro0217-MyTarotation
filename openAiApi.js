@@ -145,3 +145,84 @@ export async function getRecommendation(client, z, zodResponseFormat) {
 // getRecommendation(client, z, zodResponseFormat)
 //     .then(data => console.log(data))
 //     .catch(error => console.error(error));
+
+
+/*
+Here’s a breakdown of the APIs we’re considering for our app, along with their pros and cons:
+
+1. TMDb (The Movie Database) API
+ https://www.themoviedb.org/documentation/api
+
+✅ Pros:
+
+Free access with API key registration
+Provides structured movie and TV show details, including genres and recommendations
+Strong search functionality
+⚠️ Cons:
+
+Requires API key setup
+Rate limits may apply for free tier usage
+2. Books API Options
+Option 1: Open Library API
+https://openlibrary.org/search.json?q=the+lord+of+the+rings
+
+
+✅ Pros:
+
+Completely free and open-source
+Simple to use, no API key required
+⚠️ Cons:
+
+No structured genre data (only loosely defined subjects)
+Metadata can be inconsistent
+Option 2: Google Books API
+https://developers.google.com/books
+Example for user interface and the data we can access: https://www.google.co.uk/books/edition/Robinson_Crusoe/j1BrBgAAQBAJ?hl=en&gbpv=0
+Example: https://developers.google.com/books/docs/v1/using#ids
+
+
+✅ Pros:
+
+Free to use with an API key
+Provides book titles, authors, genres, and ISBN codes
+Strong search and metadata retrieval
+⚠️ Cons:
+
+Requires API key
+Some rate limiting on free tier
+🎯 Decision Point:
+
+Do we need structured genre data? If yes, Google Books API is the better choice.
+If genre data isn’t critical, Open Library API is simpler and fully open-source.
+3. Music Album Data API Options
+
+Option 1: Spotify API
+Spotify API → https://developer.spotify.com/documentation/web-api
+
+✅ Pros:
+
+Provides album details, artist names, and genres
+Strong search functionality
+⚠️ Cons:
+
+Requires a free developer account and authentication
+Rate limits may apply
+
+Option 2: MusicBrainz API
+MusicBrainz API → https://musicbrainz.org/doc/Development/XML_Web_Service/Version_2
+
+✅ Pros:
+
+Free and open-source
+Provides structured music metadata, including genres
+⚠️ Cons:
+
+More complex to query compared to Spotify
+Metadata may not be as rich as Spotify’s
+🎯 Decision Point:
+
+If we want an open-source solution, MusicBrainz API is the better fit.
+If we prioritize better metadata and ease of use, Spotify API is stronger but requires authentication.
+
+
+*/
