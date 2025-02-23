@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Fortune Teller</title>
 </head>
+
 <body class="w-screen h-screen bg-gray-100 flex flex-col relative p-6 m-0 p-0">
-    
+
     <nav class="w-full bg-white shadow-md flex items-center absolute top-0 left-0 py-3">
         <a href="/fortunes" class="border border-green-600 text-green-600 px-6 py-3 rounded-lg ml-4">Home</a>
     </nav>
 
 
     <div class="flex flex-col items-center justify-center h-full w-full mt-20">
-   
+
         <div class="relative flex flex-col items-center">
             <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
                 <img src="" alt="" id="fortuneteller-img">
@@ -23,8 +25,8 @@
                 <p class="text-red-500 text-sm">Tell me about yourself</p>
             </div>
         </div>
-        
-     
+
+
         <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
             <div class="flex flex-col">
                 <label class="font-semibold">Name</label>
@@ -39,17 +41,18 @@
                 <input type="text" class="border border-gray-400 p-2 rounded w-full">
             </div>
         </div>
-        
+
         <div class="mt-6 w-3/4 max-w-2xl">
             <label class="block font-semibold">Interests</label>
             <textarea class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
         </div>
-        
 
-        <div class="mt-6">
+
+        <form class="mt-6" action="/fortunes/new" method="post">
             <button class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
-        </div>
+        </form>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>

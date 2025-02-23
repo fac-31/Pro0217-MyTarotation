@@ -23,7 +23,7 @@ export const getMoodPage = async (req,res) => {
 }
 
 export const postNewFortune = async (req,res) => {
-
+    res.send("New")
 }
 
 export const getMoodFortune = async (req,res) => {
