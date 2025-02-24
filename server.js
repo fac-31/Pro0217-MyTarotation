@@ -19,10 +19,12 @@ import zod from "zod";
 
 import { zodResponseFormat } from "openai/helpers/zod";
 
-import { getRecommendation } from "./openAiApi.js";
-import { getBooks } from "./bookApi.js";
+import { getRecommendation } from "./Api's/openAiApi.js";
+import { getBooks } from "./Api's/bookApi.js";
 import { randomImage } from "./randomImage.js";
+import { getFilm } from "./Api's/movieApi.js";
 
+//console.log(await getFilm(object))
 
 app.use(express.json());
 app.use(express.static("public"));
@@ -31,6 +33,11 @@ const client = new OpenAI({
     apiKey: process.env.API_KEY
 });
 
+let object = await getRecommendation(client, zod, zodResponseFormat);
+
+await getFilm(object);
+
+await getBooks(object);
 
 app.get("/", (req, res) => {
 	res.sendFile(__dirname + "/public/fortune.html");

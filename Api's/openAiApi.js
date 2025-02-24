@@ -142,10 +142,10 @@ export async function getRecommendation(client, z, zodResponseFormat) {
 }
 
 // Test the function
-getRecommendation(client, z, zodResponseFormat)
+/*getRecommendation(client, z, zodResponseFormat)
     .then(data => console.log(data))
     .catch(error => console.error(error));
-
+*/
 
 /*
 Here’s a breakdown of the APIs we’re considering for our app, along with their pros and cons:
