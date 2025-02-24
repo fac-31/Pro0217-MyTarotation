@@ -26,29 +26,28 @@
             </div>
         </div>
 
+        <form class="mt-6" action="/fortunes/new" method="post">
 
         <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
             <div class="flex flex-col">
-                <label class="font-semibold">Name</label>
-                <input type="text" class="border border-gray-400 p-2 rounded w-full">
+                <label class="font-semibold" for="age">Name</label>
+                <input type="text" name="name" id="name" class="border border-gray-400 p-2 rounded w-full">
             </div>
             <div class="flex flex-col">
-                <label class="font-semibold">Date of Birth</label>
-                <input type="text" class="border border-gray-400 p-2 rounded w-full">
+                <label class="font-semibold" for="age">Age</label>
+                <input type="text" name="age" id="age" class="border border-gray-400 p-2 rounded w-full">
             </div>
             <div class="flex flex-col">
-                <label class="font-semibold">Mood</label>
-                <input type="text" class="border border-gray-400 p-2 rounded w-full">
+                <label class="font-semibold" for="mood">Mood</label>
+                <input type="text" name="mood" id="mood" class="border border-gray-400 p-2 rounded w-full">
             </div>
         </div>
 
         <div class="mt-6 w-3/4 max-w-2xl">
-            <label class="block font-semibold">Interests</label>
-            <textarea class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
+            <label class="block font-semibold" for="recentWatch">Have you watched anything decent lately?</label>
+            <textarea name="recentWatch" id="recentWatch" class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
         </div>
 
-
-        <form class="mt-6" action="/fortunes/new" method="post">
             <button class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
         </form>
     </div>
