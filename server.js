@@ -5,6 +5,14 @@ import "dotenv/config";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const openAiRoutes = require("./openAiApi");
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use("/api/openai", openAiRoutes);
+
 // Import Routers
 import { router as fortuneRouter } from './routes/fortunesRoute.js';
 
