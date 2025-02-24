@@ -19,8 +19,10 @@ router.get("/", getHomePage);
 router.get("/new", getNewFortunePage);
 router.post("/new", postNewFortune);
 router.get("/mood/:mood?", async (req,res) => {
-    console.log(req.params.mood)
-    if (req.params.mood) {
+    console.log("---------------")
+    console.log("PARAMS: " + req.params.mood)
+    console.log("QUERY: " + req.query.mood)
+    if (req.params.mood || req.query.mood) {
         await getMoodFortune(req,res);
     } else {
         await getMoodPage(req,res);

@@ -29,7 +29,8 @@ export const postNewFortune = async (req,res) => {
 }
 
 export const getMoodFortune = async (req,res) => {
-    res.send(req.params.mood)
+    const responseMsg = req.params.mood || req.query.mood
+    res.send(responseMsg)
 }
 
 export const getRandomFortune = async (req,res) => {
