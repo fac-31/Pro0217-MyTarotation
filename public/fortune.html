@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Fortune Teller</title>
 </head>
+
 <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
-    
+
 
     <div class="flex flex-col items-center justify-center h-full w-full mt-20">
 
@@ -19,19 +21,26 @@
                 <p class="text-red-500 text-sm">What do you want to know?</p>
             </div>
         </div>
-        
+
 
         <div class="grid grid-cols-2 gap-6 mt-10">
             <form class="contents">
-                <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg" formaction="/fortunes/new" formmethod="get">New Fortune</button>
-                <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg" formaction="/fortunes/random" formmethod="get">Random</button>
-                <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg" formaction="/fortunes/mood" formmethod="get">Mood</button>
-                <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg" formaction="/fortunes/mood?mood=angry" formmethod="get">(Common Mood)</button>
+                <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg"
+                    formaction="/fortunes/new" formmethod="get">New Fortune</button>
+                <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg"
+                    formaction="/fortunes/random" formmethod="get">Random</button>
+                <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg"
+                    formaction="/fortunes/mood" formmethod="get">Mood</button>
+                <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg"
+                    formaction="/fortunes/mood/angry" formmethod="get">(Common Mood)</button>
+                <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg"
+                    formaction="/fortunes/run-api" formmethod="get">Run API as is</button>
             </form>
         </div>
     </div>
 
     <script src="script.js"></script>
-    
+
 </body>
+
 </html>

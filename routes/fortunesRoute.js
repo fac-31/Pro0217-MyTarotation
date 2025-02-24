@@ -10,22 +10,24 @@ import {
     postNewFortune,
     getMoodPage,
     getMoodFortune,
-    getRandomFortune
+    getRandomFortune,
+    runAPI
  } from '../controllers/fortunesController.js';
 
 // Define different routes
 router.get("/", getHomePage);
 router.get("/new", getNewFortunePage);
 router.post("/new", postNewFortune);
-router.get("/mood", async (req,res) => {
-    console.log(req.query.mood)
-    if (req.query.mood) {
+router.get("/mood/:mood?", async (req,res) => {
+    console.log(req.params.mood)
+    if (req.params.mood) {
         await getMoodFortune(req,res);
     } else {
         await getMoodPage(req,res);
     }
 });
 router.get("/random", getRandomFortune);
+router.get("/run-api", runAPI);
 
 // Export router
 export { router }

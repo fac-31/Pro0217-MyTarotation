@@ -4,6 +4,7 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
+import { getRecommendation } from "../openAiApi.js";
 
 const __dirname = import.meta.dirname
 
@@ -28,9 +29,13 @@ export const postNewFortune = async (req,res) => {
 }
 
 export const getMoodFortune = async (req,res) => {
-    res.send(req.query.mood)
+    res.send(req.params.mood)
 }
 
 export const getRandomFortune = async (req,res) => {
     res.send("random")
+}
+
+export const runAPI = async (req,res) => {
+    res.send(await getRecommendation(openai,z,zodResponseFormat))
 }
