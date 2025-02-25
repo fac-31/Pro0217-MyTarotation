@@ -22,10 +22,10 @@ export async function getBooks(recommend) {
                         art: data.covers[0],
                         description: description
                     };
-
-                    console.log(returnObject)
                     return returnObject;
                 });
+                return blurb
         });
+        return bookObject
 }
 
