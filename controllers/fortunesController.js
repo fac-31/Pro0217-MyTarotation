@@ -4,7 +4,7 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
-import { getRecommendation } from "../openAiApi.js";
+import { getRecommendation } from "../Api's/openAiApi.js";
 
 const __dirname = import.meta.dirname;
 
