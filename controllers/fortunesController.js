@@ -108,7 +108,5 @@ export const getRandomFortune = async (req,res) => {
 
 // Runs API with hard coded input
 export const runAPI = async (req, res, next) => {
-    let data = await getRecommendation(openai,z,zodResponseFormat)
     res.send(data);
-    next();
 }
