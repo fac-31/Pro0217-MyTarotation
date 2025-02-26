@@ -46,7 +46,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Set up Middleware
 app.use(express.json());
 app.use(express.static("public"));
 
