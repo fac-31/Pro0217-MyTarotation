@@ -126,11 +126,23 @@ export const getMoodPage = async (req,res) => {
     `, { title: "Fortune Teller - Mood", nav: true });
 }
 
-// TODO: Handles new fortune post request -commenting out for error handling
+// TODO: Handles new fortune post request -commenting out for error searching
 export const postNewFortune = async (req,res) => {
     console.log ("form submit")
     console.log(req.body);
     res.send("Awaiting fortune");
+
+    /*
+document.getElementById("fortune-result").innerHTML = 
+    `<div>
+        <h3>Your Fortune:</h3>
+        <p><strong>Recommended Movie:</strong> ${data.filmRecommendations.title || "N/A"}</p>
+        <p><strong>Recommended TV Show:</strong> ${data.tvRecommendations.title || "N/A"}</p>
+        <p><strong>Recommended Book:</strong> ${data.bookRecommendations.title || "N/A"} (ISBN: ${data.bookRecommendations.isbnCode || "N/A"})</p>
+        <p><strong>Recommended Music:</strong> ${data.musicRecommendations.title || "N/A"} by ${data.musicRecommendations.artist || "N/A"}</p>
+    </div>`
+
+    */
 
 }; 
 
