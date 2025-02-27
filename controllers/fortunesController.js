@@ -24,11 +24,11 @@ export const getHomePage = async (req, res) => {
             </div>
         </div>
         <div class="grid grid-cols-2 gap-6 mt-10">
-              <a href="/fortunes/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
-              <a href="/fortunes/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
-              <a href="/fortunes/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
-              <a href="/fortunes/mood/angry" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
-              <a href="/fortunes/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
+            <a href="/fortunes/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
+            <a href="/fortunes/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
+            <a href="/fortunes/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
+            <a href="/fortunes/mood/angry" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
+            <a href="/fortunes/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
         </div>
     `, { title: "Fortune Teller Home" });
 }
@@ -44,31 +44,68 @@ export const getNewFortunePage = async (req,res) => {
                 <p class="text-red-500 text-sm">Tell me about yourself</p>
             </div>
         </div>
-        <form action="/fortunes/new" method="post">
+        <form id="fortune-form" action="/fortunes/new" method="post">
             <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
                 <div class="flex flex-col">
-                    <label class="font-semibold">Name</label>
-                    <input type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <label for="name" class="font-semibold">Name</label>
+                    <input id="name" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
                 <div class="flex flex-col">
-                    <label class="font-semibold">Date of Birth</label>
-                    <input type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <label for="age" class="font-semibold">Age</label>
+                    <input id="age" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
                 <div class="flex flex-col">
-                    <label class="font-semibold">Mood</label>
-                    <input type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <label for="mood" class="font-semibold">Current Mood</label>
+                    <input id="mood" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
             </div>
             <div class="mt-6 w-3/4 max-w-2xl">
-                <label class="block font-semibold">Interests</label>
-                <textarea class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
+                <label for="interests" class="block font-semibold">Have you watched anything decent lately?</label>
+                <textarea id="interests" class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
             </div>
             <div class="mt-6">
                 <button class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
-            </div>
+            </div> 
         </form>
+
+
+        <script> 
+        try {
+            document.getElementById("fortune-form").addEventListener("submit", async function(event) {
+                event.preventDefault();
+                console.log ("form submitted!")
+                try {
+                    console.log ("passing data to userInput!")
+                    const name = document.getElementById("name").value;
+                    const age = document.getElementById("age").value;
+                    const mood = document.getElementById("mood").value;
+                    const interests = document.getElementById("interests").value;
+
+                    const userInput = { name, age, mood, interests };
+                    console.log("Sending to API:", userInput);
+
+                    const response = await fetch("/fortunes/run-api", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(userInput)
+                    });
+
+                    console.log ("api request sent. awaiting response")
+
+                    if (!response.ok) throw new Error("Failed to fetch data");
+
+                    const data = await response.json();
+
+                    console.log("API Response:", data);
+
+        } catch (error) {
+            console.error("❌ Error fetching fortune:", error);
+        };
+        </script>
+
     `, { title: "Fortune Teller - About You", nav: true });
 }
+
 
 // Renders Mood Select Page
 export const getMoodPage = async (req,res) => {
@@ -89,11 +126,14 @@ export const getMoodPage = async (req,res) => {
     `, { title: "Fortune Teller - Mood", nav: true });
 }
 
-// TODO: Handles new fortune post request
+// TODO: Handles new fortune post request -commenting out for error handling
 export const postNewFortune = async (req,res) => {
+    console.log ("form submit")
     console.log(req.body);
-    res.send("New");
-}
+    res.send("Awaiting fortune");
+
+}; 
+
 
 // TODO: Sends Selected Fortune data and Renders Fortune Told Page
 export const getMoodFortune = async (req,res) => {
@@ -107,6 +147,22 @@ export const getRandomFortune = async (req,res) => {
 }
 
 // Runs API with hard coded input
-export const runAPI = async (req,res) => {
-    res.send(await getRecommendation(openai,z,zodResponseFormat));
-}
+export const runAPI = async (req, res) => {
+    try {
+        const { userInput } = req.body; 
+        console.log("📥 Received User Input:", userInput);
+
+        if (!userInput) {
+            return res.status(400).json({ error: "No input provided" });
+        }
+
+        const recommendations = await getRecommendation(openai, z, zodResponseFormat, userInput);
+
+        console.log("🔮 OpenAI Response:", recommendations);
+
+        res.json(recommendations); 
+    } catch (error) {
+        console.error("Error in runAPI:", error);
+        res.status(500).json({ error: "Error generating fortune" });
+    }
+};

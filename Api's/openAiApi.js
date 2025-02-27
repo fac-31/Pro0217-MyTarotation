@@ -44,11 +44,10 @@ const recommendSchema = z.object({
     musicRecommendations: z.array(musicMedia)
 });
 
-export async function getRecommendation(client, z, zodResponseFormat) {
+export async function getRecommendation(client, z, zodResponseFormat, userInput) {
     // Test input. Will eventually be user input.
-    const input = `I am 29 years old. I'm currently quite extatic. 
-    In other news I have recently watched Hannibal with Mads Mikkelsen & Zone of Interest. I recently read Game of Thrones while
-    listening to The Gaslight Anthem.`;
+    console.log("OpenAI Api called");
+    const input = userInput || "I am 29 years old. I'm currently quite ecstatic. In other news, I have recently watched Hannibal with Mads Mikkelsen & Zone of Interest. I recently read Game of Thrones while listening to The Gaslight Anthem.";
 
     try {
         // Make the request to OpenAI to get recommendations
@@ -115,7 +114,7 @@ export async function getRecommendation(client, z, zodResponseFormat) {
 
         // Parse the raw AI response
         const parsedData = response.choices[0].message.content;
-        
+
         // Parse response into JSON
         let parsedJSON;
         try {
