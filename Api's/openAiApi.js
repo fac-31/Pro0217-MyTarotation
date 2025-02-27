@@ -44,7 +44,7 @@ const recommendSchema = z.object({
     musicRecommendations: z.array(musicMedia)
 });
 
-export async function getRecommendation(client, z, zodResponseFormat) {
+export async function getRecommendation(client, z, zodResponseFormat, userInput) {
     // Test input. Will eventually be user input.
     const input = `I am 29 years old. I'm currently quite extatic. 
     In other news I have recently watched Hannibal with Mads Mikkelsen & Zone of Interest. I recently read Game of Thrones while
@@ -106,7 +106,7 @@ export async function getRecommendation(client, z, zodResponseFormat) {
                 },
                 {
                     role: "user",
-                    content: input,
+                    content: userInput || input,
                 },
             ],
             // Use the zodresponseformat & pass it the final schema with a title.

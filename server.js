@@ -19,6 +19,10 @@ import { router as fortuneRouter } from "./routes/fortunesRoute.js";
 // Import Other Functions
 import { randomImage } from "./randomImage.js";
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // For form data
+app.use(express.static("public"));
+
 // Middleware for shared layout
 app.use((req, res, next) => {
   res.renderWithLayout = (content, options = {}) => {
@@ -37,7 +41,7 @@ app.use((req, res, next) => {
       <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
           ${nav ? `
           <nav class="w-full bg-white shadow-md flex items-center fixed top-0 left-0 h-16 px-4">
-              <a href="/fortunes" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
+              <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
           </nav>` : ""}
 
           <div class="flex flex-col items-center justify-center h-full w-full mt-20">
@@ -54,11 +58,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
-app.use(express.static("public"));
-
 // Use Routers
-app.use("/fortunes", fortuneRouter);
+app.use("/", fortuneRouter);
 
 // API Route for Getting Image
 app.get("/get-image", async (req, res) => {
