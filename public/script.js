@@ -16,4 +16,4 @@ async function fetchImage() {
     }
 }
 
-fetchImage()
+fetchImage();

@@ -27,6 +27,5 @@ router.get("/mood/:mood?", async (req,res) => {
 });
 router.get("/random", getRandomFortune);
 router.get("/run-api", runAPI);
-
 // Export router
 export { router }
