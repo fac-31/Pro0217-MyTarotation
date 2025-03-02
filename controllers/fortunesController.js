@@ -37,8 +37,8 @@ export const getHomePage = async (req, res) => {
 export const getNewFortunePage = async (req,res) => {
     res.renderWithLayout(`
         <div class="relative flex flex-col items-center">
-            <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
-                <img src="" alt="" id="fortuneteller-img">
+            <div class="w-40 h-fit flex items-center justify-center border-4 border-red-500 rounded-lg">
+                <img class="w-40" src="/FortuneTellerImages/gifs/CR-default.gif" alt="" id="fortuneteller-img">
             </div>
             <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
                 <p class="text-red-500 text-sm">Tell me about yourself</p>
