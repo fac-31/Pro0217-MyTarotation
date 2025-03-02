@@ -4,7 +4,7 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
-import { getRecommendation } from "../Api's/openAiApi.js";
+import { handleRecommendations } from "../apis/openAiApi.js";
 
 const __dirname = import.meta.dirname;
 
@@ -134,5 +134,69 @@ export const getRandomFortune = async (req,res) => {
 
 // Runs API with hard coded input
 export const runAPI = async (req, res) => {
+    try {
+        const recommendations = await handleRecommendations(req);
 
-}
+        if (!recommendations) {
+            return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
+        }
+
+        if (!recommendations.books?.length && !recommendations.movies?.length) {
+            return res.renderWithLayout(`<p class="text-red-500">No recommendations found.</p>`, { title: "Recommendations" });
+        }
+
+        res.renderWithLayout(`
+            <div class="p-6">
+                <h2 class="text-xl font-bold">Your Recommendations</h2>
+
+                <!-- Movies Section -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold">Movies:</h3>
+                    ${recommendations.movies?.length ? `
+                        <ul class="list-none">
+                            ${recommendations.movies.map(movie => `
+                                <li class="mt-6 flex items-start gap-4">
+                                    <img src="${movie.art || 'https://via.placeholder.com/100x150?text=No+Image'}" 
+                                         alt="Movie Poster" class="w-24 h-auto rounded-md shadow-md">
+                                    <div>
+                                        <h4 class="font-semibold text-lg">${movie.title}</h4>
+                                        <p class="text-sm text-gray-700">${movie.plot?.slice(0, 300) || "No plot available."}...</p>
+                                        ${Array.isArray(movie.genres) && movie.genres.length ? 
+                                          `<p class="text-xs text-gray-500 mt-2">Genres: ${movie.genres.slice(0, 3).join(", ")}</p>` : ""}
+                                    </div>
+                                </li>
+                            `).join("")}
+                        </ul>
+                    ` : "<p class='text-gray-500'>No movies found.</p>"}
+                </div>
+
+                <!-- Books Section -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold">Books:</h3>
+                    ${recommendations.books?.length ? `
+                        <ul class="list-none">
+                            ${recommendations.books.map(book => `
+                                <li class="mt-6 flex items-start gap-4">
+                                    <img src="${book.art || 'https://via.placeholder.com/100x150?text=No+Cover'}" 
+                                         alt="Book Cover" class="w-24 h-auto rounded-md shadow-md">
+                                    <div>
+                                        <h4 class="font-semibold text-lg">${book.title}</h4>
+                                        <p class="text-sm text-gray-700">${book.description?.slice(0, 300) || "No description available."}...</p>
+                                        ${Array.isArray(book.genres) && book.genres.length ? 
+                                          `<p class="text-xs text-gray-500 mt-2">Genres: ${book.genres.slice(0, 3).join(", ")}</p>` : ""}
+                                    </div>
+                                </li>
+                            `).join("")}
+                        </ul>
+                    ` : "<p class='text-gray-500'>No books found.</p>"}
+                </div>
+            </div>
+        `, { title: "Recommendations" });
+
+    } catch (error) {
+        console.error("Error running API:", error);
+        if (!res.headersSent) {
+            res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
+        }
+    }
+};
