@@ -98,9 +98,14 @@ export const getNewFortunePage = async (req,res) => {
 
                     console.log("API Response:", data);
 
+                } catch (error) {
+                    console.error("❌ Error fetching fortune:", error);
+                }
+            });
         } catch (error) {
-            console.error("❌ Error fetching fortune:", error);
-        };
+            console.error("❌ Error in form submission:", error);
+        }
+
         </script>
 
     `, { title: "Fortune Teller - About You", nav: true });
