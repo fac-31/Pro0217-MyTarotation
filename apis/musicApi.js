@@ -7,10 +7,12 @@ dotenv.config();
 
 export async function getMusic(recommend) {
 
-    const music = recommend.musicRecommendations;
+    const music = recommend;
 
-    let title = music[0].title.replace(/ /g, "+");
-    let artist = music[0].artist.replace(/ /g, "+");
+    console.log(music);
+
+    let title = music.title.replace(/ /g, "+");
+    let artist = music.artist.replace(/ /g, "+");
 
     let musicSchema = z.object({
         title: z.string(),

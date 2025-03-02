@@ -164,6 +164,27 @@ export const runAPI = async (req, res) => {
                         </ul>
                     ` : "<p class='text-gray-500'>No books found.</p>"}
                 </div>
+
+                <!-- Albums Section -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold">Albums:</h3>
+                    ${recommendations.albums?.length ? `
+                        <ul class="list-none">
+                            ${recommendations.albums.map(album => `
+                                <li class="mt-6 flex items-start gap-4">
+                                    <img src="${album.art || 'https://via.placeholder.com/100x150?text=No+Cover'}" 
+                                         alt="Book Cover" class="w-24 h-auto rounded-md shadow-md">
+                                    <div>
+                                        <h4 class="font-semibold text-lg">${album.title}</h4>
+                                        <p class="text-sm text-gray-700">${album.artist?.slice(0, 300) || "No artist available."}</p>
+                                        ${Array.isArray(album.genres) && album.genres.length ? 
+                                          `<p class="text-xs text-gray-500 mt-2">Genres: ${album.genres.slice(0, 3).join(", ")}</p>` : ""}
+                                    </div>
+                                </li>
+                            `).join("")}
+                        </ul>
+                    ` : "<p class='text-gray-500'>No books found.</p>"}
+                </div>
             </div>
         `, { title: "Recommendations" });
 
