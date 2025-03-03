@@ -5,6 +5,7 @@ import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
 import { handleRecommendations } from "../apis/openAiApi.js";
+import { saveMoods, saveUser, getCommonMood } from "../storage.js";
 
 const __dirname = import.meta.dirname;
 
@@ -30,6 +31,7 @@ export const getHomePage = async (req, res) => {
             <a href="/mood/angry" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
             <a href="/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
         </div>
+
     `, { title: "Fortune Teller Home" });
 }
 
@@ -115,6 +117,7 @@ export const getMoodPage = async (req,res) => {
 // TODO: Sends Selected Fortune data and Renders Fortune Told Page
 export const getMoodFortune = async (req,res) => {
     const responseMsg = req.params.mood || req.query.mood;
+    console.log(await getCommonMood())
     res.send(responseMsg)
 }
 
@@ -136,6 +139,10 @@ export const postNewFortune = async (req, res) => {
         const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
 
         const recommendations = await handleRecommendations(req, formattedInput);
+
+        saveUser(name, age, mood, interests);
+
+        saveMoods(recommendations.mood);
 
         console.log("🔮 OpenAI Response:", recommendations);
 

@@ -166,10 +166,13 @@ export async function handleRecommendations(req, formattedInput) {
         ? await Promise.all([aiResponse.musicRecommendations].flat().map(getMusic))
         : [];
 
+        
+
         const recommendations = {
             books: books.filter(Boolean),
             movies: movies.filter(Boolean),
             albums: albums.filter(Boolean),
+            mood: aiResponse.mood 
         };
 
         console.log("Final Recommendations:", recommendations);
