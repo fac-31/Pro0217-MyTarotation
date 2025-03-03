@@ -1,9 +1,14 @@
 import express from "express";
+import bodyParser from "body-parser";
 import "dotenv/config";
 
 // App and PORT Setup
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Parse JSON bodies
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Import Routers
 import { router as fortuneRouter } from "./routes/fortunesRoute.js";

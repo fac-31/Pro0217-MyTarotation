@@ -1,5 +1,4 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 
 const router = express.Router()
 
@@ -26,7 +25,7 @@ router.get("/mood/:mood?", async (req,res) => {
     }
 });
 router.get("/random", getRandomFortune);
-router.get("/run-api", runAPI);
+router.post("/run-api", runAPI);
 
 // Export router
 export { router }

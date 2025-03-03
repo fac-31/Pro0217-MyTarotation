@@ -2,8 +2,6 @@ import OpenAI from "openai";
 import { z } from "zod";
 import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import 'dotenv/config';
-import path from 'path';
-import bodyParser from "body-parser";
 import { getRecommendation } from "../Api's/openAiApi.js";
 
 const __dirname = import.meta.dirname;
@@ -68,6 +66,8 @@ export const getNewFortunePage = async (req,res) => {
             </div> 
         </form>
 
+        <div id="fortune-result" class="mt-8 w-3/4 max-w-2xl mx-auto hidden">
+        </div>
 
         <script> 
         try {
@@ -80,8 +80,12 @@ export const getNewFortunePage = async (req,res) => {
                     const age = document.getElementById("age").value;
                     const mood = document.getElementById("mood").value;
                     const interests = document.getElementById("interests").value;
-
-                    const userInput = { name, age, mood, interests };
+                    const userInput = {
+                        age: age,
+                        mood: mood,
+                        interests: interests,
+                        name: name
+                    };
                     console.log("Sending to API:", userInput);
 
                     const response = await fetch("/fortunes/run-api", {
@@ -131,13 +135,12 @@ export const getMoodPage = async (req,res) => {
     `, { title: "Fortune Teller - Mood", nav: true });
 }
 
-// TODO: Handles new fortune post request -commenting out for error searching
+// TODO: Handles new fortune post request 
 export const postNewFortune = async (req,res) => {
     console.log ("form submit")
     console.log(req.body);
     res.send("Awaiting fortune");
 
-    /*
 document.getElementById("fortune-result").innerHTML = 
     `<div>
         <h3>Your Fortune:</h3>
@@ -146,8 +149,6 @@ document.getElementById("fortune-result").innerHTML =
         <p><strong>Recommended Book:</strong> ${data.bookRecommendations.title || "N/A"} (ISBN: ${data.bookRecommendations.isbnCode || "N/A"})</p>
         <p><strong>Recommended Music:</strong> ${data.musicRecommendations.title || "N/A"} by ${data.musicRecommendations.artist || "N/A"}</p>
     </div>`
-
-    */
 
 }; 
 
@@ -166,18 +167,20 @@ export const getRandomFortune = async (req,res) => {
 // Runs API with hard coded input
 export const runAPI = async (req, res) => {
     try {
-        const { userInput } = req.body; 
-        console.log("📥 Received User Input:", userInput);
+        const { age, mood, interests, name } = req.body;
+        console.log("📥 Received User Input:", req.body);
 
-        if (!userInput) {
-            return res.status(400).json({ error: "No input provided" });
+        if (!age || !mood || !interests) {
+            return res.status(400).json({ error: "Missing required fields" });
         }
 
-        const recommendations = await getRecommendation(openai, z, zodResponseFormat, userInput);
+        const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
+        
+        const recommendations = await getRecommendation(openai, z, zodResponseFormat, formattedInput);
 
         console.log("🔮 OpenAI Response:", recommendations);
 
-        res.json(recommendations); 
+        res.json(recommendations);
     } catch (error) {
         console.error("Error in runAPI:", error);
         res.status(500).json({ error: "Error generating fortune" });
