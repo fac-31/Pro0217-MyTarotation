@@ -44,7 +44,7 @@ export const getNewFortunePage = async (req,res) => {
                 <p class="text-red-500 text-sm">Tell me about yourself</p>
             </div>
         </div>
-        <form id="fortune-form" action="/fortunes/new" method="post">
+        <form id="fortune-form">
             <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
                 <div class="flex flex-col">
                     <label for="name" class="font-semibold">Name</label>
@@ -100,9 +100,9 @@ export const getNewFortunePage = async (req,res) => {
 
                     if (!response.ok) throw new Error("Failed to fetch data");
 
-                    const data = await response.json();
+                    const data = await response
 
-                    console.log("API Response:", data);
+                    console.log("API Response:", data.body);
 
                 } catch (error) {
                     console.error("Error fetching fortune:", error);
@@ -111,7 +111,6 @@ export const getNewFortunePage = async (req,res) => {
         } catch (error) {
             console.error("Error in form submission:", error);
         }
-
         </script>
 
     `, { title: "Fortune Teller - About You", nav: true });
@@ -177,12 +176,10 @@ export const runAPI = async (req, res) => {
         }
 
         const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
-        
-        const recommendations = await getRecommendation(openai, z, zodResponseFormat, formattedInput);
+
+        const recommendations = await handleRecommendations(req, formattedInput);
 
         console.log("🔮 OpenAI Response:", recommendations);
-
-        const recommendations = await handleRecommendations(req);
 
         if (!recommendations) {
             return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
@@ -194,8 +191,7 @@ export const runAPI = async (req, res) => {
 
         res.renderWithLayout(`
             <div class="p-6">
-                <h2 class="text-xl font-bold">Your Recommendations</h2>
-
+                <h2 class="text-xl font-bold">Your Recommendations</h2
                 <!-- Movies Section -->
                 <div class="mt-6">
                     <h3 class="text-lg font-semibold">Movies:</h3>

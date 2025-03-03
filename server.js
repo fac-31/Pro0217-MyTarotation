@@ -12,7 +12,7 @@ retrieveItem("moods").then(data => console.log(data))
 */
 // App and PORT Setup
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3009;
 
 // Parse JSON bodies
 app.use(bodyParser.json());

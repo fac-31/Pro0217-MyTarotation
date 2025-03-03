@@ -147,9 +147,9 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
 }
 
 //right now we don't use req, but we will need to change it when we will implement recommendations based on user input
-export async function handleRecommendations(req) { 
+export async function handleRecommendations(req, formattedInput) { 
     try {
-        let aiResponse = await getRecommendation(client, z, zodResponseFormat);
+        let aiResponse = await getRecommendation(client, z, zodResponseFormat, formattedInput);
         if (!aiResponse) throw new Error("No AI response received");
 
         console.log("AI Response:", aiResponse);
