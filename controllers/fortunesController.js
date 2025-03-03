@@ -4,8 +4,9 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
-import { handleRecommendations } from "../apis/openAiApi.js";
-
+import { handleRecommendations, getRecommendation } from "../apis/openAiApi.js";
+import { saveUser, retrieveItem, clear } from "../storage.js";
+let name;
 const __dirname = import.meta.dirname;
 
 const openai = new OpenAI({
@@ -98,13 +99,17 @@ export const  getRecommendPage = async (req,res) => {
             <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
                 <p class="text-red-500 text-sm">How are you feeling?</p>
             </div>
+            <div id="tester" class="w-40 h-40 flex justify-center border-4 border-red-500 rounded-lg">
+
+            </div>
         </div>
+
     `, { title: "Fortune Teller - Recommendations", nav: true });
 }
 
 // TODO: Handles new fortune post request
 export const postNewFortune = async (req,res) => {
-    let name = req.body.name;
+    name = req.body.name;
     let age = req.body.age;
     let mood = req.body.mood;
     let interests = req.body.interests;
@@ -114,8 +119,7 @@ export const postNewFortune = async (req,res) => {
     res.redirect("/recommend");
     try {
         let openAiData = await getRecommendation(openai, z, zodResponseFormat, userInput);
-        console.log(openAiData)
-        // We could store data at this point? 
+        saveUser(name, age, openAiData.mood, openAiData.filmRecommendations, openAiData.bookRecommendations, openAiData.musicRecommendations)
     } catch (error) {
     console.error('Error in API call:', error);
 };

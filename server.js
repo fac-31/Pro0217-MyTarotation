@@ -1,14 +1,6 @@
 import express from "express";
 import "dotenv/config";
 
-/* Imported here as an example as what happens when the functions are called. 
-You would normally call it in the routes folder to access data from the api endpoints. I think it can also be imported into
-the controllers. */ 
-import { saveMoods, retrieveItem, saveUser, clear } from "./storage.js";
-/*
-saveMoods("happy");
-retrieveItem("moods").then(data => console.log(data))
-*/
 // App and PORT Setup
 const app = express();
 const PORT = process.env.PORT || 3000;

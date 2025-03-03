@@ -6,9 +6,9 @@ import persist from 'node-persist';
 })();
 
 // Function to add users. We may not need to store this as I don't think we resuse this info but we may want to in the future 
-export async function saveUser(name, age, mood, recommendations) {
+export async function saveUser(name, age, mood, film, book, music) {
     try {
-        const userData = { name, age, mood, recommendations};
+        const userData = { name, age, mood, film, book, music};
 
     return await persist.setItem(name, userData);
     } catch (error) {

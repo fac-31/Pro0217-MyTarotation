@@ -27,4 +27,4 @@ function validateForm() {
     }
 
     return true; // Allow form submission
-}
+};
