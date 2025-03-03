@@ -24,11 +24,11 @@ export const getHomePage = async (req, res) => {
             </div>
         </div>
         <div class="grid grid-cols-2 gap-6 mt-10">
-            <a href="/fortunes/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
-            <a href="/fortunes/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
-            <a href="/fortunes/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
-            <a href="/fortunes/mood/angry" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
-            <a href="/fortunes/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
+            <a href="/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
+            <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
+            <a href="/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
+            <a href="/mood/angry" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
+            <a href="/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
         </div>
     `, { title: "Fortune Teller Home" });
 }
@@ -44,7 +44,7 @@ export const getNewFortunePage = async (req,res) => {
                 <p class="text-red-500 text-sm">Tell me about yourself</p>
             </div>
         </div>
-        <form id="fortune-form" action="/fortunes/new" method="post">
+        <form id="fortune-form" action="/new" method="post">
             <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
                 <div class="flex flex-col">
                     <label for="name" class="font-semibold">Name</label>

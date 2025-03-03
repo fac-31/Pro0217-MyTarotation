@@ -63,7 +63,7 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // Use Routers
-app.use("/fortunes", fortuneRouter);
+app.use("/", fortuneRouter);
 
 // API Route for Getting Image
 app.get("/get-image", async (req, res) => {
