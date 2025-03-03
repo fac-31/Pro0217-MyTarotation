@@ -44,24 +44,24 @@ export const getNewFortunePage = async (req,res) => {
                 <p class="text-red-500 text-sm">Tell me about yourself</p>
             </div>
         </div>
-        <form id="fortune-form">
+        <form id="fortune-form" action="/fortunes/new" method="post">
             <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
                 <div class="flex flex-col">
                     <label for="name" class="font-semibold">Name</label>
-                    <input id="name" type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <input id="name" name="name" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
                 <div class="flex flex-col">
                     <label for="age" class="font-semibold">Age</label>
-                    <input id="age" type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <input id="age" name="age" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
                 <div class="flex flex-col">
                     <label for="mood" class="font-semibold">Current Mood</label>
-                    <input id="mood" type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <input id="mood" name="mood" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
             </div>
             <div class="mt-6 w-3/4 max-w-2xl">
                 <label for="interests" class="block font-semibold">Have you watched anything decent lately?</label>
-                <textarea id="interests" class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
+                <textarea id="interests" name="interests" class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
             </div>
             <div class="mt-6">
                 <button class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
@@ -70,48 +70,6 @@ export const getNewFortunePage = async (req,res) => {
 
         <div id="fortune-result" class="mt-8 w-3/4 max-w-2xl mx-auto hidden">
         </div>
-
-        <script> 
-        try {
-            document.getElementById("fortune-form").addEventListener("submit", async function(event) {
-                event.preventDefault();
-                console.log ("form submitted!")
-                try {
-                    console.log ("passing data to userInput!")
-                    const name = document.getElementById("name").value;
-                    const age = document.getElementById("age").value;
-                    const mood = document.getElementById("mood").value;
-                    const interests = document.getElementById("interests").value;
-                    const userInput = {
-                        age: age,
-                        mood: mood,
-                        interests: interests,
-                        name: name
-                    };
-                    console.log("Sending to API:", userInput);
-
-                    const response = await fetch("/fortunes/run-api", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(userInput)
-                    });
-
-                    console.log ("api request sent. awaiting response")
-
-                    if (!response.ok) throw new Error("Failed to fetch data");
-
-                    const data = await response
-
-                    console.log("API Response:", data.body);
-
-                } catch (error) {
-                    console.error("Error fetching fortune:", error);
-                }
-            });
-        } catch (error) {
-            console.error("Error in form submission:", error);
-        }
-        </script>
 
     `, { title: "Fortune Teller - About You", nav: true });
 }
@@ -137,21 +95,21 @@ export const getMoodPage = async (req,res) => {
 }
 
 // TODO: Handles new fortune post request 
-export const postNewFortune = async (req,res) => {
-    console.log ("form submit")
-    console.log(req.body);
-    res.send("Awaiting fortune");
+// export const postNewFortune = async (req,res) => {
+//     console.log ("form submit")
+//     console.log(req.body);
+//     res.send("Awaiting fortune");
 
-document.getElementById("fortune-result").innerHTML = 
-    `<div>
-        <h3>Your Fortune:</h3>
-        <p><strong>Recommended Movie:</strong> ${data.filmRecommendations.title || "N/A"}</p>
-        <p><strong>Recommended TV Show:</strong> ${data.tvRecommendations.title || "N/A"}</p>
-        <p><strong>Recommended Book:</strong> ${data.bookRecommendations.title || "N/A"} (ISBN: ${data.bookRecommendations.isbnCode || "N/A"})</p>
-        <p><strong>Recommended Music:</strong> ${data.musicRecommendations.title || "N/A"} by ${data.musicRecommendations.artist || "N/A"}</p>
-    </div>`
+//     document.getElementById("fortune-result").innerHTML = 
+//         `<div>
+//             <h3>Your Fortune:</h3>
+//             <p><strong>Recommended Movie:</strong> ${data.filmRecommendations.title || "N/A"}</p>
+//             <p><strong>Recommended TV Show:</strong> ${data.tvRecommendations.title || "N/A"}</p>
+//             <p><strong>Recommended Book:</strong> ${data.bookRecommendations.title || "N/A"} (ISBN: ${data.bookRecommendations.isbnCode || "N/A"})</p>
+//             <p><strong>Recommended Music:</strong> ${data.musicRecommendations.title || "N/A"} by ${data.musicRecommendations.artist || "N/A"}</p>
+//         </div>`
 
-}; 
+// }; 
 
 
 // TODO: Sends Selected Fortune data and Renders Fortune Told Page
@@ -166,7 +124,7 @@ export const getRandomFortune = async (req,res) => {
 }
 
 // Runs API with hard coded input
-export const runAPI = async (req, res) => {
+export const postNewFortune = async (req, res) => {
     try {
         const { age, mood, interests, name } = req.body;
         console.log("📥 Received User Input:", req.body);

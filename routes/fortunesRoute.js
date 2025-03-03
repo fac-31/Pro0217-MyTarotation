@@ -10,7 +10,6 @@ import {
     getMoodPage,
     getMoodFortune,
     getRandomFortune,
-    runAPI
  } from '../controllers/fortunesController.js';
 
 // Define different routes
@@ -25,7 +24,7 @@ router.get("/mood/:mood?", async (req,res) => {
     }
 });
 router.get("/random", getRandomFortune);
-router.post("/run-api", runAPI);
+//router.post("/run-api", runAPI);
 
 // Export router
 export { router }
