@@ -5,6 +5,7 @@ import path from "path";
 import { getFilm } from "./movieApi.js";
 
 import { getBook } from "./bookApi.js";
+import { getMusic } from "./musicApi.js";
 
 
 import { zodResponseFormat } from "openai/helpers/zod.mjs";
@@ -155,16 +156,21 @@ export async function handleRecommendations(req) {
         console.log("AI Response:", aiResponse);
 
         let books = aiResponse.bookRecommendations
-    ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))
-    : [];
+        ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))
+        : [];
 
-    let movies = aiResponse.filmRecommendations
-    ? await Promise.all([aiResponse.filmRecommendations].flat().map(getFilm))
-    : [];
+        let movies = aiResponse.filmRecommendations
+        ? await Promise.all([aiResponse.filmRecommendations].flat().map(getFilm))
+        : [];
+
+        let albums = aiResponse.musicRecommendations
+        ? await Promise.all([aiResponse.musicRecommendations].flat().map(getMusic))
+        : [];
 
         const recommendations = {
             books: books.filter(Boolean),
             movies: movies.filter(Boolean),
+            albums: albums.filter(Boolean),
         };
 
         console.log("Final Recommendations:", recommendations);
