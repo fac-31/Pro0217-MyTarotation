@@ -44,7 +44,7 @@ export const getNewFortunePage = async (req,res) => {
                 <p class="text-red-500 text-sm">Tell me about yourself</p>
             </div>
         </div>
-        <form id="fortune-form" action="/fortunes/new" method="post">
+        <form id="fortune-form" action="/new" method="post">
             <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
                 <div class="flex flex-col">
                     <label for="name" class="font-semibold">Name</label>
