@@ -6,7 +6,6 @@ import path from 'path';
 import bodyParser from "body-parser";
 import { handleRecommendations, getRecommendation } from "../apis/openAiApi.js";
 import { saveUser, retrieveItem, clear } from "../storage.js";
-let name;
 const __dirname = import.meta.dirname;
 
 const openai = new OpenAI({
@@ -103,23 +102,44 @@ export const  getRecommendPage = async (req,res) => {
 
             </div>
         </div>
+<script>
+        async function fetchResult() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const requestId = urlParams.get("id");
 
+    async function checkStatus() {
+                const response = await fetch("/api/result?id=" + requestId);
+                const result = await response.json();
+
+                if (result.hasOwnProperty("name")) {
+                console.log("ready")
+                document.getElementById("tester").innerText = result.name + result.age;
+                    return console.log(result);
+                } else {
+                    setTimeout(checkStatus, 2000); // Retry after 2 seconds
+                }
+            }
+
+            checkStatus();
+        };
+        window.onload = fetchResult;
+</script>
     `, { title: "Fortune Teller - Recommendations", nav: true });
 }
 
 // TODO: Handles new fortune post request
 export const postNewFortune = async (req,res) => {
-    name = req.body.name;
+    let name = req.body.name;
     let age = req.body.age;
     let mood = req.body.mood;
     let interests = req.body.interests;
     let userInput = name + age + mood + interests;
 
     // Redirects before api call so people aren't waiting looking at nothing
-    res.redirect("/recommend");
+    res.redirect(`/recommend?id=${name}`);
     try {
-        let openAiData = await getRecommendation(openai, z, zodResponseFormat, userInput);
-        saveUser(name, age, openAiData.mood, openAiData.filmRecommendations, openAiData.bookRecommendations, openAiData.musicRecommendations)
+        let openAiData = await handleRecommendations(userInput);
+        saveUser(name, age, openAiData.mood, openAiData.movies, openAiData.books, openAiData.musicRecommendations)
     } catch (error) {
     console.error('Error in API call:', error);
 };
