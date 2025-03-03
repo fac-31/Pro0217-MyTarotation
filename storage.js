@@ -50,3 +50,5 @@ export async function retrieveItem(item) {
         console.log("Error getting item :" + error.message)
     };
 };
+
+console.log('storage:', await persist.values());

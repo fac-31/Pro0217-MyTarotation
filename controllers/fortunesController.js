@@ -5,6 +5,7 @@ import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
 import { handleRecommendations } from "../apis/openAiApi.js";
+import { saveUser } from "../storage.js";
 
 const __dirname = import.meta.dirname;
 
@@ -127,7 +128,8 @@ export const getRandomFortune = async (req,res) => {
 export const postNewFortune = async (req, res) => {
     try {
         const { age, mood, interests, name } = req.body;
-        console.log("📥 Received User Input:", req.body);
+     
+
 
         if (!age || !mood || !interests) {
             return res.status(400).json({ error: "Missing required fields" });
@@ -137,7 +139,7 @@ export const postNewFortune = async (req, res) => {
 
         const recommendations = await handleRecommendations(req, formattedInput);
 
-        console.log("🔮 OpenAI Response:", recommendations);
+        await saveUser(name, age, mood, recommendations);
 
         if (!recommendations) {
             return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
