@@ -60,7 +60,7 @@ export async function getBook(recommend) {
             throw new Error("Invalid bookApi response format");
         }
 
-        console.log("✅ Valid Book:", result.data);
+        //console.log("✅ Valid Book:", result.data);
         return result.data;
 
     } catch (error) {

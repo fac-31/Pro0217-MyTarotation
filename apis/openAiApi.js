@@ -152,7 +152,7 @@ export async function handleRecommendations(req, formattedInput) {
         let aiResponse = await getRecommendation(client, z, zodResponseFormat, formattedInput);
         if (!aiResponse) throw new Error("No AI response received");
 
-        console.log("AI Response:", aiResponse);
+        //console.log("AI Response:", aiResponse);
 
         let books = aiResponse.bookRecommendations
         ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))

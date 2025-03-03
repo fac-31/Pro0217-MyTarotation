@@ -5,6 +5,7 @@ import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
 import { handleRecommendations } from "../apis/openAiApi.js";
+import { saveUser } from "../storage.js";
 
 const __dirname = import.meta.dirname;
 
@@ -28,7 +29,6 @@ export const getHomePage = async (req, res) => {
             <a href="/fortunes/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
             <a href="/fortunes/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
             <a href="/fortunes/mood/angry" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
-            <a href="/fortunes/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
         </div>
     `, { title: "Fortune Teller Home" });
 }
@@ -48,20 +48,20 @@ export const getNewFortunePage = async (req,res) => {
             <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
                 <div class="flex flex-col">
                     <label for="name" class="font-semibold">Name</label>
-                    <input id="name" name="name" type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <input id="name" name="name" type="text" class="border border-gray-400 p-2 rounded w-full" required>
                 </div>
                 <div class="flex flex-col">
                     <label for="age" class="font-semibold">Age</label>
-                    <input id="age" name="age" type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <input id="age" name="age" type="text" class="border border-gray-400 p-2 rounded w-full" required>
                 </div>
                 <div class="flex flex-col">
                     <label for="mood" class="font-semibold">Current Mood</label>
-                    <input id="mood" name="mood" type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <input id="mood" name="mood" type="text" class="border border-gray-400 p-2 rounded w-full" required>
                 </div>
             </div>
             <div class="mt-6 w-3/4 max-w-2xl">
                 <label for="interests" class="block font-semibold">Have you watched anything decent lately?</label>
-                <textarea id="interests" name="interests" class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
+                <textarea id="interests" name="interests" class="w-full border border-gray-400 p-3 rounded h-24" required></textarea>
             </div>
             <div class="mt-6">
                 <button class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
@@ -125,12 +125,13 @@ export const getRandomFortune = async (req,res) => {
 
 // Runs API with hard coded input
 export const postNewFortune = async (req, res) => {
+
     try {
         const { age, mood, interests, name } = req.body;
         console.log("📥 Received User Input:", req.body);
 
         if (!age || !mood || !interests) {
-            return res.status(400).json({ error: "Missing required fields" });
+            return res.status(400).json({ err8or: "Missing required fields" });
         }
 
         const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
@@ -138,6 +139,8 @@ export const postNewFortune = async (req, res) => {
         const recommendations = await handleRecommendations(req, formattedInput);
 
         console.log("🔮 OpenAI Response:", recommendations);
+
+        saveUser(name,age,mood,recommendations);
 
         if (!recommendations) {
             return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });

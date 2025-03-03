@@ -9,7 +9,7 @@ export async function getMusic(recommend) {
 
     const music = recommend;
 
-    console.log(music);
+    //console.log(music);
 
     let title = music.title.replace(/ /g, "+");
     let artist = music.artist.replace(/ /g, "+");
@@ -37,7 +37,7 @@ export async function getMusic(recommend) {
         title = musicObject.title;
         artist = musicObject['artist-credit'].map(a => a.name).join(", ");
 
-        console.log(musicObject);
+        //console.log(musicObject);
 
         const coverArt = await fetch(`http://coverartarchive.org/release-group/${mbid}`, {
             method: "GET",
@@ -49,7 +49,7 @@ export async function getMusic(recommend) {
             .then(data => data.images[0].image)
             .catch(err => console.log(err));
         
-        console.log(coverArt)
+        //console.log(coverArt)
 
         const genres = await fetch(`https://musicbrainz.org/ws/2/release-group/${mbid}?fmt=json&inc=genres`, {
             method: "GET",
@@ -80,7 +80,7 @@ export async function getMusic(recommend) {
 
         };
 
-        console.log("Valid Music:", result.data);
+        //console.log("Valid Music:", result.data);
 
         return result.data;
 
