@@ -1,9 +1,17 @@
 import { z } from "zod";
 import OpenAI from "openai";
 import dotenv from "dotenv";
+import path from "path";
+import { getFilm } from "./movieApi.js";
+
+import { getBook } from "./bookApi.js";
+import { getMusic } from "./musicApi.js";
+
+
 import { zodResponseFormat } from "openai/helpers/zod.mjs";
 
-dotenv.config(); 
+dotenv.config({ path: path.resolve("../.env") });
+
 
 const client = new OpenAI({
   apiKey: process.env.API_KEY, 
@@ -131,14 +139,50 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
             throw new Error("Invalid AI response format");
         }
 
-        // Return the validated data
-        console.log("Valid Recommendations:", result.data);
         return result.data;
     } catch (error) {
         console.error("Error fetching recommendations:", error.message);
         return null;
     }
 }
+
+//right now we don't use req, but we will need to change it when we will implement recommendations based on user input
+export async function handleRecommendations(req) { 
+    try {
+        let aiResponse = await getRecommendation(client, z, zodResponseFormat);
+        if (!aiResponse) throw new Error("No AI response received");
+
+        console.log("AI Response:", aiResponse);
+
+        let books = aiResponse.bookRecommendations
+        ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))
+        : [];
+
+        let movies = aiResponse.filmRecommendations
+        ? await Promise.all([aiResponse.filmRecommendations].flat().map(getFilm))
+        : [];
+
+        let albums = aiResponse.musicRecommendations
+        ? await Promise.all([aiResponse.musicRecommendations].flat().map(getMusic))
+        : [];
+
+        const recommendations = {
+            books: books.filter(Boolean),
+            movies: movies.filter(Boolean),
+            albums: albums.filter(Boolean),
+        };
+
+        console.log("Final Recommendations:", recommendations);
+
+        return recommendations; 
+
+    } catch (error) {
+        console.error("Error handling recommendations:", error);
+        return null; 
+    }
+}
+
+
 
 // Test the function
 /*getRecommendation(client, z, zodResponseFormat)
