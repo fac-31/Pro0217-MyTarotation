@@ -7,16 +7,12 @@ const fortuneAge = document.getElementById("age");
 const fortuneMood = document.getElementById("mood");
 const fortuneInterests = document.getElementById("interests");
 
+const LOADING_IMG = "/FortuneTellerImages/gifs/CR-loading-eyesclosed.gif"
+
 submitButton.addEventListener("click", event => {
 
     if (fortuneName.value && fortuneAge.value && fortuneMood.value && fortuneInterests.value) {
-        // change image to loading
-        fortuneResult.style.display = "block";
-        fortuneResult.innerHTML = '<p>Loading</p>';
-    } else {
-        //change image to need more info? do nothing?
-        fortuneResult.style.display = "block";
-        fortuneResult.innerHTML = '<p>Please Enter All Data</p>'
+        fortuneTellerImage.src = LOADING_IMG;
     }
 
     

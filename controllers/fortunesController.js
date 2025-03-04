@@ -23,20 +23,12 @@ const openai = new OpenAI({
 export const getHomePage = async (req, res) => {
     let mood = await getCommonMood() + "";
     res.renderWithLayout(`
-        <div class="relative flex flex-col items-center">
-            <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
-                <img src="" alt="" id="fortuneteller-img">
-            </div>
-            <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
-                <p class="text-red-500 text-sm">What do you want to know?</p>
-            </div>
-        </div>
+        
         <div class="grid grid-cols-2 gap-6 mt-10">
             <a href="/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
             <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
             <a href="/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
             <a href="" id="common-mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg"></a>
-            <a href="/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
         </div>
         <script>
             function commonMoodButton () {
@@ -53,15 +45,8 @@ export const getHomePage = async (req, res) => {
 // Renders New Fortune Page
 export const getNewFortunePage = async (req,res) => {
     res.renderWithLayout(`
-        <div class="relative flex flex-col items-center">
-            <div class="w-40 h-fit flex items-center justify-center border-4 border-red-500 rounded-lg">
-                <img class="w-40" src="/FortuneTellerImages/gifs/CR-default.gif" alt="" id="fortuneteller-img">
-            </div>
-            <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
-                <p class="text-red-500 text-sm">Tell me about yourself</p>
-            </div>
-        </div>
-        <form id="fortune-form" action="/new" method="post">
+        
+        <form id="fortune-form" action="/new" method="post" class="flex flex-col items-center">
             <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
                 <div class="flex flex-col">
                     <label for="name" class="font-semibold">Name</label>
@@ -85,9 +70,6 @@ export const getNewFortunePage = async (req,res) => {
             </div> 
         </form>
 
-        <div id="fortune-result" class="mt-8 w-3/4 max-w-2xl mx-auto hidden">
-        </div>
-
         <script src="./scripts/new-fortune.js"></script>
 
     `, { title: "Fortune Teller - About You", nav: true });
@@ -97,14 +79,7 @@ export const getNewFortunePage = async (req,res) => {
 // Renders Mood Select Page
 export const getMoodPage = async (req,res) => {
     res.renderWithLayout(`
-        <div class="relative flex flex-col items-center">
-            <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
-                <img src="" alt="" id="fortuneteller-img">
-            </div>
-            <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
-                <p class="text-red-500 text-sm">How are you feeling?</p>
-            </div>
-        </div>
+        
         <form class="flex flex-col items-center mt-6" action="/mood" method="get">
             <label for="mood" class="text-black mb-2">Mood</label>
             <input type="text" id="mood" name="mood" class="border border-black px-4 py-2 rounded-md">
