@@ -134,3 +134,6 @@ node_modules
 
 # env file
 .env
+
+# Persist Data
+.node-persist

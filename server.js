@@ -12,7 +12,7 @@ retrieveItem("moods").then(data => console.log(data))
 */
 // App and PORT Setup
 const app = express();
-const PORT = process.env.PORT || 3009;
+const PORT = process.env.PORT || 3000;
 
 // Parse JSON bodies
 app.use(bodyParser.json());
@@ -42,7 +42,7 @@ app.use((req, res, next) => {
       <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
           ${nav ? `
           <nav class="w-full bg-white shadow-md flex items-center fixed top-0 left-0 h-16 px-4">
-              <a href="/fortunes" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
+              <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
           </nav>` : ""}
 
           <div class="flex flex-col items-center justify-center h-full w-full mt-20">

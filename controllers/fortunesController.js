@@ -5,7 +5,13 @@ import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
 import { handleRecommendations } from "../apis/openAiApi.js";
-import { saveUser } from "../storage.js";
+import { 
+    saveMoods, 
+    saveUser, 
+    getCommonMood, 
+    getRandomMoodFortune, 
+    getRandom 
+} from "../storage.js";
 
 const __dirname = import.meta.dirname;
 
@@ -15,6 +21,7 @@ const openai = new OpenAI({
 
 // Renders Home Page
 export const getHomePage = async (req, res) => {
+    let mood = await getCommonMood() + "";
     res.renderWithLayout(`
         <div class="relative flex flex-col items-center">
             <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
@@ -28,8 +35,18 @@ export const getHomePage = async (req, res) => {
             <a href="/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
             <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
             <a href="/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
-            <a href="/mood/angry" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
+            <a href="" id="common-mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg"></a>
+            <a href="/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
         </div>
+        <script>
+            function commonMoodButton () {
+                let route =  "/mood/${mood}";
+                let link = document.getElementById("common-mood")
+                link.href = route;
+                link.innerText = "Everyone's feeling ${mood} today"
+            }
+            window.onload = commonMoodButton;
+        </script>
     `, { title: "Fortune Teller Home" });
 }
 
@@ -37,8 +54,8 @@ export const getHomePage = async (req, res) => {
 export const getNewFortunePage = async (req,res) => {
     res.renderWithLayout(`
         <div class="relative flex flex-col items-center">
-            <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
-                <img src="" alt="" id="fortuneteller-img">
+            <div class="w-40 h-fit flex items-center justify-center border-4 border-red-500 rounded-lg">
+                <img class="w-40" src="/FortuneTellerImages/gifs/CR-default.gif" alt="" id="fortuneteller-img">
             </div>
             <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
                 <p class="text-red-500 text-sm">Tell me about yourself</p>
@@ -88,7 +105,7 @@ export const getMoodPage = async (req,res) => {
                 <p class="text-red-500 text-sm">How are you feeling?</p>
             </div>
         </div>
-        <form class="flex flex-col items-center mt-6" action="/fortunes/mood" method="get">
+        <form class="flex flex-col items-center mt-6" action="/mood" method="get">
             <label for="mood" class="text-black mb-2">Mood</label>
             <input type="text" id="mood" name="mood" class="border border-black px-4 py-2 rounded-md">
             <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg mt-6">Get Fortune</button>
@@ -117,12 +134,14 @@ export const getMoodPage = async (req,res) => {
 // TODO: Sends Selected Fortune data and Renders Fortune Told Page
 export const getMoodFortune = async (req,res) => {
     const responseMsg = req.params.mood || req.query.mood;
-    res.send(responseMsg)
+    let fortune = await  getRandomMoodFortune(responseMsg)
+    res.send(fortune);
 }
 
 // TODO: Sends Random Fortune Data and Renders Fortune Told Page
 export const getRandomFortune = async (req,res) => {
-    res.send("random");
+    let fortune = await getRandom()
+    res.send(fortune);
 }
 
 // Runs API with hard coded input
@@ -139,6 +158,10 @@ export const postNewFortune = async (req, res) => {
         const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
 
         const recommendations = await handleRecommendations(req, formattedInput);
+
+        //saveUser(name, age, mood, interests);
+
+        //saveMoods(recommendations.mood);
 
         console.log("🔮 OpenAI Response:", recommendations);
 
