@@ -5,6 +5,7 @@ import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
 import { handleRecommendations } from "../apis/openAiApi.js";
+import { saveMoods, saveUser, getCommonMood, getRandomMoodFortune } from "../storage.js";
 
 const __dirname = import.meta.dirname;
 
@@ -14,6 +15,7 @@ const openai = new OpenAI({
 
 // Renders Home Page
 export const getHomePage = async (req, res) => {
+    let mood = await getCommonMood() + "";
     res.renderWithLayout(`
         <div class="relative flex flex-col items-center">
             <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
@@ -27,9 +29,18 @@ export const getHomePage = async (req, res) => {
             <a href="/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
             <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
             <a href="/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
-            <a href="/mood/angry" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
+            <a href="" id="common-mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg"></a>
             <a href="/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
         </div>
+        <script>
+        function commonMoodButton () {
+        let route =  "/mood/${mood}";
+        let link = document.getElementById("common-mood")
+        link.href = route;
+        link.innerText = "Everyone's feeling ${mood} today"
+    }
+        window.onload = commonMoodButton;
+        </script>
     `, { title: "Fortune Teller Home" });
 }
 
@@ -115,7 +126,8 @@ export const getMoodPage = async (req,res) => {
 // TODO: Sends Selected Fortune data and Renders Fortune Told Page
 export const getMoodFortune = async (req,res) => {
     const responseMsg = req.params.mood || req.query.mood;
-    res.send(responseMsg)
+    let fortune = await  getRandomMoodFortune(responseMsg)
+    res.send(fortune);
 }
 
 // TODO: Sends Random Fortune Data and Renders Fortune Told Page
@@ -136,6 +148,10 @@ export const postNewFortune = async (req, res) => {
         const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
 
         const recommendations = await handleRecommendations(req, formattedInput);
+
+        saveUser(name, age, mood, interests);
+
+        saveMoods(recommendations.mood);
 
         console.log("🔮 OpenAI Response:", recommendations);
 
