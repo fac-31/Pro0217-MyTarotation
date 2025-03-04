@@ -5,6 +5,7 @@ import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
 import { handleRecommendations } from "../apis/openAiApi.js";
+import { saveMoods, saveUser, getCommonMood, getRandomMoodFortune } from "../storage.js";
 
 const __dirname = import.meta.dirname;
 
@@ -14,6 +15,7 @@ const openai = new OpenAI({
 
 // Renders Home Page
 export const getHomePage = async (req, res) => {
+    let mood = await getCommonMood() + "";
     res.renderWithLayout(`
         <div class="relative flex flex-col items-center">
             <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
@@ -24,12 +26,21 @@ export const getHomePage = async (req, res) => {
             </div>
         </div>
         <div class="grid grid-cols-2 gap-6 mt-10">
-              <a href="/fortunes/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
-              <a href="/fortunes/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
-              <a href="/fortunes/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
-              <a href="/fortunes/mood/angry" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
-              <a href="/fortunes/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
+            <a href="/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
+            <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
+            <a href="/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
+            <a href="" id="common-mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg"></a>
+            <a href="/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
         </div>
+        <script>
+        function commonMoodButton () {
+        let route =  "/mood/${mood}";
+        let link = document.getElementById("common-mood")
+        link.href = route;
+        link.innerText = "Everyone's feeling ${mood} today"
+    }
+        window.onload = commonMoodButton;
+        </script>
     `, { title: "Fortune Teller Home" });
 }
 
@@ -44,31 +55,36 @@ export const getNewFortunePage = async (req,res) => {
                 <p class="text-red-500 text-sm">Tell me about yourself</p>
             </div>
         </div>
-        <form action="/fortunes/new" method="post">
+        <form id="fortune-form" action="/new" method="post">
             <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
                 <div class="flex flex-col">
-                    <label class="font-semibold">Name</label>
-                    <input type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <label for="name" class="font-semibold">Name</label>
+                    <input id="name" name="name" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
                 <div class="flex flex-col">
-                    <label class="font-semibold">Date of Birth</label>
-                    <input type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <label for="age" class="font-semibold">Age</label>
+                    <input id="age" name="age" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
                 <div class="flex flex-col">
-                    <label class="font-semibold">Mood</label>
-                    <input type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <label for="mood" class="font-semibold">Current Mood</label>
+                    <input id="mood" name="mood" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
             </div>
             <div class="mt-6 w-3/4 max-w-2xl">
-                <label class="block font-semibold">Interests</label>
-                <textarea class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
+                <label for="interests" class="block font-semibold">Have you watched anything decent lately?</label>
+                <textarea id="interests" name="interests" class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
             </div>
             <div class="mt-6">
                 <button class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
-            </div>
+            </div> 
         </form>
+
+        <div id="fortune-result" class="mt-8 w-3/4 max-w-2xl mx-auto hidden">
+        </div>
+
     `, { title: "Fortune Teller - About You", nav: true });
 }
+
 
 // Renders Mood Select Page
 export const getMoodPage = async (req,res) => {
@@ -89,16 +105,29 @@ export const getMoodPage = async (req,res) => {
     `, { title: "Fortune Teller - Mood", nav: true });
 }
 
-// TODO: Handles new fortune post request
-export const postNewFortune = async (req,res) => {
-    console.log(req.body);
-    res.send("New");
-}
+// TODO: Handles new fortune post request 
+// export const postNewFortune = async (req,res) => {
+//     console.log ("form submit")
+//     console.log(req.body);
+//     res.send("Awaiting fortune");
+
+//     document.getElementById("fortune-result").innerHTML = 
+//         `<div>
+//             <h3>Your Fortune:</h3>
+//             <p><strong>Recommended Movie:</strong> ${data.filmRecommendations.title || "N/A"}</p>
+//             <p><strong>Recommended TV Show:</strong> ${data.tvRecommendations.title || "N/A"}</p>
+//             <p><strong>Recommended Book:</strong> ${data.bookRecommendations.title || "N/A"} (ISBN: ${data.bookRecommendations.isbnCode || "N/A"})</p>
+//             <p><strong>Recommended Music:</strong> ${data.musicRecommendations.title || "N/A"} by ${data.musicRecommendations.artist || "N/A"}</p>
+//         </div>`
+
+// }; 
+
 
 // TODO: Sends Selected Fortune data and Renders Fortune Told Page
 export const getMoodFortune = async (req,res) => {
     const responseMsg = req.params.mood || req.query.mood;
-    res.send(responseMsg)
+    let fortune = await  getRandomMoodFortune(responseMsg)
+    res.send(fortune);
 }
 
 // TODO: Sends Random Fortune Data and Renders Fortune Told Page
@@ -107,9 +136,24 @@ export const getRandomFortune = async (req,res) => {
 }
 
 // Runs API with hard coded input
-export const runAPI = async (req, res) => {
+export const postNewFortune = async (req, res) => {
     try {
-        const recommendations = await handleRecommendations(req);
+        const { age, mood, interests, name } = req.body;
+        console.log("📥 Received User Input:", req.body);
+
+        if (!age || !mood || !interests) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
+
+        const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
+
+        const recommendations = await handleRecommendations(req, formattedInput);
+
+        saveUser(name, age, mood, interests);
+
+        saveMoods(recommendations.mood);
+
+        console.log("🔮 OpenAI Response:", recommendations);
 
         if (!recommendations) {
             return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
@@ -121,8 +165,7 @@ export const runAPI = async (req, res) => {
 
         res.renderWithLayout(`
             <div class="p-6">
-                <h2 class="text-xl font-bold">Your Recommendations</h2>
-
+                <h2 class="text-xl font-bold">Your Recommendations</h2
                 <!-- Movies Section -->
                 <div class="mt-6">
                     <h3 class="text-lg font-semibold">Movies:</h3>
@@ -188,10 +231,9 @@ export const runAPI = async (req, res) => {
             </div>
         `, { title: "Recommendations" });
 
+    
     } catch (error) {
-        console.error("Error running API:", error);
-        if (!res.headersSent) {
-            res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
-        }
+        console.error("Error in runAPI:", error);
+        res.status(500).json({ error: "Error generating fortune" });
     }
 };

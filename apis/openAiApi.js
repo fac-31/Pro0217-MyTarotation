@@ -39,12 +39,13 @@ const musicMedia = z.object({
 });
 
 // Array of moods to match against.
-const moods = ["Happy", "Sad", "Angry", "Chilled", "Reflective", "Fearful", "Disgusted"];
+const moods = ["happy", "sad", "angry", "chilled", "reflective", "fearful", "disgusted"];
 
 // Full schema for the recommendations.
 const recommendSchema = z.object({
     age: z.number().nullable(),
     mood: z.enum(moods),
+    starsign: z.string(),
     genres: z.array(z.string()).optional(),
     filmRecommendations: z.array(visualMedia),
     tvRecommendations: z.array(visualMedia),
@@ -52,11 +53,10 @@ const recommendSchema = z.object({
     musicRecommendations: z.array(musicMedia)
 });
 
-export async function getRecommendation(client, z, zodResponseFormat) {
+export async function getRecommendation(client, z, zodResponseFormat, userInput) {
     // Test input. Will eventually be user input.
-    const input = `I am 29 years old. I'm currently quite extatic. 
-    In other news I have recently watched Hannibal with Mads Mikkelsen & Zone of Interest. I recently read Game of Thrones while
-    listening to The Gaslight Anthem.`;
+    console.log("OpenAI Api called");
+    const input = userInput || "I am 29 years old. I'm currently quite ecstatic. In other news, I have recently watched Hannibal with Mads Mikkelsen & Zone of Interest. I recently read Game of Thrones while listening to The Gaslight Anthem.";
 
     try {
         // Make the request to OpenAI to get recommendations
@@ -88,6 +88,7 @@ export async function getRecommendation(client, z, zodResponseFormat) {
                     {
                       "mood": "<mood>",
                       "age": <age>,
+                      "starsign": <starsign>,
                       "genres": <array_of_genres>,
                       "filmRecommendations": [{
                         "title": "<film_title>",
@@ -109,7 +110,8 @@ export async function getRecommendation(client, z, zodResponseFormat) {
                       }]
                     }
 
-                    If any information is not available, return null or an empty array [] for that field. Do not leave any field missing from the JSON structure.
+                    If any information is not available, return null or an empty array [] for that field. Do not leave any field missing from the JSON structure. Do not recommend a piece of media that the user has mentioned.
+                    Return the correct starsign if you are able to with the information provided, else return null. 
                     `,
                 },
                 {
@@ -123,7 +125,7 @@ export async function getRecommendation(client, z, zodResponseFormat) {
 
         // Parse the raw AI response
         const parsedData = response.choices[0].message.content;
-        
+
         // Parse response into JSON
         let parsedJSON;
         try {
@@ -148,9 +150,9 @@ export async function getRecommendation(client, z, zodResponseFormat) {
 }
 
 //right now we don't use req, but we will need to change it when we will implement recommendations based on user input
-export async function handleRecommendations(req) { 
+export async function handleRecommendations(req, formattedInput) { 
     try {
-        let aiResponse = await getRecommendation(client, z, zodResponseFormat);
+        let aiResponse = await getRecommendation(client, z, zodResponseFormat, formattedInput);
         if (!aiResponse) throw new Error("No AI response received");
 
         console.log("AI Response:", aiResponse);
@@ -167,10 +169,13 @@ export async function handleRecommendations(req) {
         ? await Promise.all([aiResponse.musicRecommendations].flat().map(getMusic))
         : [];
 
+        
+
         const recommendations = {
             books: books.filter(Boolean),
             movies: movies.filter(Boolean),
             albums: albums.filter(Boolean),
+            mood: aiResponse.mood 
         };
 
         console.log("Final Recommendations:", recommendations);

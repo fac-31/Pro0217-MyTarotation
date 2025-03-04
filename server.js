@@ -1,4 +1,5 @@
 import express from "express";
+import bodyParser from "body-parser";
 import "dotenv/config";
 
 /* Imported here as an example as what happens when the functions are called. 
@@ -12,6 +13,10 @@ retrieveItem("moods").then(data => console.log(data))
 // App and PORT Setup
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Parse JSON bodies
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Import Routers
 import { router as fortuneRouter } from "./routes/fortunesRoute.js";
@@ -58,7 +63,7 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // Use Routers
-app.use("/fortunes", fortuneRouter);
+app.use("/", fortuneRouter);
 
 // API Route for Getting Image
 app.get("/get-image", async (req, res) => {
