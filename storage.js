@@ -7,7 +7,7 @@ import persist from 'node-persist';
         {
             "name": "Red Hellier",
             "starsign": "Aries",
-            "mood": "Happy",
+            "mood": "happy",
             "book": {
                 "title": "Twilight",
                 "author": "Stephenie Meyer",
@@ -32,7 +32,7 @@ import persist from 'node-persist';
         {
             "name": "Billy Bob",
             "starsign": "Scorpio",
-            "mood": "Reflective",
+            "mood": "reflective",
             "book": {
                 "title": "Dune",
                 "author": "Frank Herbert",
@@ -115,6 +115,17 @@ export async function getRandomMoodFortune(mood) {
         let moodFortunes = fortunes.filter(x => x.mood === mood);
         let num = Math.floor(Math.random() * moodFortunes.length);
         let selectedFortune = moodFortunes[num];
+        return selectedFortune;
+    } catch (error) {
+        console.log("Error fetching common mood fortune: " + error.message)
+    }
+}
+
+export async function getRandom() {
+    try {
+        let fortunes = await persist.getItem("fortunes");
+        let num = Math.floor(Math.random() * fortunes.length);
+        let selectedFortune = fortunes[num];
         return selectedFortune;
     } catch (error) {
         console.log("Error fetching common mood fortune: " + error.message)
