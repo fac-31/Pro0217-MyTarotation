@@ -29,13 +29,15 @@ export const getHomePage = async (req, res) => {
             <a href="/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
             <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
             <a href="/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
-            <a href="" id="common-mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
+            <a href="" id="common-mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg"></a>
             <a href="/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
         </div>
         <script>
         function commonMoodButton () {
         let route =  "/mood/${mood}";
-        document.getElementById("common-mood").href = route;
+        let link = document.getElementById("common-mood")
+        link.href = route;
+        link.innerText = "Everyone's feeling ${mood} today"
     }
         window.onload = commonMoodButton;
         </script>

@@ -39,7 +39,7 @@ const musicMedia = z.object({
 });
 
 // Array of moods to match against.
-const moods = ["Happy", "Sad", "Angry", "Chilled", "Reflective", "Fearful", "Disgusted"];
+const moods = ["happy", "sad", "angry", "chilled", "reflective", "fearful", "disgusted"];
 
 // Full schema for the recommendations.
 const recommendSchema = z.object({
