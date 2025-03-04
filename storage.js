@@ -62,7 +62,7 @@ export async function saveUser(name, age, mood, recommendations) {
     try {
         const userData = { name, age, mood, recommendations};
 
-    return await persist.setItem(name, userData);
+        return await persist.setItem(name, userData);
     } catch (error) {
         console.log("Error setting user: " + error.message)
     }

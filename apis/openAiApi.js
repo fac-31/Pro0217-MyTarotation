@@ -45,6 +45,7 @@ const moods = ["Happy", "Sad", "Angry", "Chilled", "Reflective", "Fearful", "Dis
 const recommendSchema = z.object({
     age: z.number().nullable(),
     mood: z.enum(moods),
+    starsign: z.string(),
     genres: z.array(z.string()).optional(),
     filmRecommendations: z.array(visualMedia),
     tvRecommendations: z.array(visualMedia),
@@ -87,6 +88,7 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
                     {
                       "mood": "<mood>",
                       "age": <age>,
+                      "starsign": <starsign>,
                       "genres": <array_of_genres>,
                       "filmRecommendations": [{
                         "title": "<film_title>",
@@ -108,7 +110,8 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
                       }]
                     }
 
-                    If any information is not available, return null or an empty array [] for that field. Do not leave any field missing from the JSON structure.
+                    If any information is not available, return null or an empty array [] for that field. Do not leave any field missing from the JSON structure. Do not recommend a piece of media that the user has mentioned.
+                    Return the correct starsign if you are able to with the information provided, else return null. 
                     `,
                 },
                 {
