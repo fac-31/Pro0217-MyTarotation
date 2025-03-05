@@ -13,13 +13,13 @@ import schedule from 'node-schedule'
 
 export async function saveFortune(fortune) {
     try {
-        let fortunes = await persist.getItem("fortunes") || []; // Retrieve existing fortunes or start with an empty array
-        fortunes.push(fortune); // Append the new fortune
-        await persist.setItem("fortunes", fortunes); // Save the updated array
-        console.log("✅ New fortune saved:", fortune);
+        let fortunes = await persist.getItem("fortunes") || []; 
+        fortunes.push(fortune); 
+        await persist.setItem("fortunes", fortunes); 
+        console.log("New fortune saved:", fortune);
         return fortune;
     } catch (error) {
-        console.error("❌ Error saving fortune:", error.message);
+        console.error("Error saving fortune:", error.message);
     }
 }
 
