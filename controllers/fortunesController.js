@@ -9,12 +9,10 @@ import {
     matchMood 
 } from "../apis/openAiApi.js";
 import { 
-    saveMoods, 
-    saveUser, 
+    saveMoods,
     getCommonMood, 
     getRandomMoodFortune, 
-    getRandom 
-} from "../storage.js";
+    saveFortune} from "../storage.js";
 import '../lib/starsigns.js'
 import starsigns from "../lib/starsigns.js";
 
@@ -178,11 +176,23 @@ export const postNewFortune = async (req, res) => {
 
         const recommendations = await handleRecommendations(req, formattedInput);
 
-        //saveUser(name, age, mood, interests);
+        // saveUser(name, age, mood, interests);
 
         //saveMoods(recommendations.mood);
 
-        console.log("🔮 OpenAI Response:", recommendations);
+        console.log("🔮 Recommendations:", recommendations);
+
+
+        const newFortune = {
+            name,
+            starsign: "Unknown", 
+            mood: recommendations.mood,
+            book: recommendations.books[0],
+            film: recommendations.movies[0],
+            album: recommendations.albums[0]
+        };
+
+        await saveFortune(newFortune);
 
         if (!recommendations) {
             return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });

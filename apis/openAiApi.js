@@ -55,7 +55,7 @@ const recommendSchema = z.object({
 
 export async function getRecommendation(client, z, zodResponseFormat, userInput) {
     // Test input. Will eventually be user input.
-    console.log("OpenAI Api called");
+
     const input = userInput || "I am 29 years old. I'm currently quite ecstatic. In other news, I have recently watched Hannibal with Mads Mikkelsen & Zone of Interest. I recently read Game of Thrones while listening to The Gaslight Anthem.";
 
     try {
@@ -206,11 +206,11 @@ export async function matchMood(userInput) {
 
 //right now we don't use req, but we will need to change it when we will implement recommendations based on user input
 export async function handleRecommendations(req, formattedInput) { 
+    console.log('Formated input:', formattedInput)
     try {
         let aiResponse = await getRecommendation(client, z, zodResponseFormat, formattedInput);
         if (!aiResponse) throw new Error("No AI response received");
 
-        //console.log("AI Response:", aiResponse);
 
         let books = aiResponse.bookRecommendations
         ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))
@@ -232,8 +232,6 @@ export async function handleRecommendations(req, formattedInput) {
             albums: albums.filter(Boolean),
             mood: aiResponse.mood 
         };
-
-        console.log("Final Recommendations:", recommendations);
 
         return recommendations; 
 

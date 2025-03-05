@@ -46,7 +46,6 @@ export async function getFilm(recommend) {
 
         };
 
-        //console.log("Valid Film:", result.data);
 
         return result.data;
 
