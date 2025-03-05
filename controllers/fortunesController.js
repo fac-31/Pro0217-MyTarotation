@@ -15,6 +15,8 @@ import {
     getRandomMoodFortune, 
     getRandom 
 } from "../storage.js";
+import '../lib/starsigns.js'
+import starsigns from "../lib/starsigns.js";
 
 const __dirname = import.meta.dirname;
 
@@ -56,8 +58,8 @@ export const getNewFortunePage = async (req,res) => {
                     <input id="name" name="name" type="text" class="border border-gray-400 p-2 rounded w-full" required>
                 </div>
                 <div class="flex flex-col">
-                    <label for="age" class="font-semibold">Age</label>
-                    <input id="age" name="age" type="text" class="border border-gray-400 p-2 rounded w-full" required>
+                    <label for="dob" class="font-semibold">Date of Birth</label>
+                    <input id="dob" name="dob" type="date" class="border border-gray-400 p-2 rounded w-full" required>
                 </div>
                 <div class="flex flex-col">
                     <label for="mood" class="font-semibold">Current Mood</label>
@@ -109,16 +111,32 @@ export const getRandomFortune = async (req,res) => {
     res.send(fortune);
 }
 
+const getAge = (dob) => {
+    const today = Date.now();
+    const diff = new Date(today - dob);
+    return Math.abs(diff.getUTCFullYear() - 1970);
+}
+
+const getStarsign = (dob) => {
+    const birthMonth = dob.getMonth();
+    const starMonth = birthMonth - (starsigns.dateChange[birthMonth] > dob.getDate() ? 1 : 0)
+    return starsigns.monthEndSign.at(starMonth);
+}
+
 // Runs API with hard coded input
 export const postNewFortune = async (req, res) => {
 
     try {
-        const { age, mood, interests, name } = req.body;
+        const { dob, mood, interests, name } = req.body;
         console.log("📥 Received User Input:", req.body);
 
-        if (!age || !mood || !interests) {
+        if (!dob || !mood || !interests) {
             return res.status(400).json({ err8or: "Missing required fields" });
         }
+
+        const dateOfBirth = new Date(dob);
+        const age = getAge(dateOfBirth);
+        const starsign = getStarsign(dateOfBirth)
 
         const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
 
@@ -129,8 +147,6 @@ export const postNewFortune = async (req, res) => {
         //saveMoods(recommendations.mood);
 
         console.log("🔮 OpenAI Response:", recommendations);
-
-        saveUser(name,age,mood,recommendations);
 
         if (!recommendations) {
             return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
