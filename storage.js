@@ -1,72 +1,39 @@
 import persist from 'node-persist';
+import schedule from 'node-schedule'
 
 // Creates storage with logging set to true. This will console log when an item is set, written etc
 (async () => {
-    await persist.initSync({ logging: true });
-    await persist.setItem("fortunes", [
-        {
-            "name": "Red Hellier",
-            "starsign": "Aries",
-            "mood": "happy",
-            "book": {
-                "title": "Twilight",
-                "author": "Stephenie Meyer",
-                "ISBN": "0316015849",
-                "art": "https://covers.openlibrary.org/b/id/twilight-S.jpg",
-                "description": "Book about sexy vampires",
-                "genres": ["Romance","Drama"]
-            },
-            "film": {
-                "title": "Pirates of the Carribean 3: At World's End",
-                "plot": "The Pirates fight for love and life in this epic finale",
-                "genres": ["Action","Adventure"],
-                "art": "--filmposter poster url"
-            },
-            "album": {
-                "title": "The Rise and Fall of a Midwest Princess",
-                "artist": "Chappell Roan",
-                "genres": ["Pop"],
-                "art": "--album cover art url"
-            }
-        },
-        {
-            "name": "Billy Bob",
-            "starsign": "Scorpio",
-            "mood": "reflective",
-            "book": {
-                "title": "Dune",
-                "author": "Frank Herbert",
-                "isbnCode": "0316015849",
-                "art": "https://covers.openlibrary.org/b/id/twilight-S.jpg",
-                "description": "It's in the desert in space",
-                "genres": ["Sci-fi","Drama"]
-            },
-            "film": {
-                "title": "Mad Max: Fury Road",
-                "plot": "A desert car chase",
-                "genres": ["Action","Adventure"],
-                "art": "--filmposter poster url"
-            },
-            "album": {
-                "title": "To Pimp a Butterfly",
-                "artist": "Kendrick Lamar",
-                "genres": ["HipHop","Jazz"],
-                "art": "--album cover art url"
-            }
-        }
-    ])
+    await persist.init({ logging: true });
+    let fortunes = await persist.getItem("fortunes");
+    if (!fortunes) {
+        await persist.setItem("fortunes", []);
+    }
+    console.log("📜 Stored Fortunes:", fortunes);
 })();
 
-// Function to add users. We may not need to store this as I don't think we resuse this info but we may want to in the future 
-export async function saveUser(name, age, mood, recommendations) {
+export async function saveFortune(fortune) {
     try {
-        const userData = { name, age, mood, recommendations};
-
-        return await persist.setItem(name, userData);
+        let fortunes = await persist.getItem("fortunes") || []; 
+        fortunes.push(fortune); 
+        await persist.setItem("fortunes", fortunes); 
+        console.log("New fortune saved:", fortune);
+        return fortune;
     } catch (error) {
-        console.log("Error setting user: " + error.message)
+        console.error("Error saving fortune:", error.message);
     }
-  };
+}
+
+
+// Function to add users. We may not need to store this as I don't think we resuse this info but we may want to in the future 
+// export async function saveUser(name, age, mood, recommendations) {
+//     try {
+//         const userData = { name, age, mood, recommendations};
+
+//         return await persist.setItem(name, userData);
+//     } catch (error) {
+//         console.log("Error setting user: " + error.message)
+//     }
+//   };
 
 // Clears all stored data
 export async function clear() {
@@ -76,6 +43,8 @@ export async function clear() {
         console.log("Error clearing storage: " + error.message)
     }
 };
+
+schedule.scheduleJob('0 0 * * *', clear)
 
 // Saves moods and their popularity to access for the random mood call
 export async function saveMoods(mood) {
