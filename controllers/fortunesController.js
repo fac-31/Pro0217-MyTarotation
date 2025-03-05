@@ -12,8 +12,9 @@ import {
     saveMoods,
     getCommonMood, 
     getRandomMoodFortune, 
-    saveFortune} from "../storage.js";
-import '../lib/starsigns.js'
+    getRandom,
+    saveFortune
+} from "../storage.js";
 import starsigns from "../lib/starsigns.js";
 
 const __dirname = import.meta.dirname;
@@ -25,6 +26,7 @@ const openai = new OpenAI({
 // Renders Home Page
 export const getHomePage = async (req, res) => {
     let mood = await getCommonMood() + "";
+    console.log(mood);
     res.renderWithLayout(`
         
         <div class="grid grid-cols-2 gap-6 mt-10">
@@ -163,11 +165,12 @@ export const postNewFortune = async (req, res) => {
         }
 
         let age;
+        let starsignFromDoB;
 
         if (dob) {
             const dateOfBirth = new Date(dob);
             age = getAge(dateOfBirth);
-            const starsignFromDoB = getStarsign(dateOfBirth)
+            starsignFromDoB = getStarsign(dateOfBirth)
         } else if (starsign) {
             age = 25;
         }
@@ -176,16 +179,11 @@ export const postNewFortune = async (req, res) => {
 
         const recommendations = await handleRecommendations(req, formattedInput);
 
-        // saveUser(name, age, mood, interests);
-
-        //saveMoods(recommendations.mood);
-
         console.log("🔮 Recommendations:", recommendations);
-
 
         const newFortune = {
             name,
-            starsign: "Unknown", 
+            starsign: starsign || starsignFromDoB, 
             mood: recommendations.mood,
             book: recommendations.books[0],
             film: recommendations.movies[0],
@@ -193,6 +191,7 @@ export const postNewFortune = async (req, res) => {
         };
 
         await saveFortune(newFortune);
+        await saveMoods(recommendations.mood);
 
         if (!recommendations) {
             return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
