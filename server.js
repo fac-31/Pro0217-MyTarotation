@@ -27,7 +27,7 @@ import { randomImage } from "./randomImage.js";
 // Middleware for shared layout
 app.use((req, res, next) => {
   res.renderWithLayout = (content, options = {}) => {
-    const { title = "Fortune Teller", nav = false } = options;
+    const { title = "Fortune Teller", nav = false, fortuneTellerImg = 'default' } = options;
 
     const html = `
       <!DOCTYPE html>
@@ -49,7 +49,7 @@ app.use((req, res, next) => {
                   <p class="text-red-500 text-sm">How are you feeling?</p>
               </div>
               <div class="w-60 h-fit flex items-center justify-center rounded-lg">
-                  <img src="/FortuneTellerImages/gifs/CR-default.gif" alt="" id="fortuneteller-img">
+                  <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img">
               </div>
           </div>
           <div class="flex flex-col items-center justify-start h-full w-full">

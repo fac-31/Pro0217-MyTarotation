@@ -149,6 +149,61 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
     }
 }
 
+const closestMoodSchema = z.object({
+    closestMood: z.enum(moods)
+});
+
+export async function matchMood(userInput) {
+    // Test input. Will eventually be user input.
+    console.log("OpenAI Api Mood Match called");
+    const input = userInput || "happy";
+
+    try {
+        // Make the request to OpenAI to get recommendations
+        let response = await client.chat.completions.create({
+            model: "gpt-4o", 
+            messages: [
+                {
+                    role: "system",
+                    content: `
+                    You need to match the user's inputed mood to the closest one of these predefined moods: ${moods.join(", ")}
+                    `,
+                },
+                {
+                    role: "user",
+                    content: input,
+                },
+            ],
+            // Use the zodresponseformat & pass it the final schema with a title.
+            response_format: zodResponseFormat(closestMoodSchema, "closestMood"),
+        });
+
+        // Parse the raw AI response
+        const parsedData = response.choices[0].message.content;
+
+        // Parse response into JSON
+        let parsedJSON;
+        try {
+            parsedJSON = JSON.parse(parsedData);
+        } catch (error) {
+            throw new Error("AI response is not valid JSON.");
+        }
+
+        // Response validation via Zod schema
+        const result = closestMoodSchema.safeParse(parsedJSON);
+
+        if (!result.success) {
+            console.error("Validation Error:", result.error);
+            throw new Error("Invalid AI response format");
+        }
+
+        return result.data;
+    } catch (error) {
+        console.error("Error fetching recommendations:", error.message);
+        return null;
+    }
+}
+
 //right now we don't use req, but we will need to change it when we will implement recommendations based on user input
 export async function handleRecommendations(req, formattedInput) { 
     try {

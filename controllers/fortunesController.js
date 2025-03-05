@@ -4,7 +4,10 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
-import { handleRecommendations } from "../apis/openAiApi.js";
+import { 
+    handleRecommendations, 
+    matchMood 
+} from "../apis/openAiApi.js";
 import { 
     saveMoods, 
     saveUser, 
@@ -69,7 +72,6 @@ export const getNewFortunePage = async (req,res) => {
                 <button id="submit-form" class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
             </div> 
         </form>
-
         <script src="./scripts/new-fortune.js"></script>
 
     `, { title: "Fortune Teller - About You", nav: true });
@@ -82,34 +84,22 @@ export const getMoodPage = async (req,res) => {
         
         <form class="flex flex-col items-center mt-6" action="/mood" method="get">
             <label for="mood" class="text-black mb-2">Mood</label>
-            <input type="text" id="mood" name="mood" class="border border-black px-4 py-2 rounded-md">
-            <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg mt-6">Get Fortune</button>
+            <input type="text" id="mood" name="mood" class="border border-black px-4 py-2 rounded-md" required>
+            <button id="submit-form" class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg mt-6">Get Fortune</button>
         </form>
+        <script src="./scripts/mood-select.js"></script>
     `, { title: "Fortune Teller - Mood", nav: true });
 }
 
-// TODO: Handles new fortune post request 
-// export const postNewFortune = async (req,res) => {
-//     console.log ("form submit")
-//     console.log(req.body);
-//     res.send("Awaiting fortune");
-
-//     document.getElementById("fortune-result").innerHTML = 
-//         `<div>
-//             <h3>Your Fortune:</h3>
-//             <p><strong>Recommended Movie:</strong> ${data.filmRecommendations.title || "N/A"}</p>
-//             <p><strong>Recommended TV Show:</strong> ${data.tvRecommendations.title || "N/A"}</p>
-//             <p><strong>Recommended Book:</strong> ${data.bookRecommendations.title || "N/A"} (ISBN: ${data.bookRecommendations.isbnCode || "N/A"})</p>
-//             <p><strong>Recommended Music:</strong> ${data.musicRecommendations.title || "N/A"} by ${data.musicRecommendations.artist || "N/A"}</p>
-//         </div>`
-
-// }; 
-
-
 // TODO: Sends Selected Fortune data and Renders Fortune Told Page
 export const getMoodFortune = async (req,res) => {
-    const responseMsg = req.params.mood || req.query.mood;
-    let fortune = await  getRandomMoodFortune(responseMsg)
+    let requestMsg = req.params.mood || req.query.mood;
+    if (req.query.mood) {
+        const matchMoodAIresponse = await matchMood(requestMsg);
+        requestMsg = matchMoodAIresponse.closestMood;
+        console.log(requestMsg)
+    }
+    let fortune = await getRandomMoodFortune(requestMsg)
     res.send(fortune);
 }
 
@@ -216,7 +206,7 @@ export const postNewFortune = async (req, res) => {
                     ` : "<p class='text-gray-500'>No books found.</p>"}
                 </div>
             </div>
-        `, { title: "Recommendations" });
+        `, { title: "Recommendations", nav: true, fortuneTellerImg: 'success' });
 
     
     } catch (error) {
