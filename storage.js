@@ -90,6 +90,17 @@ export async function getRandomMoodFortune(mood) {
     }
 }
 
+export async function getRandom() {
+    try {
+        let fortunes = await persist.getItem("fortunes");
+        let num = Math.floor(Math.random() * fortunes.length);
+        let selectedFortune = fortunes[num];
+        return selectedFortune;
+    } catch (error) {
+        console.log("Error fetching common mood fortune: " + error.message)
+    }
+}
+
 export async function retrieveItem(item) {
     try {
         let data = await persist.getItem(item);

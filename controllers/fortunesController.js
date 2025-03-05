@@ -33,13 +33,13 @@ export const getHomePage = async (req, res) => {
             <a href="/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
         </div>
         <script>
-        function commonMoodButton () {
-        let route =  "/mood/${mood}";
-        let link = document.getElementById("common-mood")
-        link.href = route;
-        link.innerText = "Everyone's feeling ${mood} today"
-    }
-        window.onload = commonMoodButton;
+            function commonMoodButton () {
+                let route =  "/mood/${mood}";
+                let link = document.getElementById("common-mood")
+                link.href = route;
+                link.innerText = "Everyone's feeling ${mood} today"
+            }
+            window.onload = commonMoodButton;
         </script>
     `, { title: "Fortune Teller Home" });
 }
@@ -48,8 +48,8 @@ export const getHomePage = async (req, res) => {
 export const getNewFortunePage = async (req,res) => {
     res.renderWithLayout(`
         <div class="relative flex flex-col items-center">
-            <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
-                <img src="" alt="" id="fortuneteller-img">
+            <div class="w-40 h-fit flex items-center justify-center border-4 border-red-500 rounded-lg">
+                <img class="w-40" src="/FortuneTellerImages/gifs/CR-default.gif" alt="" id="fortuneteller-img">
             </div>
             <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
                 <p class="text-red-500 text-sm">Tell me about yourself</p>
@@ -97,7 +97,7 @@ export const getMoodPage = async (req,res) => {
                 <p class="text-red-500 text-sm">How are you feeling?</p>
             </div>
         </div>
-        <form class="flex flex-col items-center mt-6" action="/fortunes/mood" method="get">
+        <form class="flex flex-col items-center mt-6" action="/mood" method="get">
             <label for="mood" class="text-black mb-2">Mood</label>
             <input type="text" id="mood" name="mood" class="border border-black px-4 py-2 rounded-md">
             <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg mt-6">Get Fortune</button>
@@ -132,7 +132,8 @@ export const getMoodFortune = async (req,res) => {
 
 // TODO: Sends Random Fortune Data and Renders Fortune Told Page
 export const getRandomFortune = async (req,res) => {
-    res.send("random");
+    let fortune = await getRandom()
+    res.send(fortune);
 }
 
 // Runs API with hard coded input
@@ -151,7 +152,7 @@ export const postNewFortune = async (req, res) => {
 
         // saveUser(name, age, mood, interests);
 
-        saveMoods(recommendations.mood);
+        //saveMoods(recommendations.mood);
 
         console.log("🔮 Recommendations:", recommendations);
 
