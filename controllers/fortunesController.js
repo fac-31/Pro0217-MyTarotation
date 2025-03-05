@@ -51,27 +51,47 @@ export const getHomePage = async (req, res) => {
 export const getNewFortunePage = async (req,res) => {
     res.renderWithLayout(`
         
-        <form id="fortune-form" action="/new" method="post" class="flex flex-col items-center">
+        <form id="fortune-form" action="/new" method="post">
             <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
                 <div class="flex flex-col">
                     <label for="name" class="font-semibold">Name</label>
-                    <input id="name" name="name" type="text" class="border border-gray-400 p-2 rounded w-full" required>
+                    <input id="name" name="name" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
                 <div class="flex flex-col">
-                    <label for="dob" class="font-semibold">Date of Birth</label>
-                    <input id="dob" name="dob" type="date" class="border border-gray-400 p-2 rounded w-full" required>
+                    <div id="starsign-dropdown" class="hidden">
+                        <label for="starsign" class="font-semibold">Starsign</label>
+                        <select id="starsign" name="starsign" type="text" class="border border-gray-400 p-2 rounded w-full">
+                            <option value="aquarius">Aquarius</option>
+                            <option value="pisces">Pisces</option>
+                            <option value="aries">Aries</option>
+                            <option value="taurus">Taurus</option>
+                            <option value="gemini">Gemini</option>
+                            <option value="cancer">Cancer</option>
+                            <option value="leo">Leo</option>
+                            <option value="virgo">Virgo</option>
+                            <option value="libra">Libra</option>
+                            <option value="scorpio">Scorpio</option>
+                            <option value="sagittarius">Sagittarius</option>
+                            <option value="capricorn">Capricorn</option>
+                        </select>
+                    </div>
+                    <div id="dob-date" class="block">
+                        <label for="dob" class="font-semibold">Date of Birth</label>
+                        <input id="dob" name="dob" type="date" class="border border-gray-400 p-2 rounded w-full">
+                    </div>
+                <button id="change-sign-input-type" class="text-sm" type="button">Use Starsign Instead</button>
                 </div>
                 <div class="flex flex-col">
                     <label for="mood" class="font-semibold">Current Mood</label>
-                    <input id="mood" name="mood" type="text" class="border border-gray-400 p-2 rounded w-full" required>
+                    <input id="mood" name="mood" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
             </div>
             <div class="mt-6 w-3/4 max-w-2xl">
                 <label for="interests" class="block font-semibold">Have you watched anything decent lately?</label>
-                <textarea id="interests" name="interests" class="w-full border border-gray-400 p-3 rounded h-24" required></textarea>
+                <textarea id="interests" name="interests" class="w-full border border-gray-400 p-2 rounded h-24"></textarea>
             </div>
             <div class="mt-6">
-                <button id="submit-form" class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
+                <button id="submit-form" type="submit" class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
             </div> 
         </form>
         <script src="./scripts/new-fortune.js"></script>
@@ -111,32 +131,48 @@ export const getRandomFortune = async (req,res) => {
     res.send(fortune);
 }
 
+/**
+ * Calculates a user's age based on their DoB and the current Date
+ * @param {Date} dob - Date object from dob input
+ * @returns User's age in years
+ */
 const getAge = (dob) => {
     const today = Date.now();
     const diff = new Date(today - dob);
     return Math.abs(diff.getUTCFullYear() - 1970);
 }
 
+/**
+ * Uses lib/starsigns to lookup the user's starsign based on their month and day of birth
+ * @param {Date} dob - Date object from dob input
+ * @returns User's Starsign
+ */
 const getStarsign = (dob) => {
     const birthMonth = dob.getMonth();
     const starMonth = birthMonth - (starsigns.dateChange[birthMonth] > dob.getDate() ? 1 : 0)
     return starsigns.monthEndSign.at(starMonth);
 }
 
-// Runs API with hard coded input
+// Runs when /new Post request is made
 export const postNewFortune = async (req, res) => {
 
     try {
-        const { dob, mood, interests, name } = req.body;
+        const { dob, starsign, mood, interests, name } = req.body;
         console.log("📥 Received User Input:", req.body);
 
-        if (!dob || !mood || !interests) {
+        if ((!dob && !starsign) || !mood || !interests) {
             return res.status(400).json({ err8or: "Missing required fields" });
         }
 
-        const dateOfBirth = new Date(dob);
-        const age = getAge(dateOfBirth);
-        const starsign = getStarsign(dateOfBirth)
+        let age;
+
+        if (dob) {
+            const dateOfBirth = new Date(dob);
+            age = getAge(dateOfBirth);
+            const starsignFromDoB = getStarsign(dateOfBirth)
+        } else if (starsign) {
+            age = 25;
+        }
 
         const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
 
