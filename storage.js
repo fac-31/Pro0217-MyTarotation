@@ -68,6 +68,8 @@ export async function getCommonMood() {
     let moods = await persist.getItem("moods");
     let common = "happy"; 
     for (const mood in moods) {
+        console.log(moods[mood]);
+        console.log(moods[common]);
          if (moods[mood] > moods[common]) {
             common = mood;
          };
