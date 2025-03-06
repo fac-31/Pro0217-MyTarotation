@@ -6,6 +6,8 @@ import { getFilm } from "./movieApi.js";
 
 import { getBook } from "./bookApi.js";
 import { getMusic } from "./musicApi.js";
+import natural from "natural";
+
 
 
 import { zodResponseFormat } from "openai/helpers/zod.mjs";
@@ -52,11 +54,35 @@ const recommendSchema = z.object({
     bookRecommendations: z.array(writtenMedia),
     musicRecommendations: z.array(musicMedia)
 });
-
 export async function getRecommendation(client, z, zodResponseFormat, userInput) {
-    // Test input. Will eventually be user input.
+    function isGibberish(text) {
+        if (!text || text.trim().length < 3) return true; // Too short
+        const tokenizer = new natural.WordTokenizer();
+        const words = tokenizer.tokenize(text);
 
-    const input = userInput || "I am 29 years old. I'm currently quite ecstatic. In other news, I have recently watched Hannibal with Mads Mikkelsen & Zone of Interest. I recently read Game of Thrones while listening to The Gaslight Anthem.";
+        // Check if at least 50% of the words are real words
+        const realWords = words.filter(word => natural.LancasterStemmer.stem(word).length > 2);
+        const gibberishRatio = realWords.length / words.length;
+
+        return gibberishRatio < 0.5; // More than 50% gibberish = reject
+    }
+
+
+    let { age, mood, interests } = userInput;
+
+
+    if (isGibberish(mood) || isGibberish(interests)) {
+        console.warn("Detected gibberish inputs. Using fallback.");
+        mood = "sad";
+        interests = "Thriller by Michael Jackson, Inception, The Great Gatsby";
+    }
+
+
+   
+    // Format input for OpenAI
+    const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. My interests are ${interests}.`;
+    console.log('Processed User Input:', formattedInput);
+
 
     try {
         // Make the request to OpenAI to get recommendations
@@ -83,40 +109,14 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
                     - "down", "sad" → "Sad"
                     - "melancholic", "pensive" → "Reflective"
 
-                    The recommendations should be presented with the following structure:
-
-                    {
-                      "mood": "<mood>",
-                      "age": <age>,
-                      "starsign": <starsign>,
-                      "genres": <array_of_genres>,
-                      "filmRecommendations": [{
-                        "title": "<film_title>",
-                        "genre": <array_of_genres>
-                      }],
-                      "tvRecommendations": [{
-                        "title": "<tv_show_title>",
-                        "genre": <array_of_genres>
-                      }],
-                      "bookRecommendations": [{
-                        "title": "<book_title>",
-                        "genre": <array_of_genres>,
-                        "isbnCode": "<isbn_code>"
-                      }],
-                      "musicRecommendations": [{
-                        "title": "<music_album_title>",
-                        "artist": "<artist>",
-                        "genre": <array_of_genres>
-                      }]
-                    }
-
                     If any information is not available, return null or an empty array [] for that field. Do not leave any field missing from the JSON structure. Do not recommend a piece of media that the user has mentioned.
                     Return the correct starsign if you are able to with the information provided, else return null. 
+                   If gibberish was detected, add a note: "Your input was unclear, so we based recommendations on a 'sad' mood with popular entertainment." 
                     `,
                 },
                 {
                     role: "user",
-                    content: input,
+                    content: formattedInput,
                 },
             ],
             // Use the zodresponseformat & pass it the final schema with a title.
@@ -205,10 +205,10 @@ export async function matchMood(userInput) {
 }
 
 //right now we don't use req, but we will need to change it when we will implement recommendations based on user input
-export async function handleRecommendations(req, formattedInput) { 
-    console.log('Formated input:', formattedInput)
+export async function handleRecommendations(req, input) { 
+  
     try {
-        let aiResponse = await getRecommendation(client, z, zodResponseFormat, formattedInput);
+        let aiResponse = await getRecommendation(client, z, zodResponseFormat, input);
         if (!aiResponse) throw new Error("No AI response received");
 
 
@@ -320,7 +320,8 @@ Provides structured music metadata, including genres
 ⚠️ Cons:
 
 More complex to query compared to Spotify
-Metadata may not be as rich as Spotify’s
+Metadata may not be as ri
+ch as Spotify’s
 🎯 Decision Point:
 
 If we want an open-source solution, MusicBrainz API is the better fit.

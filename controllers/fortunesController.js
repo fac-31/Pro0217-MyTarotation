@@ -175,9 +175,9 @@ export const postNewFortune = async (req, res) => {
             age = 25;
         }
 
-        const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
+        
 
-        const recommendations = await handleRecommendations(req, formattedInput);
+        const recommendations = await handleRecommendations(req, req.body);
 
         console.log("🔮 Recommendations:", recommendations);
 
