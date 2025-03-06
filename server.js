@@ -37,12 +37,45 @@ app.use((req, res, next) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <script src="https://cdn.tailwindcss.com"></script>
           <title>${title}</title>
-          
+              <style type="text/tailwindcss">
+              @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+        @layer utilities {
+            @keyframes typewriter {
+                from { width: 0; }
+                to { width: 100%; } /* Expands dynamically */
+            };
+            .animate-typewriter {
+                display: inline-block; 
+                overflow: hidden;
+                white-space: nowrap;
+                animation: typewriter 2s steps(20) 1s 1 normal both, blink 0.8s infinite;
+            };
+@keyframes dealCard {
+  from {
+    transform: scale(0.2) translateY(0px) translateX(0px) rotate(-360deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(100px) translateX(200px)  rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.animate-deal {
+  
+  transform-origin: center;
+  animation: dealCard 2s ease-out forwards;
+}
+        }
+    </style>
       </head>
       <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
           ${nav ? `
           <nav class="w-full bg-white shadow-md flex items-center fixed top-0 left-0 h-16 px-4">
-              <a href="/fortunes" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
+              <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
           </nav>` : ""}
 
           <div class="flex flex-col items-center justify-center h-full w-full mt-20">

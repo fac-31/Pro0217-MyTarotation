@@ -51,8 +51,8 @@ export const getNewFortunePage = async (req,res) => {
             <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
                 <img src="" alt="" id="fortuneteller-img">
             </div>
-            <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
-                <p class="text-red-500 text-sm">Tell me about yourself</p>
+            <div class="absolute top-0 right-[-150px] bg-white border border-red-500 rounded-full px-4 py-2">
+                <p class="text-red-500 text-sm" >Tell me about yourself</p>
             </div>
         </div>
         <form id="fortune-form" action="/new" method="post">
@@ -127,8 +127,23 @@ export const getMoodPage = async (req,res) => {
 export const getMoodFortune = async (req,res) => {
     const responseMsg = req.params.mood || req.query.mood;
     let fortune = await  getRandomMoodFortune(responseMsg)
-    res.send(fortune);
-}
+    res.renderWithLayout(`
+        <div class="relative flex flex-col items-center justify-between w-full">
+            <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
+                <img src="" alt="" id="fortuneteller-img">
+            </div>
+            <div class="absolute ml-64 bg-white border border-red-500 rounded-full px-4 py-2">
+                <p class="text-red-500 text-sm animate-typewritter">How are you feeling?</p>
+            </div>
+            <div class="flex flex-row justify-center items-between w-full h-64">
+                <p id="card" class="flex justify-center items-center text-center text-purple-500 border-2 border-black opacity-0 w-40 h-64 bg-gray-200
+                animate-deal">
+  Spinning card placeholder
+</p>
+            </div>
+        </div>
+            `, { title: "Fortune Teller - Mood", nav: true });
+};
 
 // TODO: Sends Random Fortune Data and Renders Fortune Told Page
 export const getRandomFortune = async (req,res) => {
