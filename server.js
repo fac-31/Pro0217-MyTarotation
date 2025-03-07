@@ -51,7 +51,7 @@ app.use((req, res, next) => {
                 display: inline-block; 
                 overflow: hidden;
                 white-space: nowrap;
-                animation: typewriter 2s steps(20) 1s 1 normal both, blink 0.8s infinite;
+                animation: typewriter 1.5s steps(20) 0.5s 1 normal both;
             };
 @keyframes dealCard {
   from {
@@ -65,34 +65,23 @@ app.use((req, res, next) => {
 }
 .animate-deal {
   transform-origin: center;
-  animation: dealCard 2s ease-out forwards;
+  animation: dealCard 2s ease-out 1s forwards;
 }
-  @keyframes flip-card {
-  from { transform: rotateY(0); 
   }
-  to { transform: rotateY(180deg); 
-  }
-}
-  .animate-flip {
-  animation: flip-card 1s ease-out 1s forwards;
-  }
-        }
 #card-wrapper1:hover #card-inner {
   transform: rotateY(180deg); /* Flips the card */
 }
 
-/* Ensures the card flips in 3D space */
 #card-inner {
   transform-style: preserve-3d;  /* Enable 3D transformations */
-  transition: transform 1.5s ease; /* Smooth transition for flip */
+  transition: transform 2s ease; 
 }
 
 /* Prevents the back of the card from showing when flipped */
 #card-front, #card-back {
-  backface-visibility: hidden; /* Hides the back side when flipped */
+  backface-visibility: hidden;
 
 }
-
 /* Initially, the back of the card is hidden, flipped 180 degrees */
 #card-back {
   transform: rotateY(180deg);
