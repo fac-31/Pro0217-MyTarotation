@@ -124,17 +124,21 @@ export const getMoodFortune = async (req,res) => {
     let fortune = await getRandomMoodFortune(requestMsg)
     res.renderWithLayout(`
         <div class="relative flex flex-col items-center justify-between w-full">
-            <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
-                <img src="" alt="" id="fortuneteller-img">
-            </div>
-            <div class="absolute ml-64 bg-white border border-red-500 rounded-full px-4 py-2">
-                <p class="text-red-500 text-sm animate-typewritter">How are you feeling?</p>
-            </div>
-            <div class="flex flex-row justify-center items-between w-full h-64">
-                <p id="card" class="flex justify-center items-center text-center text-purple-500 border-2 border-black opacity-0 w-40 h-64 bg-gray-200
-                animate-deal">
-  Spinning card placeholder
-</p>
+            <div id="card-holder" class="flex flex-row justify-center items-between w-full h-64">
+                <div id="card-wrapper1" class="w-40 h-64 bg-transparent border border-gray-200 opacity-0 animate-deal">
+                    <div id="card-inner" class="w-40 h-64 bg-transparent border border-gray-200 [perspective:1000px]"> 
+                        <div id="card-front" class="w-full h-full bg-white flex items-center-300 justify-center absolute">
+                            <p>
+                            Spinning card placeholder - Front
+                            </p>
+                        </div>
+                        <div id="card-back" class="w-full h-full bg-gray-300 flex items-center justify-center absolute">
+                            <p>
+                            Spinning card placeholder - Back
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
             `, { title: "Fortune Teller - Mood", nav: true });

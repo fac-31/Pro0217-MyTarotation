@@ -45,7 +45,7 @@ app.use((req, res, next) => {
         @layer utilities {
             @keyframes typewriter {
                 from { width: 0; }
-                to { width: 100%; } /* Expands dynamically */
+                to { width: 100%; }
             };
             .animate-typewriter {
                 display: inline-block; 
@@ -55,21 +55,48 @@ app.use((req, res, next) => {
             };
 @keyframes dealCard {
   from {
-    transform: scale(0.2) translateY(0px) translateX(0px) rotate(-360deg);
+    transform: scale(0.2) translateY(-700px) translateX(0px) rotate(-360deg);
     opacity: 0;
   }
   to {
-    transform: scale(1) translateY(100px) translateX(200px)  rotate(360deg);
+    transform: scale(1) translateY(0px) translateX(400px)  rotate(360deg);
     opacity: 1;
   }
 }
-
 .animate-deal {
-  
   transform-origin: center;
   animation: dealCard 2s ease-out forwards;
 }
+  @keyframes flip-card {
+  from { transform: rotateY(0); 
+  }
+  to { transform: rotateY(180deg); 
+  }
+}
+  .animate-flip {
+  animation: flip-card 1s ease-out 1s forwards;
+  }
         }
+#card-wrapper1:hover #card-inner {
+  transform: rotateY(180deg); /* Flips the card */
+}
+
+/* Ensures the card flips in 3D space */
+#card-inner {
+  transform-style: preserve-3d;  /* Enable 3D transformations */
+  transition: transform 1.5s ease; /* Smooth transition for flip */
+}
+
+/* Prevents the back of the card from showing when flipped */
+#card-front, #card-back {
+  backface-visibility: hidden; /* Hides the back side when flipped */
+
+}
+
+/* Initially, the back of the card is hidden, flipped 180 degrees */
+#card-back {
+  transform: rotateY(180deg);
+}
     </style>
       </head>
       <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
