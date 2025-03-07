@@ -3,11 +3,9 @@ import OpenAI from "openai";
 import dotenv from "dotenv";
 import path from "path";
 import { getFilm } from "./movieApi.js";
-
 import { getBook } from "./bookApi.js";
 import { getMusic } from "./musicApi.js";
-import natural from "natural";
-
+import asdfjkl from 'asdfjkl';
 
 
 import { zodResponseFormat } from "openai/helpers/zod.mjs";
@@ -54,27 +52,26 @@ const recommendSchema = z.object({
     bookRecommendations: z.array(writtenMedia),
     musicRecommendations: z.array(musicMedia)
 });
+
+
+
 export async function getRecommendation(client, z, zodResponseFormat, userInput) {
-    function isGibberish(text) {
-        if (!text || text.trim().length < 3) return true; // Too short
-        const tokenizer = new natural.WordTokenizer();
-        const words = tokenizer.tokenize(text);
+   
+    let { age, mood, interests } = userInput;
+    let warningMessage = "";
 
-        // Check if at least 50% of the words are real words
-        const realWords = words.filter(word => natural.LancasterStemmer.stem(word).length > 2);
-        const gibberishRatio = realWords.length / words.length;
+   
 
-        return gibberishRatio < 0.5; // More than 50% gibberish = reject
+    if (asdfjkl.default(mood)) {
+        console.warn("Detected gibberish mood. Using fallback.");
+        mood = "happy";
+        warningMessage += "Your mood input was unclear, so we assumed 'happy'. ";
     }
 
-
-    let { age, mood, interests } = userInput;
-
-
-    if (isGibberish(mood) || isGibberish(interests)) {
-        console.warn("Detected gibberish inputs. Using fallback.");
-        mood = "sad";
-        interests = "Thriller by Michael Jackson, Inception, The Great Gatsby";
+    if(asdfjkl.default(interests)) {
+        console.warn('"Detected gibberish interests. Using fallback."')
+        interests = interests = "Thriller by Michael Jackson, Inception, The Great Gatsby";
+        warningMessage += "Your interests input was unclear, so we used popular entertainment instead. ";
     }
 
 
@@ -111,7 +108,7 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
 
                     If any information is not available, return null or an empty array [] for that field. Do not leave any field missing from the JSON structure. Do not recommend a piece of media that the user has mentioned.
                     Return the correct starsign if you are able to with the information provided, else return null. 
-                   If gibberish was detected, add a note: "Your input was unclear, so we based recommendations on a 'sad' mood with popular entertainment." 
+                   If gibberish was detected, add a note: "Your input was unclear, so we based recommendations on a 'happy' mood with popular entertainment." 
                     `,
                 },
                 {
@@ -142,7 +139,10 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
             throw new Error("Invalid AI response format");
         }
 
-        return result.data;
+       return {
+            ...result.data,
+            warning: warningMessage || null, // Return warning if applicable
+        };
     } catch (error) {
         console.error("Error fetching recommendations:", error.message);
         return null;
@@ -211,7 +211,7 @@ export async function handleRecommendations(req, input) {
         let aiResponse = await getRecommendation(client, z, zodResponseFormat, input);
         if (!aiResponse) throw new Error("No AI response received");
 
-
+        console.log('AI Response:', aiResponse)
         let books = aiResponse.bookRecommendations
         ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))
         : [];
@@ -230,7 +230,8 @@ export async function handleRecommendations(req, input) {
             books: books.filter(Boolean),
             movies: movies.filter(Boolean),
             albums: albums.filter(Boolean),
-            mood: aiResponse.mood 
+            mood: aiResponse.mood, 
+            warning: aiResponse.warning
         };
 
         return recommendations; 
@@ -241,91 +242,3 @@ export async function handleRecommendations(req, input) {
     }
 }
 
-
-
-// Test the function
-/*getRecommendation(client, z, zodResponseFormat)
-    .then(data => console.log(data))
-    .catch(error => console.error(error));
-*/
-
-/*
-Here’s a breakdown of the APIs we’re considering for our app, along with their pros and cons:
-
-1. TMDb (The Movie Database) API
- https://www.themoviedb.org/documentation/api
-
-✅ Pros:
-
-Free access with API key registration
-Provides structured movie and TV show details, including genres and recommendations
-Strong search functionality
-⚠️ Cons:
-
-Requires API key setup
-Rate limits may apply for free tier usage
-2. Books API Options
-Option 1: Open Library API
-https://openlibrary.org/search.json?q=the+lord+of+the+rings
-
-
-✅ Pros:
-
-Completely free and open-source
-Simple to use, no API key required
-⚠️ Cons:
-
-No structured genre data (only loosely defined subjects)
-Metadata can be inconsistent
-Option 2: Google Books API
-https://developers.google.com/books
-Example for user interface and the data we can access: https://www.google.co.uk/books/edition/Robinson_Crusoe/j1BrBgAAQBAJ?hl=en&gbpv=0
-Example: https://developers.google.com/books/docs/v1/using#ids
-
-
-✅ Pros:
-
-Free to use with an API key
-Provides book titles, authors, genres, and ISBN codes
-Strong search and metadata retrieval
-⚠️ Cons:
-
-Requires API key
-Some rate limiting on free tier
-🎯 Decision Point:
-
-Do we need structured genre data? If yes, Google Books API is the better choice.
-If genre data isn’t critical, Open Library API is simpler and fully open-source.
-3. Music Album Data API Options
-
-Option 1: Spotify API
-Spotify API → https://developer.spotify.com/documentation/web-api
-
-✅ Pros:
-
-Provides album details, artist names, and genres
-Strong search functionality
-⚠️ Cons:
-
-Requires a free developer account and authentication
-Rate limits may apply
-
-Option 2: MusicBrainz API
-MusicBrainz API → https://musicbrainz.org/doc/Development/XML_Web_Service/Version_2
-
-✅ Pros:
-
-Free and open-source
-Provides structured music metadata, including genres
-⚠️ Cons:
-
-More complex to query compared to Spotify
-Metadata may not be as ri
-ch as Spotify’s
-🎯 Decision Point:
-
-If we want an open-source solution, MusicBrainz API is the better fit.
-If we prioritize better metadata and ease of use, Spotify API is stronger but requires authentication.
-
-
-*/

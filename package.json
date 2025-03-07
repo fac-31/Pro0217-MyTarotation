@@ -12,13 +12,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "asdfjkl": "^0.0.7",
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "natural": "^8.0.1",
     "node-persist": "^4.0.4",
     "node-schedule": "^2.1.1",
     "openai": "^4.86.1",
     "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.3"
   }
 }
