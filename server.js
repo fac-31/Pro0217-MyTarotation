@@ -59,7 +59,7 @@ app.use((req, res, next) => {
     opacity: 0;
   }
   to {
-    transform: scale(1) translateY(0px) translateX(400px)  rotate(360deg);
+    transform: scale(1) translateY(0px) translateX(0px)  rotate(360deg);
     opacity: 1;
   }
 }
@@ -69,20 +69,19 @@ app.use((req, res, next) => {
 }
   }
 #card-wrapper1:hover #card-inner {
-  transform: rotateY(180deg); /* Flips the card */
+  transform: rotateY(180deg); 
 }
 
 #card-inner {
-  transform-style: preserve-3d;  /* Enable 3D transformations */
+  transform-style: preserve-3d; 
   transition: transform 2s ease; 
 }
 
-/* Prevents the back of the card from showing when flipped */
 #card-front, #card-back {
   backface-visibility: hidden;
 
 }
-/* Initially, the back of the card is hidden, flipped 180 degrees */
+
 #card-back {
   transform: rotateY(180deg);
 }
