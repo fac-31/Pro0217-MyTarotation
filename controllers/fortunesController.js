@@ -156,6 +156,80 @@ const getStarsign = (dob) => {
     return starsigns.monthEndSign.at(starMonth);
 }
 
+// Shared card layout
+
+const generateCardLayout = (recommendations) => {
+    const cards = [
+        { type: 'movie', item: recommendations.movies?.[0] },
+        { type: 'book', item: recommendations.books?.[0] },
+        { type: 'album', item: recommendations.albums?.[0] }
+    ];
+
+    return `
+        ${recommendations.warning && ` <div class="text-red-500 p-4">
+            <p><strong>Warning:</strong> ${recommendations.warning}</p>
+        </div>`}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
+            ${cards.map(({ type, item }) => `
+                <div class="flip-card h-[450px] w-full min-w-[280px]" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-white rounded-lg shadow-lg overflow-hidden">
+                            <img src="/Images/tarot-back-generic.png" alt="Tarot Card Back" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flip-card-back bg-white rounded-lg shadow-lg p-6">
+                            ${item ? `
+                                <div class="flex flex-col items-center h-full">
+                                    <img src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" 
+                                            alt="${type} cover" class="w-32 h-32 object-cover rounded-md mb-4">
+                                    <h4 class="font-semibold text-center text-lg mb-2">${item.title}</h4>
+                                    ${type === 'album' ? `
+                                        <p class="text-md text-gray-600 mb-2">${item.artist}</p>
+                                        <p class="text-sm text-gray-500">Genres: ${item.genres.join(', ')}</p>
+                                    ` : `
+                                        <p class="text-sm text-gray-600 mb-2">Genres: ${item.genres.join(', ')}</p>
+                                        <p class="text-sm text-gray-500 text-center max-h-32 overflow-y-auto">${item.plot || item.description || ''}</p>
+                                    `}
+                                </div>
+                            ` : `<p class="text-gray-500 text-center">No ${type} found</p>`}
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        <style>
+            .flip-card {
+                perspective: 1000px;
+                cursor: pointer;
+            }
+            .flip-card-inner {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                transition: transform 0.6s;
+                transform-style: preserve-3d;
+            }
+            .flip-card-inner.flipped {
+                transform: rotateY(180deg);
+            }
+            .flip-card-front, .flip-card-back {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                backface-visibility: hidden;
+            }
+            .flip-card-back {
+                transform: rotateY(180deg);
+            }
+        </style>
+    `;
+}
+
+// res.renderWithLayout(generateCardLayout(recommendations), 
+//             { title: "Your Fortune", nav: true, fortuneTellerImg: 'success' }
+//         );
+
+
+
 // Runs when /new Post request is made
 export const postNewFortune = async (req, res) => {
 
@@ -198,6 +272,7 @@ export const postNewFortune = async (req, res) => {
         await saveFortune(newFortune);
         await saveMoods(recommendations.mood);
 
+        
         if (!recommendations) {
             return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
         }
@@ -206,77 +281,9 @@ export const postNewFortune = async (req, res) => {
             return res.renderWithLayout(`<p class="text-red-500">No recommendations found.</p>`, { title: "Recommendations" });
         }
 
-        res.renderWithLayout(`
-            <div class="p-6 ">
-            ${recommendations.warning && ` <div class="text-red-500 p-4">
-            <p><strong>Warning:</strong> ${recommendations.warning}</p>
-        </div>`}
-                <h2 class="text-xl font-bold">Your Recommendations</h2
-                <!-- Movies Section -->
-                <div class="mt-6">
-                    <h3 class="text-lg font-semibold">Movies:</h3>
-                    ${recommendations.movies?.length ? `
-                        <ul class="list-none">
-                            ${recommendations.movies.map(movie => `
-                                <li class="mt-6 flex items-start gap-4">
-                                    <img src="${movie.art || 'https://via.placeholder.com/100x150?text=No+Image'}" 
-                                         alt="Movie Poster" class="w-24 h-auto rounded-md shadow-md">
-                                    <div>
-                                        <h4 class="font-semibold text-lg">${movie.title}</h4>
-                                        <p class="text-sm text-gray-700">${movie.plot?.slice(0, 300) || "No plot available."}...</p>
-                                        ${Array.isArray(movie.genres) && movie.genres.length ? 
-                                          `<p class="text-xs text-gray-500 mt-2">Genres: ${movie.genres.slice(0, 3).join(", ")}</p>` : ""}
-                                    </div>
-                                </li>
-                            `).join("")}
-                        </ul>
-                    ` : "<p class='text-gray-500'>No movies found.</p>"}
-                </div>
-
-                <!-- Books Section -->
-                <div class="mt-6">
-                    <h3 class="text-lg font-semibold">Books:</h3>
-                    ${recommendations.books?.length ? `
-                        <ul class="list-none">
-                            ${recommendations.books.map(book => `
-                                <li class="mt-6 flex items-start gap-4">
-                                    <img src="${book.art || 'https://via.placeholder.com/100x150?text=No+Cover'}" 
-                                         alt="Book Cover" class="w-24 h-auto rounded-md shadow-md">
-                                    <div>
-                                        <h4 class="font-semibold text-lg">${book.title}</h4>
-                                        <p class="text-sm text-gray-700">${book.description?.slice(0, 300) || "No description available."}...</p>
-                                        ${Array.isArray(book.genres) && book.genres.length ? 
-                                          `<p class="text-xs text-gray-500 mt-2">Genres: ${book.genres.slice(0, 3).join(", ")}</p>` : ""}
-                                    </div>
-                                </li>
-                            `).join("")}
-                        </ul>
-                    ` : "<p class='text-gray-500'>No books found.</p>"}
-                </div>
-
-                <!-- Albums Section -->
-                <div class="mt-6">
-                    <h3 class="text-lg font-semibold">Albums:</h3>
-                    ${recommendations.albums?.length ? `
-                        <ul class="list-none">
-                            ${recommendations.albums.map(album => `
-                                <li class="mt-6 flex items-start gap-4">
-                                    <img src="${album.art || 'https://via.placeholder.com/100x150?text=No+Cover'}" 
-                                         alt="Book Cover" class="w-24 h-auto rounded-md shadow-md">
-                                    <div>
-                                        <h4 class="font-semibold text-lg">${album.title}</h4>
-                                        <p class="text-sm text-gray-700">${album.artist?.slice(0, 300) || "No artist available."}</p>
-                                        ${Array.isArray(album.genres) && album.genres.length ? 
-                                          `<p class="text-xs text-gray-500 mt-2">Genres: ${album.genres.slice(0, 3).join(", ")}</p>` : ""}
-                                    </div>
-                                </li>
-                            `).join("")}
-                        </ul>
-                    ` : "<p class='text-gray-500'>No books found.</p>"}
-                </div>
-            </div>
-        `, { title: "Recommendations", nav: true, fortuneTellerImg: 'success' });
-
+        res.renderWithLayout(generateCardLayout(recommendations), 
+            { title: "Your Fortune", nav: true, fortuneTellerImg: 'success' }
+        );
     
     } catch (error) {
         console.error("Error in runAPI:", error);
