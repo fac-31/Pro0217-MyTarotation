@@ -45,9 +45,7 @@ app.use((req, res, next) => {
               <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
           </nav>` : ""}
           <div class="flex flex-col items-center mt-20">
-              <div class="bg-white rounded-full px-4 py-2">
-                  <p class="text-red-500 text-sm">How are you feeling?</p>
-              </div>
+         
               <div class="w-60 h-fit flex items-center justify-center rounded-lg">
                   <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img">
               </div>
@@ -85,3 +83,4 @@ app.get("/get-image", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is listening at http://localhost:${PORT}`);
 });
+

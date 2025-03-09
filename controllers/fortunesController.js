@@ -28,8 +28,11 @@ export const getHomePage = async (req, res) => {
     let mood = await getCommonMood() + "";
     console.log(mood);
     res.renderWithLayout(`
-        
+             <div class="bg-white rounded-full px-4 py-2 mt-10">
+                  <p class="text-red-500 text-sm">How are you feeling?</p>
+              </div>
         <div class="grid grid-cols-2 gap-6 mt-10">
+          
             <a href="/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
             <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
             <a href="/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
@@ -163,6 +166,9 @@ const generateCardLayout = (recommendations) => {
     ];
 
     return `
+        ${recommendations.warning && ` <div class="text-red-500 p-4">
+            <p><strong>Warning:</strong> ${recommendations.warning}</p>
+        </div>`}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }) => `
                 <div class="flip-card h-[450px] w-full min-w-[280px]" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
@@ -218,6 +224,10 @@ const generateCardLayout = (recommendations) => {
     `;
 }
 
+// res.renderWithLayout(generateCardLayout(recommendations), 
+//             { title: "Your Fortune", nav: true, fortuneTellerImg: 'success' }
+//         );
+
 
 
 // Runs when /new Post request is made
@@ -226,7 +236,7 @@ export const postNewFortune = async (req, res) => {
     try {
         const { dob, starsign, mood, interests, name } = req.body;
         console.log("📥 Received User Input:", req.body);
-
+        
         if ((!dob && !starsign) || !mood || !interests) {
             return res.status(400).json({ err8or: "Missing required fields" });
         }
@@ -242,11 +252,13 @@ export const postNewFortune = async (req, res) => {
             age = 25;
         }
 
-        const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
+        
 
-        const recommendations = await handleRecommendations(req, formattedInput);
+        const recommendations = await handleRecommendations(req, req.body);
 
         console.log("🔮 Recommendations:", recommendations);
+       
+
 
         const newFortune = {
             name,
