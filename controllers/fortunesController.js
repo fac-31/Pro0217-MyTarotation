@@ -4,7 +4,18 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
-import { handleRecommendations } from "../apis/openAiApi.js";
+import { 
+    handleRecommendations, 
+    matchMood 
+} from "../apis/openAiApi.js";
+import { 
+    saveMoods,
+    getCommonMood, 
+    getRandomMoodFortune, 
+    getRandom,
+    saveFortune
+} from "../storage.js";
+import starsigns from "../lib/starsigns.js";
 
 const __dirname = import.meta.dirname;
 
@@ -14,36 +25,32 @@ const openai = new OpenAI({
 
 // Renders Home Page
 export const getHomePage = async (req, res) => {
+    let mood = await getCommonMood() + "";
+    console.log(mood);
     res.renderWithLayout(`
-        <div class="relative flex flex-col items-center">
-            <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
-                <img src="" alt="" id="fortuneteller-img">
-            </div>
-            <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
-                <p class="text-red-500 text-sm">What do you want to know?</p>
-            </div>
-        </div>
+        
         <div class="grid grid-cols-2 gap-6 mt-10">
             <a href="/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
             <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
             <a href="/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
-            <a href="/mood/angry" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">(Common Mood)</a>
-            <a href="/run-api" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Run API</a>
+            <a href="" id="common-mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg"></a>
         </div>
+        <script>
+            function commonMoodButton () {
+                let route =  "/mood/${mood}";
+                let link = document.getElementById("common-mood")
+                link.href = route;
+                link.innerText = "Everyone's feeling ${mood} today"
+            }
+            window.onload = commonMoodButton;
+        </script>
     `, { title: "Fortune Teller Home" });
 }
 
 // Renders New Fortune Page
 export const getNewFortunePage = async (req,res) => {
     res.renderWithLayout(`
-        <div class="relative flex flex-col items-center">
-            <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
-                <img src="" alt="" id="fortuneteller-img">
-            </div>
-            <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
-                <p class="text-red-500 text-sm">Tell me about yourself</p>
-            </div>
-        </div>
+        
         <form id="fortune-form" action="/new" method="post">
             <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
                 <div class="flex flex-col">
@@ -51,8 +58,28 @@ export const getNewFortunePage = async (req,res) => {
                     <input id="name" name="name" type="text" class="border border-gray-400 p-2 rounded w-full">
                 </div>
                 <div class="flex flex-col">
-                    <label for="age" class="font-semibold">Age</label>
-                    <input id="age" name="age" type="text" class="border border-gray-400 p-2 rounded w-full">
+                    <div id="starsign-dropdown" class="hidden">
+                        <label for="starsign" class="font-semibold">Starsign</label>
+                        <select id="starsign" name="starsign" type="text" class="border border-gray-400 p-2 rounded w-full">
+                            <option value="aquarius">Aquarius</option>
+                            <option value="pisces">Pisces</option>
+                            <option value="aries">Aries</option>
+                            <option value="taurus">Taurus</option>
+                            <option value="gemini">Gemini</option>
+                            <option value="cancer">Cancer</option>
+                            <option value="leo">Leo</option>
+                            <option value="virgo">Virgo</option>
+                            <option value="libra">Libra</option>
+                            <option value="scorpio">Scorpio</option>
+                            <option value="sagittarius">Sagittarius</option>
+                            <option value="capricorn">Capricorn</option>
+                        </select>
+                    </div>
+                    <div id="dob-date" class="block">
+                        <label for="dob" class="font-semibold">Date of Birth</label>
+                        <input id="dob" name="dob" type="date" class="border border-gray-400 p-2 rounded w-full">
+                    </div>
+                <button id="change-sign-input-type" class="text-sm" type="button">Use Starsign Instead</button>
                 </div>
                 <div class="flex flex-col">
                     <label for="mood" class="font-semibold">Current Mood</label>
@@ -61,15 +88,13 @@ export const getNewFortunePage = async (req,res) => {
             </div>
             <div class="mt-6 w-3/4 max-w-2xl">
                 <label for="interests" class="block font-semibold">Have you watched anything decent lately?</label>
-                <textarea id="interests" name="interests" class="w-full border border-gray-400 p-3 rounded h-24"></textarea>
+                <textarea id="interests" name="interests" class="w-full border border-gray-400 p-2 rounded h-24"></textarea>
             </div>
             <div class="mt-6">
-                <button class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
+                <button id="submit-form" type="submit" class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
             </div> 
         </form>
-
-        <div id="fortune-result" class="mt-8 w-3/4 max-w-2xl mx-auto hidden">
-        </div>
+        <script src="./scripts/new-fortune.js"></script>
 
     `, { title: "Fortune Teller - About You", nav: true });
 }
@@ -78,66 +103,95 @@ export const getNewFortunePage = async (req,res) => {
 // Renders Mood Select Page
 export const getMoodPage = async (req,res) => {
     res.renderWithLayout(`
-        <div class="relative flex flex-col items-center">
-            <div class="w-40 h-40 flex items-center justify-center border-4 border-red-500 rounded-lg">
-                <img src="" alt="" id="fortuneteller-img">
-            </div>
-            <div class="absolute top-0 right-[-50px] bg-white border border-red-500 rounded-full px-4 py-2">
-                <p class="text-red-500 text-sm">How are you feeling?</p>
-            </div>
-        </div>
-        <form class="flex flex-col items-center mt-6" action="/fortunes/mood" method="get">
+        
+        <form class="flex flex-col items-center mt-6" action="/mood" method="get">
             <label for="mood" class="text-black mb-2">Mood</label>
-            <input type="text" id="mood" name="mood" class="border border-black px-4 py-2 rounded-md">
-            <button class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg mt-6">Get Fortune</button>
+            <input type="text" id="mood" name="mood" class="border border-black px-4 py-2 rounded-md" required>
+            <button id="submit-form" class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg mt-6">Get Fortune</button>
         </form>
+        <script src="./scripts/mood-select.js"></script>
     `, { title: "Fortune Teller - Mood", nav: true });
 }
 
-// TODO: Handles new fortune post request 
-// export const postNewFortune = async (req,res) => {
-//     console.log ("form submit")
-//     console.log(req.body);
-//     res.send("Awaiting fortune");
-
-//     document.getElementById("fortune-result").innerHTML = 
-//         `<div>
-//             <h3>Your Fortune:</h3>
-//             <p><strong>Recommended Movie:</strong> ${data.filmRecommendations.title || "N/A"}</p>
-//             <p><strong>Recommended TV Show:</strong> ${data.tvRecommendations.title || "N/A"}</p>
-//             <p><strong>Recommended Book:</strong> ${data.bookRecommendations.title || "N/A"} (ISBN: ${data.bookRecommendations.isbnCode || "N/A"})</p>
-//             <p><strong>Recommended Music:</strong> ${data.musicRecommendations.title || "N/A"} by ${data.musicRecommendations.artist || "N/A"}</p>
-//         </div>`
-
-// }; 
-
-
 // TODO: Sends Selected Fortune data and Renders Fortune Told Page
 export const getMoodFortune = async (req,res) => {
-    const responseMsg = req.params.mood || req.query.mood;
-    res.send(responseMsg)
+    let requestMsg = req.params.mood || req.query.mood;
+    if (req.query.mood) {
+        const matchMoodAIresponse = await matchMood(requestMsg);
+        requestMsg = matchMoodAIresponse.closestMood;
+        console.log(requestMsg)
+    }
+    let fortune = await getRandomMoodFortune(requestMsg)
+    res.send(fortune);
 }
 
 // TODO: Sends Random Fortune Data and Renders Fortune Told Page
 export const getRandomFortune = async (req,res) => {
-    res.send("random");
+    let fortune = await getRandom()
+    res.send(fortune);
 }
 
-// Runs API with hard coded input
+/**
+ * Calculates a user's age based on their DoB and the current Date
+ * @param {Date} dob - Date object from dob input
+ * @returns User's age in years
+ */
+const getAge = (dob) => {
+    const today = Date.now();
+    const diff = new Date(today - dob);
+    return Math.abs(diff.getUTCFullYear() - 1970);
+}
+
+/**
+ * Uses lib/starsigns to lookup the user's starsign based on their month and day of birth
+ * @param {Date} dob - Date object from dob input
+ * @returns User's Starsign
+ */
+const getStarsign = (dob) => {
+    const birthMonth = dob.getMonth();
+    const starMonth = birthMonth - (starsigns.dateChange[birthMonth] > dob.getDate() ? 1 : 0)
+    return starsigns.monthEndSign.at(starMonth);
+}
+
+// Runs when /new Post request is made
 export const postNewFortune = async (req, res) => {
+
     try {
-        const { age, mood, interests, name } = req.body;
+        const { dob, starsign, mood, interests, name } = req.body;
         console.log("📥 Received User Input:", req.body);
 
-        if (!age || !mood || !interests) {
-            return res.status(400).json({ error: "Missing required fields" });
+        if ((!dob && !starsign) || !mood || !interests) {
+            return res.status(400).json({ err8or: "Missing required fields" });
+        }
+
+        let age;
+        let starsignFromDoB;
+
+        if (dob) {
+            const dateOfBirth = new Date(dob);
+            age = getAge(dateOfBirth);
+            starsignFromDoB = getStarsign(dateOfBirth)
+        } else if (starsign) {
+            age = 25;
         }
 
         const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. ${interests}`;
 
         const recommendations = await handleRecommendations(req, formattedInput);
 
-        console.log("🔮 OpenAI Response:", recommendations);
+        console.log("🔮 Recommendations:", recommendations);
+
+        const newFortune = {
+            name,
+            starsign: starsign || starsignFromDoB, 
+            mood: recommendations.mood,
+            book: recommendations.books[0],
+            film: recommendations.movies[0],
+            album: recommendations.albums[0]
+        };
+
+        await saveFortune(newFortune);
+        await saveMoods(recommendations.mood);
 
         if (!recommendations) {
             return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
@@ -213,7 +267,7 @@ export const postNewFortune = async (req, res) => {
                     ` : "<p class='text-gray-500'>No books found.</p>"}
                 </div>
             </div>
-        `, { title: "Recommendations" });
+        `, { title: "Recommendations", nav: true, fortuneTellerImg: 'success' });
 
     
     } catch (error) {

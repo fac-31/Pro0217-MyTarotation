@@ -5,14 +5,14 @@ import "dotenv/config";
 /* Imported here as an example as what happens when the functions are called. 
 You would normally call it in the routes folder to access data from the api endpoints. I think it can also be imported into
 the controllers. */ 
-import { saveMoods, retrieveItem, saveUser, clear } from "./storage.js";
+import { saveMoods, retrieveItem, clear } from "./storage.js";
 /*
 saveMoods("happy");
-retrieveItem("moods").then(data => console.log(data))
+retrieveItem("moods").then(data => (data))
 */
 // App and PORT Setup
 const app = express();
-const PORT = process.env.PORT || 3009;
+const PORT = process.env.PORT || 3000;
 
 // Parse JSON bodies
 app.use(bodyParser.json());
@@ -27,7 +27,7 @@ import { randomImage } from "./randomImage.js";
 // Middleware for shared layout
 app.use((req, res, next) => {
   res.renderWithLayout = (content, options = {}) => {
-    const { title = "Fortune Teller", nav = false } = options;
+    const { title = "Fortune Teller", nav = false, fortuneTellerImg = 'default' } = options;
 
     const html = `
       <!DOCTYPE html>
@@ -41,15 +41,21 @@ app.use((req, res, next) => {
       </head>
       <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
           ${nav ? `
-          <nav class="w-full bg-white shadow-md flex items-center fixed top-0 left-0 h-16 px-4">
-              <a href="/fortunes" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
+          <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
+              <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
           </nav>` : ""}
-
-          <div class="flex flex-col items-center justify-center h-full w-full mt-20">
+          <div class="flex flex-col items-center mt-20">
+              <div class="bg-white rounded-full px-4 py-2">
+                  <p class="text-red-500 text-sm">How are you feeling?</p>
+              </div>
+              <div class="w-60 h-fit flex items-center justify-center rounded-lg">
+                  <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img">
+              </div>
+          </div>
+          <div class="flex flex-col items-center justify-start h-full w-full">
               ${content}
           </div>
 
-          <script src="/script.js"></script>
       </body>
       </html>
     `;
