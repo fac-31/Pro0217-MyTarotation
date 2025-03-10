@@ -217,7 +217,7 @@ const generateCardLayout = async (recommendations) => {
     return `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }, i) => `
-                <div class="flip-card h-[450px] w-full min-w-[280px]" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
+                <div class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
                     <div class="flip-card-inner">
                         <div class="flip-card-front bg-white rounded-lg shadow-lg overflow-hidden">
                             <img src="/Images/${images[i]}" alt="Tarot Card Back" class="w-full h-full object-cover">
