@@ -29,7 +29,7 @@ export const getHomePage = async (req, res) => {
     console.log(mood);
     res.renderWithLayout(`
              <div class="bg-white rounded-full px-4 py-2 mt-10">
-                  <p class="text-red-500 text-sm animate-typewriter">How are you feeling?</p>
+                  <p class="text-red-500 text-sm">How are you feeling?</p>
               </div>
         <div class="grid grid-cols-2 gap-6 mt-10">
           
@@ -125,27 +125,8 @@ export const getMoodFortune = async (req,res) => {
         console.log(requestMsg)
     }
     let fortune = await getRandomMoodFortune(requestMsg)
-    res.renderWithLayout(`
-        <div class="relative flex flex-col items-center justify-between w-full">
-            <div id="card-holder" class="flex flex-row justify-center items-between w-full h-64">
-                <div id="card-wrapper1" class="w-40 h-64 bg-transparent border border-gray-200 opacity-0 animate-deal">
-                    <div id="card-inner" class="w-40 h-64 bg-transparent border border-gray-200 [perspective:1000px]"> 
-                        <div id="card-front" class="w-full h-full bg-white flex items-center-300 justify-center absolute">
-                            <p>
-                            Spinning card placeholder - Front
-                            </p>
-                        </div>
-                        <div id="card-back" class="w-full h-full bg-gray-300 flex items-center justify-center absolute">
-                            <p>
-                            Spinning card placeholder - Back
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-            `, { title: "Fortune Teller - Mood", nav: true });
-};
+    res.send(fortune);
+}
 
 // TODO: Sends Random Fortune Data and Renders Fortune Told Page
 export const getRandomFortune = async (req,res) => {
@@ -190,12 +171,12 @@ const generateCardLayout = (recommendations) => {
         </div>`}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }) => `
-                <div class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
+                <div class="flip-card h-[450px] w-full min-w-[280px]" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
                     <div class="flip-card-inner">
                         <div class="flip-card-front bg-white rounded-lg shadow-lg overflow-hidden">
                             <img src="/Images/tarot-back-generic.png" alt="Tarot Card Back" class="w-full h-full object-cover">
                         </div>
-                        <div class="flip-card-back bg-white rounded-lg shadow-lg p-6">
+                       <div class="flip-card-back bg-white rounded-lg shadow-lg p-6">
                             ${item ? `
                                 <div class="flex flex-col items-center h-full">
                                     <img src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" 
