@@ -214,9 +214,6 @@ const generateCardLayout = (recommendations) => {
     ];
 
     return `
-        ${recommendations.warning && ` <div class="text-red-500 p-4">
-            <p><strong>Warning:</strong> ${recommendations.warning}</p>
-        </div>`}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }) => `
                 <div class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
