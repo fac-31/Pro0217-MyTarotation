@@ -4,6 +4,7 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
+import { randomImage } from "../randomImage.js";
 import { 
     handleRecommendations, 
     matchMood 
@@ -177,13 +178,14 @@ const getStarsign = (dob) => {
 
 // Shared card layout
 
-const generateCardLayout = (recommendations) => {
+const generateCardLayout = async (recommendations) => {
     const cards = [
         { type: 'movie', item: recommendations.movies?.[0] },
         { type: 'book', item: recommendations.books?.[0] },
         { type: 'album', item: recommendations.albums?.[0] }
     ];
-
+    let images = await randomImage();
+    console.log(images);
     return `
         ${recommendations.warning && ` <div class="text-red-500 p-4">
             <p><strong>Warning:</strong> ${recommendations.warning}</p>
@@ -193,7 +195,7 @@ const generateCardLayout = (recommendations) => {
                 <div class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
                     <div class="flip-card-inner">
                         <div class="flip-card-front bg-white rounded-lg shadow-lg overflow-hidden">
-                            <img src="/Images/tarot-back-generic.png" alt="Tarot Card Back" class="w-full h-full object-cover">
+                            <img src=${images} alt="Tarot Card Back" class="w-full h-full object-cover">
                         </div>
                         <div class="flip-card-back bg-white rounded-lg shadow-lg p-6">
                             ${item ? `
@@ -300,7 +302,7 @@ export const postNewFortune = async (req, res) => {
             return res.renderWithLayout(`<p class="text-red-500">No recommendations found.</p>`, { title: "Recommendations" });
         }
 
-        res.renderWithLayout(generateCardLayout(recommendations), 
+        res.renderWithLayout(await generateCardLayout(recommendations), 
             { title: "Your Fortune", nav: true, fortuneTellerImg: 'success' }
         );
     
