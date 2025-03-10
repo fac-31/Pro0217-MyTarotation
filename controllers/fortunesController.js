@@ -226,7 +226,7 @@ const generateCardLayout = async (recommendations) => {
                             ${item ? `
                                 <div class="flex flex-col items-center h-full">
                                     <img src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" 
-                                            alt="${type} cover" class="w-32 h-32 object-cover rounded-md mb-4">
+                                            alt="${type} cover" class="w-32 h-32 object-scale-down rounded-md mb-4">
                                     <h4 class="font-semibold text-center text-lg mb-2">${item.title}</h4>
                                     ${type === 'album' ? `
                                         <p class="text-md text-gray-600 mb-2">${item.artist}</p>
