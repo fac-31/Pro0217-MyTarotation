@@ -47,7 +47,7 @@ export async function getBook(recommend) {
         let bookObject = {
             title: blurbData?.title || "Unknown Title",
             art: blurbData?.covers?.[0]
-                ? `https://covers.openlibrary.org/b/id/${blurbData.covers[0]}-S.jpg`
+                ? `https://covers.openlibrary.org/b/id/${blurbData.covers[0]}-M.jpg`
                 : "https://via.placeholder.com/100x150?text=No+Cover",
             description: description,
             genres: Array.isArray(blurbData?.subjects) ? blurbData.subjects : ["Unknown Genre"]
