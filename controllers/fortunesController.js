@@ -116,42 +116,72 @@ export const getMoodPage = async (req,res) => {
     `, { title: "Fortune Teller - Mood", nav: true });
 }
 
-// TODO: Sends Selected Fortune data and Renders Fortune Told Page
-export const getMoodFortune = async (req,res) => {
-    let requestMsg = req.params.mood || req.query.mood;
-    if (req.query.mood) {
-        const matchMoodAIresponse = await matchMood(requestMsg);
-        requestMsg = matchMoodAIresponse.closestMood;
-        console.log(requestMsg)
+// Sends Selected Fortune data and Renders Fortune Told Page
+export const getMoodFortune = async (req, res) => {
+    try {
+        let requestMsg = req.params.mood || req.query.mood;
+
+        if (req.query.mood) {
+            const matchMoodAIresponse = await matchMood(requestMsg);
+            requestMsg = matchMoodAIresponse.closestMood;
+            console.log("Matched Mood:", requestMsg);
+        }
+
+        let fortune = await getRandomMoodFortune(requestMsg);
+
+        if (!fortune) {
+            return res.renderWithLayout(`<p class="text-red-500">No fortune found for this mood.</p>`, { title: "Mood Fortune" });
+        }
+
+        // Extract recommendations
+        const recommendations = {
+            movies: fortune.film ? [{ title: fortune.film.title, art: fortune.film.art, genres: fortune.film.genres, plot: fortune.film.plot }] : [],
+            books: fortune.book ? [{ title: fortune.book.title, art: fortune.book.art, genres: fortune.book.genres, description: fortune.book.description }] : [],
+            albums: fortune.album ? [{ title: fortune.album.title, artist: fortune.album.artist, genres: fortune.album.genres, art: fortune.album.art }] : []
+        };
+
+        res.renderWithLayout(generateCardLayout(recommendations), { 
+            title: `Your Fortune - ${requestMsg}`, 
+            nav: true, 
+            fortuneTellerImg: 'success' 
+        });
+
+    } catch (error) {
+        console.error("Error fetching mood-based fortune:", error);
+        res.status(500).json({ error: "Error retrieving fortune" });
     }
-    let fortune = await getRandomMoodFortune(requestMsg)
-    res.renderWithLayout(`
-        <div class="relative flex flex-col items-center justify-between w-full">
-            <div id="card-holder" class="flex flex-row justify-center items-between w-full h-64">
-                <div id="card-wrapper1" class="w-40 h-64 bg-transparent border border-gray-200 opacity-0 animate-deal">
-                    <div id="card-inner" class="w-40 h-64 bg-transparent border border-gray-200 [perspective:1000px]"> 
-                        <div id="card-front" class="w-full h-full bg-white flex items-center-300 justify-center absolute">
-                            <p>
-                            Spinning card placeholder - Front
-                            </p>
-                        </div>
-                        <div id="card-back" class="w-full h-full bg-gray-300 flex items-center justify-center absolute">
-                            <p>
-                            Spinning card placeholder - Back
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-            `, { title: "Fortune Teller - Mood", nav: true });
 };
 
-// TODO: Sends Random Fortune Data and Renders Fortune Told Page
-export const getRandomFortune = async (req,res) => {
-    let fortune = await getRandom()
-    res.send(fortune);
-}
+
+// Sends Random Fortune Data and Renders Fortune Told Page
+export const getRandomFortune = async (req, res) => {
+    try {
+        let fortune = await getRandom();
+        
+        if (!fortune) {
+            return res.renderWithLayout(`<p class="text-red-500">No random fortune available.</p>`, { title: "Random Fortune" });
+        }
+
+        // Extract recommendations
+        const recommendations = {
+            movies: fortune.film ? [{ title: fortune.film.title, art: fortune.film.art, genres: fortune.film.genres, plot: fortune.film.plot }] : [],
+            books: fortune.book ? [{ title: fortune.book.title, art: fortune.book.art, genres: fortune.book.genres, description: fortune.book.description }] : [],
+            albums: fortune.album ? [{ title: fortune.album.title, artist: fortune.album.artist, genres: fortune.album.genres, art: fortune.album.art }] : []
+        };
+
+        res.renderWithLayout(generateCardLayout(recommendations), { 
+            title: "Random Fortune", 
+            nav: true, 
+            fortuneTellerImg: 'success' 
+        });
+
+    } catch (error) {
+        console.error("Error fetching random fortune:", error);
+        res.status(500).json({ error: "Error retrieving fortune" });
+    }
+};
+
+
 
 /**
  * Calculates a user's age based on their DoB and the current Date
@@ -176,7 +206,6 @@ const getStarsign = (dob) => {
 }
 
 // Shared card layout
-
 const generateCardLayout = (recommendations) => {
     const cards = [
         { type: 'movie', item: recommendations.movies?.[0] },
