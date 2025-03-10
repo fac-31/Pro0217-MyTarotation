@@ -37,7 +37,55 @@ app.use((req, res, next) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <script src="https://cdn.tailwindcss.com"></script>
           <title>${title}</title>
-          
+              <style type="text/tailwindcss">
+              @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+        @layer utilities {
+            @keyframes typewriter {
+                from { width: 0; }
+                to { width: 100%; }
+            };
+            .animate-typewriter {
+                display: inline-block; 
+                overflow: hidden;
+                white-space: nowrap;
+                animation: typewriter 1.5s steps(20) 0.5s 1 normal both;
+            };
+@keyframes dealCard {
+  from {
+    transform: scale(0.2) translateY(-700px) translateX(0px) rotate(-360deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0px) translateX(0px)  rotate(360deg);
+    opacity: 1;
+  }
+}
+.animate-deal {
+  transform-origin: center;
+  animation: dealCard 2s ease-out 1s forwards;
+}
+  }
+#card-wrapper1:hover #card-inner {
+  transform: rotateY(180deg); 
+}
+
+#card-inner {
+  transform-style: preserve-3d; 
+  transition: transform 2s ease; 
+}
+
+#card-front, #card-back {
+  backface-visibility: hidden;
+
+}
+
+#card-back {
+  transform: rotateY(180deg);
+}
+    </style>
       </head>
       <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
           ${nav ? `
