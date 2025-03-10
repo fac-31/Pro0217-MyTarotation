@@ -4,6 +4,7 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import 'dotenv/config';
 import path from 'path';
 import bodyParser from "body-parser";
+import { randomImage } from "../randomImage.js";
 import { 
     handleRecommendations, 
     matchMood 
@@ -140,7 +141,7 @@ export const getMoodFortune = async (req, res) => {
             albums: fortune.album ? [{ title: fortune.album.title, artist: fortune.album.artist, genres: fortune.album.genres, art: fortune.album.art }] : []
         };
 
-        res.renderWithLayout(generateCardLayout(recommendations), { 
+        res.renderWithLayout(await generateCardLayout(recommendations), { 
             title: `Your Fortune - ${requestMsg}`, 
             nav: true, 
             fortuneTellerImg: 'success' 
@@ -169,7 +170,7 @@ export const getRandomFortune = async (req, res) => {
             albums: fortune.album ? [{ title: fortune.album.title, artist: fortune.album.artist, genres: fortune.album.genres, art: fortune.album.art }] : []
         };
 
-        res.renderWithLayout(generateCardLayout(recommendations), { 
+        res.renderWithLayout(await generateCardLayout(recommendations), { 
             title: "Random Fortune", 
             nav: true, 
             fortuneTellerImg: 'success' 
@@ -206,26 +207,26 @@ const getStarsign = (dob) => {
 }
 
 // Shared card layout
-const generateCardLayout = (recommendations) => {
+const generateCardLayout = async (recommendations) => {
     const cards = [
         { type: 'movie', item: recommendations.movies?.[0] },
         { type: 'book', item: recommendations.books?.[0] },
         { type: 'album', item: recommendations.albums?.[0] }
     ];
-
+    let images = await randomImage();
     return `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
-            ${cards.map(({ type, item }) => `
-                <div class="flip-card h-[450px] w-full min-w-[280px]" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
+            ${cards.map(({ type, item }, i) => `
+                <div class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
                     <div class="flip-card-inner">
                         <div class="flip-card-front bg-white rounded-lg shadow-lg overflow-hidden">
-                            <img src="/Images/tarot-back-generic.png" alt="Tarot Card Back" class="w-full h-full object-cover">
+                            <img src="/Images/${images[i]}" alt="Tarot Card Back" class="w-full h-full object-cover">
                         </div>
                        <div class="flip-card-back bg-white rounded-lg shadow-lg p-6">
                             ${item ? `
                                 <div class="flex flex-col items-center h-full">
                                     <img src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" 
-                                            alt="${type} cover" class="w-32 h-32 object-cover rounded-md mb-4">
+                                            alt="${type} cover" class="w-32 h-32 object-scale-down rounded-md mb-4">
                                     <h4 class="font-semibold text-center text-lg mb-2">${item.title}</h4>
                                     ${type === 'album' ? `
                                         <p class="text-md text-gray-600 mb-2">${item.artist}</p>
@@ -326,7 +327,7 @@ export const postNewFortune = async (req, res) => {
             return res.renderWithLayout(`<p class="text-red-500">No recommendations found.</p>`, { title: "Recommendations" });
         }
 
-        res.renderWithLayout(generateCardLayout(recommendations), 
+        res.renderWithLayout(await generateCardLayout(recommendations), 
             { title: "Your Fortune", nav: true, fortuneTellerImg: 'success' }
         );
     

@@ -12,11 +12,17 @@ export async function randomImage() {
             throw new Error("No images found");
         } else {
             // Select a random image file
-            let num = Math.floor(Math.random() * images.length);
-            const selectedImage = images[num];
+            let three = [];
+            while (three.length < 3) {
+                let num = Math.floor(Math.random() * images.length);
+                if (!three.includes(images[num])) {
+                three.push(images[num]);
+                };
+            }
+
 
             // Return the relative URL for the image (since it's inside the public directory)
-            return `/Images/${selectedImage}`;
+            return three;
         }
     } catch (error) {
         console.error("Error:", error.message);

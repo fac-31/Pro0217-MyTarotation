@@ -3,7 +3,7 @@ import schedule from 'node-schedule'
 
 // Creates storage with logging set to true. This will console log when an item is set, written etc
 (async () => {
-    await persist.init({ logging: true });
+    await persist.init({ });
     let fortunes = await persist.getItem("fortunes");
     if (!fortunes) {
         await persist.setItem("fortunes", []);
