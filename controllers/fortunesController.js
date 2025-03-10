@@ -214,14 +214,13 @@ const generateCardLayout = async (recommendations) => {
         { type: 'album', item: recommendations.albums?.[0] }
     ];
     let images = await randomImage();
-    console.log(images);
     return `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
-            ${cards.map(({ type, item }) => `
+            ${cards.map(({ type, item }, i) => `
                 <div class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
                     <div class="flip-card-inner">
                         <div class="flip-card-front bg-white rounded-lg shadow-lg overflow-hidden">
-                            <img src=${images} alt="Tarot Card Back" class="w-full h-full object-cover">
+                            <img src="/Images/${images[i]}" alt="Tarot Card Back" class="w-full h-full object-cover">
                         </div>
                         <div class="flip-card-back bg-white rounded-lg shadow-lg p-6">
                             ${item ? `
