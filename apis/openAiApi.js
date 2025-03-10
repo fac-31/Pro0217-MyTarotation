@@ -141,7 +141,7 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
 
        return {
             ...result.data,
-            warning: warningMessage || null, // Return warning if applicable
+            warning: warningMessage,
         };
     } catch (error) {
         console.error("Error fetching recommendations:", error.message);

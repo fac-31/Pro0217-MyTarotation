@@ -1,7 +1,9 @@
 import express from "express";
 import bodyParser from "body-parser";
 import "dotenv/config";
+import browserSync from "browser-sync"; 
 
+const bs = browserSync.create();
 /* Imported here as an example as what happens when the functions are called. 
 You would normally call it in the routes folder to access data from the api endpoints. I think it can also be imported into
 the controllers. */ 
@@ -132,3 +134,8 @@ app.listen(PORT, () => {
   console.log(`Server is listening at http://localhost:${PORT}`);
 });
 
+bs.init({
+  proxy: `http://localhost:${PORT}`,
+  files: ['public/*/.*'], // Watch for changes in the 'public' folder
+  reloadDelay: 50,
+});
