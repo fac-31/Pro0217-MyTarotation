@@ -219,16 +219,16 @@ const generateCardLayout = async (recommendations) => {
     ];
     let images = await randomImage();
     return `
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
+        <div id="card-grid" class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }, i) => `
-                <div class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" >
-                    <div class="${type} flip-card-inner">
-                        <div class="flip-card-front bg-white rounded-lg shadow-lg overflow-hidden" onclick="document.querySelector('.${type}.flip-card-inner').classList.toggle('flipped')">
+                <div id="${type}-card-div" class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal border" >
+                    <div id="${type}-card" class="flip-card-inner border-8 border-solid border-white rounded-lg">
+                        <div class="flip-card-front shadow-lg overflow-hidden" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
                             <img src="/Images/${images[i]}" alt="Tarot Card Back" class="w-full h-full object-cover">
                         </div>
-                       <div class="flip-card-back bg-white rounded-lg shadow-lg p-6">
+                       <div class="flex flex-col justify-between flip-card-back bg-white rounded-lg shadow-lg p-6">
                             ${item ? `
-                                <div class="flex flex-col items-center h-full" onclick="document.querySelector('.${type}.flip-card-inner').classList.toggle('flipped')">
+                                <div class="flex flex-col items-center h-full" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
                                     <img src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" 
                                             alt="${type} cover" class="w-32 h-32 object-scale-down rounded-md mb-4">
                                     <h4 class="font-semibold text-center text-lg mb-2">${item.title}</h4>
@@ -241,8 +241,8 @@ const generateCardLayout = async (recommendations) => {
                                     `}
                                 </div>
                                 <div class="flex justify-between">
-                                    <button>X</button>
-                                    <button>Lock</button>
+                                    <button id="lock-btn" type="button" class="${type} border-2 border-solid border-black rounded-sm">Lock</button>
+                                    <button id="delete-btn"  type="button" class="${type} border-2 border-solid border-black rounded-sm">XXXX</button>
                                 </div>
                             ` : `<p class="text-gray-500 text-center">No ${type} found</p>`}
                         </div>
@@ -275,6 +275,7 @@ const generateCardLayout = async (recommendations) => {
                 transform: rotateY(180deg);
             }
         </style>
+        <script type="module" src="./scripts/fortune-display.js"></script>
     `;
 }
 
