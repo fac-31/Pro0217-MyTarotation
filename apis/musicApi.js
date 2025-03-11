@@ -31,8 +31,10 @@ export async function getMusic(recommend) {
             .then(response => response.json())
             .then(data => data.releases[0])
             .catch(err => console.log(err));
+
         
         const mbid = musicObject['release-group'].id
+        console.log('MBID', mbid)
         title = musicObject.title;
         artist = musicObject['artist-credit'].map(a => a.name).join(", ");
 
@@ -59,10 +61,13 @@ export async function getMusic(recommend) {
             })
             .catch(err => console.log(err));
 
+            
+      
+
         let returnObject = {
             title: title,
             artist: artist,
-            genres: genres,
+            genres: genres.map(genre => genre.toLowerCase()).slice(0, 3),
             art: coverArt
         };
 
