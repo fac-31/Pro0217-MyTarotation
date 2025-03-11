@@ -28,11 +28,13 @@ export async function getFilm(recommend) {
                 console.error("OMDB API Error:", filmObject.Error || "Unknown error");
                 return null;
             }
+
+
             
         let returnObject = {
             title: filmObject.Title,
             plot: filmObject.Plot,
-            genres: filmObject.Genre.split(" "),
+            genres: filmObject.Genre.split(", ").map(genre => genre.toLowerCase()),
             art: filmObject.Poster
         };
 

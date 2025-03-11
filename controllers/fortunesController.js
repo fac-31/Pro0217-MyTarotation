@@ -27,7 +27,7 @@ const openai = new OpenAI({
 // Renders Home Page
 export const getHomePage = async (req, res) => {
     let mood = await getCommonMood() + "";
-    console.log(mood);
+    
     res.renderWithLayout(`
              <div class="bg-white rounded-full px-4 py-2 mt-10">
                   <p class="text-red-500 text-sm">How are you feeling?</p>
@@ -125,7 +125,7 @@ export const getMoodFortune = async (req, res) => {
         if (req.query.mood) {
             const matchMoodAIresponse = await matchMood(requestMsg);
             requestMsg = matchMoodAIresponse.closestMood;
-            console.log("Matched Mood:", requestMsg);
+            // console.log("Matched Mood:", requestMsg);
         }
 
         let fortune = await getRandomMoodFortune(requestMsg);
@@ -281,7 +281,7 @@ export const postNewFortune = async (req, res) => {
 
     try {
         const { dob, starsign, mood, interests, name } = req.body;
-        console.log("📥 Received User Input:", req.body);
+        // console.log("📥 Received User Input:", req.body);
         
         if ((!dob && !starsign) || !mood || !interests) {
             return res.status(400).json({ err8or: "Missing required fields" });

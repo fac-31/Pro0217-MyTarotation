@@ -78,8 +78,7 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
    
     // Format input for OpenAI
     const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. My interests are ${interests}.`;
-    console.log('Processed User Input:', formattedInput);
-
+    
 
     try {
         // Make the request to OpenAI to get recommendations
@@ -155,7 +154,7 @@ const closestMoodSchema = z.object({
 
 export async function matchMood(userInput) {
     // Test input. Will eventually be user input.
-    console.log("OpenAI Api Mood Match called");
+   
     const input = userInput || "happy";
 
     try {
@@ -211,7 +210,7 @@ export async function handleRecommendations(req, input) {
         let aiResponse = await getRecommendation(client, z, zodResponseFormat, input);
         if (!aiResponse) throw new Error("No AI response received");
 
-        console.log('AI Response:', aiResponse)
+        // console.log('AI Response:', aiResponse)
         let books = aiResponse.bookRecommendations
         ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))
         : [];
