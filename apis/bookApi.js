@@ -40,9 +40,10 @@ export async function getBook(recommend) {
 
         let description = blurbData?.description
             ? typeof blurbData.description === "string"
-                ? blurbData.description
-                : blurbData.description.value
+                ? blurbData.description.slice(0,300)
+                : blurbData.description.value.slice(0,300)
             : "No description available.";
+
 
         let bookObject = {
             title: blurbData?.title || "Unknown Title",
@@ -50,7 +51,7 @@ export async function getBook(recommend) {
                 ? `https://covers.openlibrary.org/b/id/${blurbData.covers[0]}-M.jpg`
                 : "https://via.placeholder.com/100x150?text=No+Cover",
             description: description,
-            genres: Array.isArray(blurbData?.subjects) ? blurbData.subjects : ["Unknown Genre"]
+            genres: Array.isArray(blurbData.subjects) ? blurbData.subjects.slice(0,3) : ["Unknown Genre"]
         };
 
        

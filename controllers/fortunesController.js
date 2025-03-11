@@ -17,6 +17,9 @@ import {
     saveFortune
 } from "../storage.js";
 import starsigns from "../lib/starsigns.js";
+import { getMusic } from "../apis/musicApi.js";
+import { getBook } from "../apis/bookApi.js";
+import { getFilm } from "../apis/movieApi.js";
 
 const __dirname = import.meta.dirname;
 
@@ -38,6 +41,7 @@ export const getHomePage = async (req, res) => {
             <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
             <a href="/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
             <a href="" id="common-mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg"></a>
+            <a href="/test" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Test Style</a>
         </div>
         <script>
             function commonMoodButton () {
@@ -217,14 +221,14 @@ const generateCardLayout = async (recommendations) => {
     return `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }, i) => `
-                <div class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" >
+                    <div class="${type} flip-card-inner">
+                        <div class="flip-card-front bg-white rounded-lg shadow-lg overflow-hidden" onclick="document.querySelector('.${type}.flip-card-inner').classList.toggle('flipped')">
                             <img src="/Images/${images[i]}" alt="Tarot Card Back" class="w-full h-full object-cover">
                         </div>
                        <div class="flip-card-back bg-white rounded-lg shadow-lg p-6">
                             ${item ? `
-                                <div class="flex flex-col items-center h-full">
+                                <div class="flex flex-col items-center h-full" onclick="document.querySelector('.${type}.flip-card-inner').classList.toggle('flipped')">
                                     <img src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" 
                                             alt="${type} cover" class="w-32 h-32 object-scale-down rounded-md mb-4">
                                     <h4 class="font-semibold text-center text-lg mb-2">${item.title}</h4>
@@ -235,6 +239,10 @@ const generateCardLayout = async (recommendations) => {
                                         <p class="text-sm text-gray-600 mb-2">Genres: ${item.genres.join(', ')}</p>
                                         <p class="text-sm text-gray-500 text-center max-h-32 overflow-y-auto">${item.plot || item.description || ''}</p>
                                     `}
+                                </div>
+                                <div class="flex justify-between">
+                                    <button>X</button>
+                                    <button>Lock</button>
                                 </div>
                             ` : `<p class="text-gray-500 text-center">No ${type} found</p>`}
                         </div>
@@ -336,3 +344,17 @@ export const postNewFortune = async (req, res) => {
         res.status(500).json({ error: "Error generating fortune" });
     }
 };
+
+export const testRecs  = async (req, res) => {
+    const book = await getBook({isbnCode:"978-0307387899"})
+    const album = await getMusic({title:'Rage Against the Machine',artist:'Rage Against the Machine'});
+    const movie = await getFilm({title:"Mad Max: Fury Road"})
+    const recommendations = {
+        books: [book],
+        albums: [album],
+        movies: [movie]
+    }
+    res.renderWithLayout(await generateCardLayout(recommendations), 
+        { title: "Your Fortune", nav: true, fortuneTellerImg: 'fadein' }
+    );
+}
