@@ -8,7 +8,7 @@ import schedule from 'node-schedule'
     if (!fortunes) {
         await persist.setItem("fortunes", []);
     }
-    console.log("📜 Stored Fortunes:", fortunes);
+    // console.log("📜 Stored Fortunes:", fortunes);
 })();
 
 export async function saveFortune(fortune) {
@@ -16,7 +16,7 @@ export async function saveFortune(fortune) {
         let fortunes = await persist.getItem("fortunes") || []; 
         fortunes.push(fortune); 
         await persist.setItem("fortunes", fortunes); 
-        console.log("New fortune saved:", fortune);
+        // console.log("New fortune saved:", fortune);
         return fortune;
     } catch (error) {
         console.error("Error saving fortune:", error.message);
@@ -68,8 +68,8 @@ export async function getCommonMood() {
     let moods = await persist.getItem("moods");
     let common = "happy"; 
     for (const mood in moods) {
-        console.log(moods[mood]);
-        console.log(moods[common]);
+        // console.log(moods[mood]);
+        // console.log(moods[common]);
          if (moods[mood] > moods[common]) {
             common = mood;
          };

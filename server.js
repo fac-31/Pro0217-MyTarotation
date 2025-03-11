@@ -1,9 +1,9 @@
 import express from "express";
 import bodyParser from "body-parser";
 import "dotenv/config";
-import browserSync from "browser-sync"; 
+// import browserSync from "browser-sync"; 
 
-const bs = browserSync.create();
+// const bs = browserSync.create();
 /* Imported here as an example as what happens when the functions are called. 
 You would normally call it in the routes folder to access data from the api endpoints. I think it can also be imported into
 the controllers. */ 
@@ -41,8 +41,8 @@ app.use((req, res, next) => {
           <title>${title}</title>
               <style type="text/tailwindcss">
               @tailwind base;
-@tailwind components;
-@tailwind utilities;
+    @tailwind components;
+    @tailwind utilities;
 
         @layer utilities {
             @keyframes typewriter {
@@ -55,58 +55,58 @@ app.use((req, res, next) => {
                 white-space: nowrap;
                 animation: typewriter 1.5s steps(20) 0.5s 1 normal both;
             };
-@keyframes dealCard {
-  from {
-    transform: scale(0.2) translateY(-700px) translateX(0px) rotate(-360deg);
-    opacity: 0;
+  @keyframes dealCard {
+    from {
+      transform: scale(0.2) translateY(-700px) translateX(0px) rotate(-360deg);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1) translateY(0px) translateX(0px)  rotate(360deg);
+      opacity: 1;
+    }
   }
-  to {
-    transform: scale(1) translateY(0px) translateX(0px)  rotate(360deg);
-    opacity: 1;
+  .animate-deal {
+    transform-origin: center;
+    animation: dealCard 2s ease-out 1s forwards;
   }
-}
-.animate-deal {
-  transform-origin: center;
-  animation: dealCard 2s ease-out 1s forwards;
-}
+    }
+  #card-wrapper1:hover #card-inner {
+    transform: rotateY(180deg); 
   }
-#card-wrapper1:hover #card-inner {
-  transform: rotateY(180deg); 
-}
 
-#card-inner {
-  transform-style: preserve-3d; 
-  transition: transform 2s ease; 
-}
+  #card-inner {
+    transform-style: preserve-3d; 
+    transition: transform 2s ease; 
+  }
 
-#card-front, #card-back {
-  backface-visibility: hidden;
+  #card-front, #card-back {
+    backface-visibility: hidden;
 
-}
+  }
 
-#card-back {
-  transform: rotateY(180deg);
-}
-    </style>
-      </head>
-      <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
-          ${nav ? `
-          <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
-              <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
-          </nav>` : ""}
-          <div class="flex flex-col items-center mt-20">
-         
-              <div class="w-60 h-fit flex items-center justify-center rounded-lg">
-                  <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img">
-              </div>
-          </div>
-          <div class="flex flex-col items-center justify-start h-full w-full">
-              ${content}
-          </div>
+  #card-back {
+    transform: rotateY(180deg);
+  }
+      </style>
+        </head>
+        <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
+            ${nav ? `
+            <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
+                <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
+            </nav>` : ""}
+            <div class="flex flex-col items-center mt-20">
+          
+                <div class="w-60 h-fit flex items-center justify-center rounded-lg">
+                    <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img">
+                </div>
+            </div>
+            <div class="flex flex-col items-center justify-start h-full w-full">
+                ${content}
+            </div>
 
-      </body>
-      </html>
-    `;
+        </body>
+        </html>
+      `;
 
     res.send(html);
   };
@@ -134,8 +134,8 @@ app.listen(PORT, () => {
   console.log(`Server is listening at http://localhost:${PORT}`);
 });
 
-bs.init({
-  proxy: `http://localhost:${PORT}`,
-  files: ['public/*/.*'], // Watch for changes in the 'public' folder
-  reloadDelay: 50,
-});
+// bs.init({
+//   proxy: `http://localhost:${PORT}`,
+//   files: ['public/*/.*'], // Watch for changes in the 'public' folder
+//   reloadDelay: 50,
+// });

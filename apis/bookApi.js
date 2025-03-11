@@ -22,9 +22,11 @@ export async function getBook(recommend) {
 
     
         let bookDataResponse = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
+   
         if (!bookDataResponse.ok) throw new Error(`Failed to fetch book data (ISBN: ${isbn})`);
 
         let bookData = await bookDataResponse.json();
+
         let key = bookData?.works?.[0]?.key;
 
         if (!key) {
@@ -38,11 +40,13 @@ export async function getBook(recommend) {
 
         let blurbData = await blurbResponse.json();
 
-        let description = blurbData?.description
-            ? typeof blurbData.description === "string"
-                ? blurbData.description.slice(0,300)
-                : blurbData.description.value.slice(0,300)
-            : "No description available.";
+        console.log('Blurb:', blurbData)
+
+        let description = blurbData?.description?.value ?? blurbData?.description ?? "No description available.";
+
+        let genres = Array.isArray(blurbData?.subjects) && blurbData.subjects.length > 0 
+            ? blurbData.subjects.slice(0, 3) 
+            : ["Unknown Genre"];
 
 
         let bookObject = {
@@ -51,7 +55,7 @@ export async function getBook(recommend) {
                 ? `https://covers.openlibrary.org/b/id/${blurbData.covers[0]}-M.jpg`
                 : "https://via.placeholder.com/100x150?text=No+Cover",
             description: description,
-            genres: Array.isArray(blurbData.subjects) ? blurbData.subjects.slice(0,3) : ["Unknown Genre"]
+            genres: genres.map(genre => genre.toLowerCase())
         };
 
        
