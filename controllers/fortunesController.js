@@ -221,12 +221,12 @@ const generateCardLayout = async (recommendations) => {
     return `
         <div id="card-grid" class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }, i) => `
-                <div id="${type}-card-div" class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal border" >
+                <div id="${type}-card-div" class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" >
                     <div id="${type}-card" class="flip-card-inner border-8 border-solid border-white rounded-lg">
                         <div class="flip-card-front shadow-lg overflow-hidden" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
                             <img src="/Images/${images[i]}" alt="Tarot Card Back" class="w-full h-full object-cover">
                         </div>
-                       <div class="flex flex-col justify-between flip-card-back bg-white rounded-lg shadow-lg p-6">
+                       <div class="flex flex-col justify-between flip-card-back bg-white shadow-lg p-6">
                             ${item ? `
                                 <div class="flex flex-col items-center h-full" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
                                     <img src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" 
@@ -249,6 +249,15 @@ const generateCardLayout = async (recommendations) => {
                     </div>
                 </div>
             `).join('')}
+        </div>
+        <div id="unlocked-types-list" class="movie book album"></div>
+        <div id="screen-cover" class="hidden absolute w-screen h-screen bg-transparent">
+            <div id="confirm-delete" class="absolute bg-white p-8">
+                <p>Confirm that you would like to delete this recommendation from your fortune</p>
+                <p>AND that you do not want to recieve any more recommendations of this type</p>
+                <button id="cancel-delete-btn" type="button" class="bg-grey-500">Cancel</button>
+                <button id="confirm-delete-btn" type="button" class="bg-red-500" value="">Confirm Deletion</button>
+            </div>
         </div>
         <style>
             .flip-card {
@@ -273,6 +282,9 @@ const generateCardLayout = async (recommendations) => {
             }
             .flip-card-back {
                 transform: rotateY(180deg);
+            }
+            #unlocked-types-list {
+                display: none;
             }
         </style>
         <script type="module" src="./scripts/fortune-display.js"></script>
