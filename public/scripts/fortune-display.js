@@ -3,6 +3,7 @@ const lockButtons = document.querySelectorAll('#lock-btn');
 const deleteButtons = document.querySelectorAll('#delete-btn');
 const cancelDeleteButton = document.querySelector('#cancel-delete-btn');
 const confirmDeleteButton = document.querySelector('#confirm-delete-btn');
+const refreshButton = document.getElementById("refresh");
 
 // Pop up to confirm recommendation delete and prevent clicking on main page
 const confirmDeletePopUp = document.querySelector('#confirm-delete');
@@ -62,12 +63,22 @@ confirmDeleteButton.addEventListener('click', function (event) {
 // On Click: Hide Confirm Deletion Pop Up
 cancelDeleteButton.addEventListener('click', function (event) {
     screenCover.classList.toggle('hidden');
-})
+}); 
 
-/**
- * > unlockedTypesList.classList
- * Gets array of media types that are not locked (as strings)
- */
-unlockedTypesList.classList.forEach(type => {
-    console.log(type);
-})
+// function to check for unlocked. Look at assigning the title of each recommendation to a property - value -
+// on the "type"-card-div for easier retrieval else. It will be going down the dom children. Open ai call already adjusted.
+// Need to grap names of media as above. Types are already gotten. Pass it and retrieve new recommendations. Then a function 
+// to input this into the html. Check styling and done.
+let refresher = () => {
+    let unlockedTypes = unlockedTypesList;
+    let unlockedMedia = [...unlockedTypes.classList].map(elem => document.getElementById(elem + "-card-div").chil)
+    unlockedTypes.classList.forEach(elem => {
+        let card = document.getElementById(elem + "-card-div");
+        card.style.visibility = "hidden";
+    });
+
+    return console.log(unlockedMedia)
+}
+
+// refresh button event listener
+refreshButton.addEventListener("click", refresher) 

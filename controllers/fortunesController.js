@@ -231,6 +231,7 @@ const generateCardLayout = async (recommendations) => {
     ];
     let images = await randomImage();
     return `
+    <button id="refresh">Refresh</button>
         <div id="card-grid" class="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }, i) => `
                 <div id="${type}-card-div" class="flip-card h-[450px] w-full min-w-[280px] opacity-0 animate-deal" >

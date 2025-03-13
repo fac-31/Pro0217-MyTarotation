@@ -55,7 +55,7 @@ const recommendSchema = z.object({
 
 
 
-export async function getRecommendation(client, z, zodResponseFormat, userInput) {
+export async function getRecommendation(client, z, zodResponseFormat, userInput, refreshInput=null, refreshType=null) {
    
     let { age, mood, interests } = userInput;
     let warningMessage = "";
@@ -78,7 +78,10 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
    
     // Format input for OpenAI
     const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. My interests are ${interests}.`;
-    
+
+    const formatedRefreshInput = refreshInput ? `This person is not interested in the following pieces of media; ${refreshInput}. 
+    Please recommend 1 each of the following types, ${refreshType}. The recommendations should follow the same type of genre and feel
+    of the pieces of media that they didn't want.` : null;
 
     try {
         // Make the request to OpenAI to get recommendations
@@ -91,7 +94,6 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
                     
                     You are an expert media critic. Based on the user's input, please recommend:
                     - 1 film
-                    - 1 TV show
                     - 1 book
                     - 1 music album
 
@@ -112,7 +114,7 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
                 },
                 {
                     role: "user",
-                    content: formattedInput,
+                    content: formattedInput || formatedRefreshInput,
                 },
             ],
             // Use the zodresponseformat & pass it the final schema with a title.
