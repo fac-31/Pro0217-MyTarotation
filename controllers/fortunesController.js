@@ -119,6 +119,7 @@ export const getMoodPage = async (req,res) => {
 
 // Sends Selected Fortune data and Renders Fortune Told Page
 export const getMoodFortune = async (req, res) => {
+    // check moods - against pre-pop. In error handling - direct to newFortune page, if they want, if its not found.
     try {
         let requestMsg = req.params.mood || req.query.mood;
 
