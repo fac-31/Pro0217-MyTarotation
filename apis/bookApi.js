@@ -48,6 +48,7 @@ export async function getBook(recommend) {
             ? blurbData.subjects.slice(0, 3) 
             : ["Unknown Genre"];
 
+
         let bookObject = {
             title: blurbData?.title || "Unknown Title",
             art: blurbData?.covers?.[0]
