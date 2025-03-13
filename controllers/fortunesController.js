@@ -136,7 +136,18 @@ export const getMoodFortune = async (req, res) => {
         let fortune = await getRandomMoodFortune(requestMsg);
 
         if (!fortune) {
-            return res.renderWithLayout(`<p class="text-red-500">No fortune found for this mood.</p>`, { title: "Mood Fortune" });
+            return res.renderWithLayout(`
+                <div class="flex flex-col items-center justify-start gap-8 h-full w-full p-4">
+                <div class="flex flex-col items-center justify-evenly">
+                <h1 class="text-red-500">Sorry, I have no fortunes available for this mood!</h1>
+                <p class="text-red-500">Would you like to create a new fortune or receive a random fortune?</p>
+                </div>
+                <div flex flex-row items-between justify-evenly> 
+                <a href="/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">A New Fortune please!</a>
+                <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">A Random Fortune please!</a>
+                </div>
+                </div>
+                `, { title: "Mood Fortune" });
         }
 
         // Extract recommendations
@@ -372,3 +383,5 @@ export const testRecs  = async (req, res) => {
         { title: "Your Fortune", nav: true, fortuneTellerImg: 'fadein' }
     );
 }
+// Get unlocked via id. Get class - this has space seperated list of unlocked. Split via space. Pass this to a refacted openAi call. 
+// Get just that item. Reload that element. Will have to check styling and animations

@@ -30,7 +30,6 @@ import schedule from 'node-schedule'
             "genres":["alternative metal","alternative rock","desert rock"],
             "art":"http://coverartarchive.org/release/989e8e77-6263-45e6-a8e5-8228fed65532/28387489485.jpg"}}]);
     }
-    console.log("📜 Stored Fortunes:", fortunes);
 })();
 
 export async function saveFortune(fortune) {
