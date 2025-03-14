@@ -206,10 +206,10 @@ export async function matchMood(userInput) {
 }
 
 //right now we don't use req, but we will need to change it when we will implement recommendations based on user input
-export async function handleRecommendations(req, input) { 
+export async function handleRecommendations(req, input, refreshInput) { 
   
     try {
-        let aiResponse = await getRecommendation(client, z, zodResponseFormat, input);
+        let aiResponse = await getRecommendation(client, z, zodResponseFormat, input, refreshInput, refreshType);
         if (!aiResponse) throw new Error("No AI response received");
 
         // console.log('AI Response:', aiResponse)

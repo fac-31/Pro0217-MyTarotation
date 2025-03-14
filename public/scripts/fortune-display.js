@@ -69,15 +69,16 @@ cancelDeleteButton.addEventListener('click', function (event) {
 // on the "type"-card-div for easier retrieval else. It will be going down the dom children. Open ai call already adjusted.
 // Need to grap names of media as above. Types are already gotten. Pass it and retrieve new recommendations. Then a function 
 // to input this into the html. Check styling and done.
-let refresher = () => {
-    let unlockedTypes = unlockedTypesList;
-    let unlockedMedia = [...unlockedTypes.classList].map(elem => document.getElementById(elem + "-card-div").chil)
-    unlockedTypes.classList.forEach(elem => {
+let refresher = async () => {
+    let unlockedTypes = unlockedTypesList.classList;
+    let media = []
+    unlockedTypes.forEach(elem => {
         let card = document.getElementById(elem + "-card-div");
         card.style.visibility = "hidden";
+        media.push(card.querySelector("h4").textContent);
     });
-
-    return console.log(unlockedMedia)
+    //let recommendations = await handleRecommendations(null, null, media.join(", "), unlockedTypes.join(", "))
+    return console.log("test")
 }
 
 // refresh button event listener
