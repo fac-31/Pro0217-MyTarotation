@@ -32,25 +32,64 @@ export const getHomePage = async (req, res) => {
     let mood = await getCommonMood() + "";
     
     res.renderWithLayout(`
-             <div class="bg-white rounded-full px-4 py-2 mt-10">
-                  <p class="text-red-500 text-sm">How are you feeling?</p>
-              </div>
-        <div class="grid grid-cols-2 gap-6 mt-10">
-          
-            <a href="/new" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">New Fortune</a>
-            <a href="/random" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Random</a>
-            <a href="/mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Mood Select</a>
-            <a href="" id="common-mood" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg"></a>
-            <a href="/test" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Test Style</a>
+        <div class="flex flex-col items-center mt-10 space-y-6">
+            <div id="greeting-1" class="bg-white rounded-full px-6 py-3 shadow-md opacity-0 transition-opacity duration-500">
+                <p class="text-red-500 text-lg font-medium">Hey there good looking</p>
+            </div>
+            
+            <div id="greeting-2" class="bg-white rounded-full px-6 py-3 shadow-md opacity-0 transition-opacity duration-500">
+                <p class="text-red-500 text-lg font-medium">I have been expecting you.</p>
+            </div>
+            
+            <div id="greeting-3" class="bg-white rounded-full px-6 py-3 shadow-md opacity-0 transition-opacity duration-500">
+                <p class="text-red-500 text-lg font-medium">What guidance are you looking for today?</p>
+            </div>
+        </div>
+        
+        <div id="button-container" class="grid grid-cols-2 gap-4 mt-8 mx-auto max-w-md opacity-0 transition-opacity duration-500">
+            <a href="/new" class="text-green-600 bg-white hover:bg-green-50 border border-green-600 px-4 py-2 rounded-md text-center shadow-sm transition duration-200">New Fortune</a>
+            <a href="/random" class="text-green-600 bg-white hover:bg-green-50 border border-green-600 px-4 py-2 rounded-md text-center shadow-sm transition duration-200">Random</a>
+            <a href="/mood" class="text-green-600 bg-white hover:bg-green-50 border border-green-600 px-4 py-2 rounded-md text-center shadow-sm transition duration-200">Mood Select</a>
+            <a href="" id="common-mood" class="text-green-600 bg-white hover:bg-green-50 border border-green-600 px-4 py-2 rounded-md text-center shadow-sm transition duration-200"></a>
+            <a href="/test" class="text-green-600 bg-white hover:bg-green-50 border border-green-600 px-4 py-2 rounded-md text-center col-span-2 shadow-sm transition duration-200">Test Style</a>
         </div>
         <script>
-            function commonMoodButton () {
-                let route =  "/mood/${mood}";
-                let link = document.getElementById("common-mood")
+            function commonMoodButton() {
+                let route = "/mood/${mood}";
+                let link = document.getElementById("common-mood");
                 link.href = route;
-                link.innerText = "Everyone's feeling ${mood} today"
+                link.innerText = "Everyone's feeling ${mood} today";
             }
-            window.onload = commonMoodButton;
+            
+            function animateGreetings() {
+                // Show first greeting after 500ms
+                setTimeout(() => {
+                    document.getElementById("greeting-1").classList.remove("opacity-0");
+                    
+                    // Show second greeting after 2s
+                    setTimeout(() => {
+                        document.getElementById("greeting-2").classList.remove("opacity-0");
+                        
+                        // Show third greeting after 2s
+                        setTimeout(() => {
+                            document.getElementById("greeting-3").classList.remove("opacity-0");
+                            
+                            // Show buttons after 1.5s
+                            setTimeout(() => {
+                                document.getElementById("button-container").classList.remove("opacity-0");
+                            }, 1500);
+                            
+                        }, 2000);
+                        
+                    }, 2000);
+                    
+                }, 500);
+            }
+            
+            window.onload = function() {
+                commonMoodButton();
+                animateGreetings();
+            };
         </script>
     `, { title: "Fortune Teller Home" });
 }
