@@ -32,27 +32,41 @@ export const getHomePage = async (req, res) => {
     let mood = await getCommonMood() + "";
     
     res.renderWithLayout(`
-        <div class="flex flex-col items-center mt-10 space-y-6">
-            <div id="greeting-1" class="bg-white rounded-full px-6 py-3 shadow-md opacity-0 transition-opacity duration-500">
-                <p class="text-red-500 text-lg font-medium">Hey there good looking</p>
-            </div>
-            
-            <div id="greeting-2" class="bg-white rounded-full px-6 py-3 shadow-md opacity-0 transition-opacity duration-500">
-                <p class="text-red-500 text-lg font-medium">I have been expecting you.</p>
-            </div>
-            
-            <div id="greeting-3" class="bg-white rounded-full px-6 py-3 shadow-md opacity-0 transition-opacity duration-500">
-                <p class="text-red-500 text-lg font-medium">What guidance are you looking for today?</p>
+        <div class="flex flex-col items-center mt-10">
+            <div id="greeting-container" class="bg-white rounded-full px-6 py-3 shadow-md h-16 flex items-center justify-center min-w-[280px]">
+                <p id="greeting-text" class="text-blue-600 text-lg font-medium text-center">Hey there good looking</p>
             </div>
         </div>
         
-        <div id="button-container" class="grid grid-cols-2 gap-4 mt-8 mx-auto max-w-md opacity-0 transition-opacity duration-500">
-            <a href="/new" class="text-green-600 bg-white hover:bg-green-50 border border-green-600 px-4 py-2 rounded-md text-center shadow-sm transition duration-200">New Fortune</a>
-            <a href="/random" class="text-green-600 bg-white hover:bg-green-50 border border-green-600 px-4 py-2 rounded-md text-center shadow-sm transition duration-200">Random</a>
-            <a href="/mood" class="text-green-600 bg-white hover:bg-green-50 border border-green-600 px-4 py-2 rounded-md text-center shadow-sm transition duration-200">Mood Select</a>
-            <a href="" id="common-mood" class="text-green-600 bg-white hover:bg-green-50 border border-green-600 px-4 py-2 rounded-md text-center shadow-sm transition duration-200"></a>
-            <a href="/test" class="text-green-600 bg-white hover:bg-green-50 border border-green-600 px-4 py-2 rounded-md text-center col-span-2 shadow-sm transition duration-200">Test Style</a>
-        </div>
+        <div id="button-container" 
+     class="grid grid-cols-2 gap-4 mt-8 mx-auto max-w-md opacity-0 transition-opacity duration-500">
+
+  <a href="/new"
+     class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 text-yellow-100 font-semibold text-center border border-yellow-200  px-6 py-3 rounded-xl shadow-lg transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
+     Full Fortune Experience
+  </a>
+
+  <a href="/random"
+     class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 text-yellow-100 font-semibold text-center border border-yellow-200  px-6 py-3 rounded-xl shadow-lg transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
+    Express Fortune
+  </a>
+
+  <a href="/mood"
+     class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 text-yellow-100 font-semibold text-center border border-yellow-200 px-6 py-3 rounded-xl shadow-lg
+            transform transition-transform duration-30 0 hover:-translate-y-1 hover:shadow-2xl">
+    Pre-Coffee Fortune
+  </a>
+
+  <a href="" id="common-mood"
+     class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 text-yellow-100 font-semibold text-center border border-yellow-200 px-6 py-3 rounded-xl shadow-lg transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
+  </a>
+  <a href="/test"
+     class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 text-yellow-100 font-semibold text-center col-span-2 border border-yellow-200 px-6 py-3 rounded-xl shadow-lg transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
+    Test Style
+  </a>
+
+</div>
+
         <script>
             function commonMoodButton() {
                 let route = "/mood/${mood}";
@@ -62,28 +76,55 @@ export const getHomePage = async (req, res) => {
             }
             
             function animateGreetings() {
-                // Show first greeting after 500ms
-                setTimeout(() => {
-                    document.getElementById("greeting-1").classList.remove("opacity-0");
+                const greetingText = document.getElementById("greeting-text");
+                const greetingContainer = document.getElementById("greeting-container");
+                const buttonContainer = document.getElementById("button-container");
+                
+                const messages = [
+                    "Hey there, good looking!",
+                    "I have been expecting you...",
+                    "What guidance are you looking for today?"
+                ];
+                
+                let currentMessage = 0;
+                
+                // Show the initial message
+                greetingText.textContent = messages[currentMessage];
+                
+                // Function to display subsequent messages
+                function displayNextMessage() {
+                    // Fade out the current message
+                    greetingContainer.classList.add("opacity-0");
                     
-                    // Show second greeting after 2s
                     setTimeout(() => {
-                        document.getElementById("greeting-2").classList.remove("opacity-0");
+                        currentMessage++;
                         
-                        // Show third greeting after 2s
-                        setTimeout(() => {
-                            document.getElementById("greeting-3").classList.remove("opacity-0");
+                        // If we still have another message to show
+                        if (currentMessage < messages.length) {
+                            greetingText.textContent = messages[currentMessage];
+                            greetingContainer.classList.remove("opacity-0");
                             
-                            // Show buttons after 1.5s
-                            setTimeout(() => {
-                                document.getElementById("button-container").classList.remove("opacity-0");
-                            }, 1500);
-                            
-                        }, 2000);
-                        
-                    }, 2000);
+                            // If this is NOT the last message, schedule another transition
+                            if (currentMessage < messages.length - 1) {
+                                setTimeout(displayNextMessage, 2000);
+                            } else {
+                                // If it IS the last message, let it remain on screen,
+                                // then reveal the buttons after a pause
+                                setTimeout(() => {
+                                    buttonContainer.classList.remove("opacity-0");
+                                }, 2000);
+                            }
+                        }
+                    }, 500); // 0.5s fade-out before switching to the next text
+                }
+                
+                // Add transition class after initial render
+                setTimeout(() => {
+                    greetingContainer.classList.add("transition-opacity", "duration-500");
                     
-                }, 500);
+                    // Start message transitions after 2 seconds
+                    setTimeout(displayNextMessage, 2000);
+                }, 100);
             }
             
             window.onload = function() {
@@ -92,59 +133,146 @@ export const getHomePage = async (req, res) => {
             };
         </script>
     `, { title: "Fortune Teller Home" });
-}
+};
+
+
 
 // Renders New Fortune Page
-export const getNewFortunePage = async (req,res) => {
+export const getNewFortunePage = async (req, res) => {
     res.renderWithLayout(`
-        
-        <form id="fortune-form" action="/new" method="post">
-            <div class="grid grid-cols-3 gap-6 mt-6 w-3/4 max-w-2xl">
-                <div class="flex flex-col">
-                    <label for="name" class="font-semibold">Name</label>
-                    <input id="name" name="name" type="text" class="border border-gray-400 p-2 rounded w-full">
-                </div>
-                <div class="flex flex-col">
-                    <div id="starsign-dropdown" class="hidden">
-                        <label for="starsign" class="font-semibold">Starsign</label>
-                        <select id="starsign" name="starsign" type="text" class="border border-gray-400 p-2 rounded w-full">
-                            <option value="aquarius">Aquarius</option>
-                            <option value="pisces">Pisces</option>
-                            <option value="aries">Aries</option>
-                            <option value="taurus">Taurus</option>
-                            <option value="gemini">Gemini</option>
-                            <option value="cancer">Cancer</option>
-                            <option value="leo">Leo</option>
-                            <option value="virgo">Virgo</option>
-                            <option value="libra">Libra</option>
-                            <option value="scorpio">Scorpio</option>
-                            <option value="sagittarius">Sagittarius</option>
-                            <option value="capricorn">Capricorn</option>
-                        </select>
-                    </div>
-                    <div id="dob-date" class="block">
-                        <label for="dob" class="font-semibold">Date of Birth</label>
-                        <input id="dob" name="dob" type="date" class="border border-gray-400 p-2 rounded w-full">
-                    </div>
-                <button id="change-sign-input-type" class="text-sm" type="button">Use Starsign Instead</button>
-                </div>
-                <div class="flex flex-col">
-                    <label for="mood" class="font-semibold">Current Mood</label>
-                    <input id="mood" name="mood" type="text" class="border border-gray-400 p-2 rounded w-full">
-                </div>
+      <div class="flex items-center justify-center mt-6">
+        <form 
+          id="fortune-form" 
+          action="/new" 
+          method="post"
+          class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 
+                 border border-yellow-600 text-yellow-100
+                 rounded-xl shadow-xl p-6 w-11/12 max-w-2xl"
+        >
+          <h2 class="text-2xl font-bold mb-4 text-center">
+            Reveal Your Fortune
+          </h2>
+  
+          <div class="grid grid-cols-3 gap-6">
+            <div class="flex flex-col">
+              <label for="name" class="font-semibold text-yellow-200 mb-1">
+                Name
+              </label>
+              <input 
+                id="name" 
+                name="name" 
+                type="text" 
+                class="bg-purple-800 border border-yellow-500 text-yellow-100
+                       placeholder-yellow-300 rounded-md p-3
+                       focus:outline-none focus:ring-2 focus:ring-yellow-300
+                       w-full"
+                placeholder="Enter your name"
+              >
             </div>
-            <div class="mt-6 w-3/4 max-w-2xl">
-                <label for="interests" class="block font-semibold">Have you watched anything decent lately?</label>
-                <textarea id="interests" name="interests" class="w-full border border-gray-400 p-2 rounded h-24"></textarea>
+            <div class="flex flex-col">
+              <div id="starsign-dropdown" class="hidden">
+                <label for="starsign" class="font-semibold text-yellow-500 mb-1">
+                  Starsign
+                </label>
+                <select
+                  id="starsign"
+                  name="starsign"
+                  class="bg-purple-800 border border-yellow-500 text-yellow-100
+                         placeholder-yellow-300 rounded-md p-3
+                         focus:outline-none focus:ring-2 focus:ring-yellow-300
+                         w-full"
+                >
+                  <option value="aquarius">Aquarius</option>
+                  <option value="pisces">Pisces</option>
+                  <option value="aries">Aries</option>
+                  <option value="taurus">Taurus</option>
+                  <option value="gemini">Gemini</option>
+                  <option value="cancer">Cancer</option>
+                  <option value="leo">Leo</option>
+                  <option value="virgo">Virgo</option>
+                  <option value="libra">Libra</option>
+                  <option value="scorpio">Scorpio</option>
+                  <option value="sagittarius">Sagittarius</option>
+                  <option value="capricorn">Capricorn</option>
+                </select>
+              </div>
+  
+              <div id="dob-date" class="block">
+                <label for="dob" class="font-semibold text-yellow-200 mb-1">
+                  Date of Birth
+                </label>
+                <input 
+                  id="dob" 
+                  name="dob" 
+                  type="date" 
+                  class="bg-purple-800 border border-yellow-500 text-yellow-100
+                         placeholder-yellow-300 rounded-md p-3
+                         focus:outline-none focus:ring-2 focus:ring-yellow-300
+                         w-full"
+                >
+              </div>
+              <button 
+                id="change-sign-input-type" 
+                type="button"
+                class="text-sm mt-2 underline text-yellow-200 hover:text-yellow-300"
+              >
+                Use Starsign Instead
+              </button>
             </div>
-            <div class="mt-6">
-                <button id="submit-form" type="submit" class="border border-green-600 text-green-600 px-8 py-3 rounded-lg text-lg">See my future</button>
-            </div> 
+            <div class="flex flex-col">
+              <label for="mood" class="font-semibold text-yellow-200 mb-1">
+                Current Mood
+              </label>
+              <input 
+                id="mood" 
+                name="mood" 
+                type="text"
+                class="bg-purple-800 border border-yellow-500 text-yellow-100
+                       placeholder-yellow-300 rounded-md p-3
+                       focus:outline-none focus:ring-2 focus:ring-yellow-300
+                       w-full"
+                placeholder="E.g. Curious, excited, anxious..."
+              >
+            </div>
+          </div>
+  
+          <div class="mt-6">
+            <label for="interests" class="block font-semibold text-yellow-200 mb-1">
+              Have you watched anything decent lately?
+            </label>
+            <textarea 
+              id="interests"
+              name="interests"
+              class="bg-purple-800 border border-yellow-200 text-yellow-100
+                     placeholder-yellow-300 rounded-md p-3
+                     focus:outline-none focus:ring-2 focus:ring-yellow-300
+                     w-full h-24"
+              placeholder="Share the good stuff..."
+            ></textarea>
+          </div>
+  
+          <div class="mt-6 flex justify-center">
+            <button 
+              id="submit-form" 
+              type="submit"
+              class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
+                     border border-yellow-600 text-yellow-100 
+                     px-8 py-3 rounded-lg text-lg font-semibold 
+                     shadow-md transform transition-transform duration-300
+                     hover:-translate-y-1 hover:shadow-2xl
+              "
+            >
+              See my future
+            </button>
+          </div>
         </form>
-        <script src="./scripts/new-fortune.js"></script>
-
-    `, { title: "Fortune Teller - About You", nav: true });
-}
+      </div>
+  
+      <script src="./scripts/new-fortune.js"></script>
+    `, 
+    { title: "Fortune Teller - About You", nav: true });
+  };
+  
 
 
 // Renders Mood Select Page
