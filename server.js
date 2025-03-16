@@ -89,12 +89,12 @@ app.use((req, res, next) => {
   }
       </style>
         </head>
-        <body class="w-screen h-screen bg-gray-100 flex justify-center m-0 p-0">
+        <body class="w-screen h-screen bg-gray-100 flex justify-center items-center m-0 p-0">
             ${nav ? `
             <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
                 <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
             </nav>` : ""}
-            <div class="flex justify-between w-1/2 max-w-[700px] h-fit bg-[#5b3e0c] rounded-lg">
+            <div class="flex justify-between w-1/2 max-w-[700px] min-w-[550px] h-fit bg-[#5b3e0c] rounded-lg">
                 <div class="w-12 h-fit flex items-center justify-center rounded-lg">
                     <img src="/FortuneTellerImages/pngs/booth-side-l.png">
                 </div>

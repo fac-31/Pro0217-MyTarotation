@@ -11,25 +11,35 @@ const screenCover = document.querySelector('#screen-cover');
 // Div that stores the unlocked types list
 const unlockedTypesList = document.querySelector('#unlocked-types-list')
 
-// Cards
-const movieCard = document.querySelector('#movie-card');
-const bookCard = document.querySelector('#book-card');
-const albumCard = document.querySelector('#album-card');
+// Grid Div for fortune cards, cols is set to number of current columns
+const cardGrid = document.querySelector('#card-grid')
+let cols = 3;
+
+// Card Backs
+const cardBacks = document.querySelectorAll('.flip-card-back');
 
 /* Lock Buttons On Cards
 *   On Click:
 *   - Toggle Card Border Colour between white and green
-*   - Toggle locked Card Class
 *   - Add or remove from Unlocked Type List Class List
 */
 lockButtons.forEach(button => {
     button.addEventListener('click', function (event) {
         const typeToLock = this.classList[0];
-        const cardToLock = document.querySelector(`#${typeToLock}-card`);
-        cardToLock.classList.toggle('locked');
+        const cardToLock = document.querySelectorAll(`.${typeToLock}-card`);
+        const deleteButtonToLock = document.querySelector(`.${typeToLock}#delete-btn`);
         unlockedTypesList.classList.toggle(`${typeToLock}`)
-        cardToLock.classList.toggle('border-emerald-500');
-        cardToLock.classList.toggle('border-white');
+        deleteButtonToLock.classList.toggle('bg-red-500')
+        deleteButtonToLock.classList.toggle('bg-gray-500')
+        deleteButtonToLock.classList.toggle('border-red-500')
+        deleteButtonToLock.classList.toggle('border-gray-500')
+        deleteButtonToLock.classList.toggle('hover:bg-red-700')
+        deleteButtonToLock.classList.toggle('hover:border-red-700')
+        deleteButtonToLock.disabled = !deleteButtonToLock.disabled;
+        cardToLock.forEach(side => {
+            side.classList.toggle('border-emerald-500');
+            side.classList.toggle('border-black');
+        })
     })
 });
 
@@ -54,8 +64,11 @@ deleteButtons.forEach(button => {
             Change Column number for cards
 */
 confirmDeleteButton.addEventListener('click', function (event) {
-    const cardToDelete = document.querySelector(`#${this.value}-card`);
+    const cardToDelete = document.querySelector(`#${this.value}-card-div`);
+    cols -= 1;
     cardToDelete.classList.toggle('hidden');
+    cardGrid.classList.toggle(`md:grid-cols-${cols}`);
+    cardGrid.classList.toggle(`md:grid-cols-${cols + 1}`);
     screenCover.classList.toggle('hidden');
 })
 
@@ -63,6 +76,22 @@ confirmDeleteButton.addEventListener('click', function (event) {
 cancelDeleteButton.addEventListener('click', function (event) {
     screenCover.classList.toggle('hidden');
 })
+
+cardBacks.forEach(card => {
+    card.addEventListener('mouseover', function(event) {
+        const popUpType = this.classList[0].replace('-card','');
+        const popUpShow = document.querySelector(`#${popUpType}-pop-up`);
+        popUpShow.classList.toggle('hidden');
+    })
+
+    card.addEventListener('mouseout', function (event) {
+        const popUpType = this.classList[0].replace('-card','')
+        const popUpHide = document.querySelector(`#${popUpType}-pop-up`);
+        popUpHide.classList.toggle('hidden');
+    })
+})
+
+
 
 /**
  * > unlockedTypesList.classList
