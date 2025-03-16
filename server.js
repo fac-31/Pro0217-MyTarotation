@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 import { router as fortuneRouter } from "./routes/fortunesRoute.js";
 
 // Import Other Functions
-import { randomImage } from "./randomImage.js";
+import { randomImage } from "./utils/randomImage.js";
 
 // Middleware for shared layout
 app.use((req, res, next) => {
