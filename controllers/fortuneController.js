@@ -1,3 +1,5 @@
+import {v4 as uuidv4} from 'uuid'
+
 import { handleRecommendations } from "../apis/openAiApi.js";
 import { saveMoods, saveFortune, getRandom } from "../storage.js";
 import { getAge, getStarsign } from "../utils/helpers.js";
@@ -153,6 +155,8 @@ export const postNewFortune = async (req, res) => {
             return res.status(400).json({ err8or: "Missing required fields" });
         }
 
+        const _id = uuidv4();
+
         let age;
         let starsignFromDoB;
 
@@ -166,18 +170,19 @@ export const postNewFortune = async (req, res) => {
 
         
 
-        const recommendations = await handleRecommendations(req, req.body);
+        const recommendations = await handleRecommendations(req,{age,mood,interests});
 
         console.log("🔮 Recommendations:", recommendations);
        
 
 
         const newFortune = {
+            _id,
             name,
             starsign: starsign || starsignFromDoB, 
             mood: recommendations.mood,
             book: recommendations.books[0],
-            film: recommendations.movies[0],
+            movie: recommendations.movies[0],
             album: recommendations.albums[0]
         };
 
