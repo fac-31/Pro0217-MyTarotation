@@ -5,7 +5,7 @@ import starsigns from "../lib/starsigns.js";
  * @param {Date} dob - Date object from dob input
  * @returns User's age in years
  */
-const getAge = (dob) => {
+export const getAge = (dob) => {
     const today = Date.now();
     const diff = new Date(today - dob);
     return Math.abs(diff.getUTCFullYear() - 1970);
@@ -16,7 +16,7 @@ const getAge = (dob) => {
  * @param {Date} dob - Date object from dob input
  * @returns User's Starsign
  */
-const getStarsign = (dob) => {
+export const getStarsign = (dob) => {
     const birthMonth = dob.getMonth();
     const starMonth = birthMonth - (starsigns.dateChange[birthMonth] > dob.getDate() ? 1 : 0)
     return starsigns.monthEndSign.at(starMonth);
