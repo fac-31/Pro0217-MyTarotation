@@ -89,25 +89,34 @@ app.use((req, res, next) => {
   }
       </style>
         </head>
-        <body class="w-screen h-screen bg-gray-100 flex justify-center m-0 p-0">
+      
+          <body class=" relative w-screen h-screen flex justify-center m-0 p-0 bg-[#3a0305]">
+            <video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover z-[-1]">
+            <source src="/backgroundImages/tent_video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+            </video>
+
             ${nav ? `
             <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
-                <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
+                <a href="/" class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
+                     border border-yellow-300 text-yellow-100 
+                     px-8 py-3 rounded-lg text-lg font-semibold 
+                     shadow-md">Home</a>
             </nav>` : ""}
-            <div class="flex justify-between w-1/2 max-w-[700px] h-fit bg-[#5b3e0c] rounded-lg">
-                <div class="w-12 h-fit flex items-center justify-center rounded-lg">
-                    <img src="/FortuneTellerImages/pngs/booth-side-l.png">
+            <div class="relative flex flex-col items-center justify-center w-full h-screen max-w-[700px] bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12">
+                 <div class="absolute left-0 top-0 h-full w-[10vw] flex items-center justify-center">
+                    <img src="/FortuneTellerImages/pngs/booth-side-l.png" class="h-full max-h-[90vh] md:max-h-[95vh]">
                 </div>
-                <div class="flex flex-col items-center mt-20">
-                    <div class="w-60 h-fit flex items-center justify-center border-4 border-solid border-black rounded-lg">
-                        <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img">
+                <div class="flex flex-col items-center w-full h-full max-w-lg">
+                    <div class="w-full max-w-[100px] md:max-w-[150px] items-center justify-center border-4 border-solid border-black rounded-lg">
+                        <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img" class="w-full h-auto">
                     </div>
                     <div class="flex flex-col items-center justify-start h-full w-full">
                         ${content}
                     </div>
                 </div>
-                <div class="w-12 h-fit flex items-center justify-center rounded-lg">
-                    <img src="/FortuneTellerImages/pngs/booth-side-r.png">
+                 <div class="absolute right-0 top-0 h-full w-[10vw] flex items-center justify-center">
+                    <img src="/FortuneTellerImages/pngs/booth-side-r.png" class="h-full max-h-[90vh] md:max-h-[95vh]">
                 </div>
             </div>
 
