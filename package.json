@@ -25,6 +25,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "browser-sync": "^3.0.3"
+    "browser-sync": "^3.0.3",
+    "cypress": "^14.2.0"
   }
 }
