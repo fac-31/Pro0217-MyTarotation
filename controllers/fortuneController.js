@@ -126,7 +126,7 @@ export const getNewFortunePage = async (req, res) => {
               id="submit-form" 
               type="submit"
               class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
-                     border border-yellow-600 text-yellow-100 
+                     border border-yellow-300 text-yellow-100 
                      px-8 py-3 rounded-lg text-lg font-semibold 
                      shadow-md transform transition-transform duration-300
                      hover:-translate-y-1 hover:shadow-2xl
@@ -149,7 +149,7 @@ export const postNewFortune = async (req, res) => {
 
     try {
         const { dob, starsign, mood, interests, name } = req.body;
-        // console.log("📥 Received User Input:", req.body);
+        // console.log("Received User Input:", req.body);
         
         if ((!dob && !starsign) || !mood || !interests) {
             return res.status(400).json({ err8or: "Missing required fields" });
@@ -172,7 +172,7 @@ export const postNewFortune = async (req, res) => {
 
         const recommendations = await handleRecommendations(req,{age,mood,interests});
 
-        console.log("🔮 Recommendations:", recommendations);
+        console.log("Recommendations:", recommendations);
        
 
 
