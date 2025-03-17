@@ -3,15 +3,18 @@ import express from 'express';
 const router = express.Router()
 
 // Import functions from controller
-import { 
-    getHomePage,
-    getNewFortunePage,
-    postNewFortune,
-    getMoodPage,
-    getMoodFortune,
-    getRandomFortune,
-    testRecs
- } from '../controllers/fortunesController.js';
+import { getHomePage } from "../controllers/homeController.js";
+import {
+  getNewFortunePage,
+  postNewFortune,
+  getRandomFortune,
+} from "../controllers/fortuneController.js";
+import {
+  getMoodPage,
+  getMoodFortune,
+} from "../controllers/moodController.js";
+import { testRecs } from "../controllers/testController.js";
+
  import { handleRecommendations } from '../apis/openAiApi.js';
 
 // Define different routes

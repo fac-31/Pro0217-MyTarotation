@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 import { router as fortuneRouter } from "./routes/fortunesRoute.js";
 
 // Import Other Functions
-import { randomImage } from "./randomImage.js";
+import { randomImage } from "./utils/randomImage.js";
 
 // Middleware for shared layout
 app.use((req, res, next) => {
@@ -89,19 +89,26 @@ app.use((req, res, next) => {
   }
       </style>
         </head>
-        <body class="w-screen h-screen bg-gray-100 flex flex-col m-0 p-0">
+        <body class="w-screen h-screen bg-gray-100 flex justify-center m-0 p-0">
             ${nav ? `
             <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
                 <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
             </nav>` : ""}
-            <div class="flex flex-col items-center mt-20">
-          
-                <div class="w-60 h-fit flex items-center justify-center rounded-lg">
-                    <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img">
+            <div class="flex justify-between w-1/2 max-w-[700px] h-fit bg-[#5b3e0c] rounded-lg">
+                <div class="w-12 h-fit flex items-center justify-center rounded-lg">
+                    <img src="/FortuneTellerImages/pngs/booth-side-l.png">
                 </div>
-            </div>
-            <div class="flex flex-col items-center justify-start h-full w-full">
-                ${content}
+                <div class="flex flex-col items-center mt-20">
+                    <div class="w-60 h-fit flex items-center justify-center border-4 border-solid border-black rounded-lg">
+                        <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img">
+                    </div>
+                    <div class="flex flex-col items-center justify-start h-full w-full">
+                        ${content}
+                    </div>
+                </div>
+                <div class="w-12 h-fit flex items-center justify-center rounded-lg">
+                    <img src="/FortuneTellerImages/pngs/booth-side-r.png">
+                </div>
             </div>
 
         </body>

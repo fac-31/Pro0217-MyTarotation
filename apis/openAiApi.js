@@ -12,7 +12,6 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 
 dotenv.config({ path: path.resolve("../.env") });
 
-
 const client = new OpenAI({
   apiKey: process.env.API_KEY, 
 });

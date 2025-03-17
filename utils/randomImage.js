@@ -5,7 +5,7 @@ import path from "path";
 export async function randomImage() {
     try {
 
-        const imagesDir = path.join(import.meta.dirname, 'public', 'Images');
+        const imagesDir = path.join(import.meta.dirname, '../', 'public', 'Images');
         let images = await fs.promises.readdir(imagesDir);
         
         if (images.length === 0) {
