@@ -12,25 +12,35 @@ const screenCover = document.querySelector('#screen-cover');
 // Div that stores the unlocked types list
 const unlockedTypesList = document.querySelector('#unlocked-types-list')
 
-// Cards
-const movieCard = document.querySelector('#movie-card');
-const bookCard = document.querySelector('#book-card');
-const albumCard = document.querySelector('#album-card');
+// Grid Div for fortune cards, cols is set to number of current columns
+const cardGrid = document.querySelector('#card-grid')
+let cols = 3;
+
+// Card Backs
+const cardBacks = document.querySelectorAll('.flip-card-back');
 
 /* Lock Buttons On Cards
 *   On Click:
 *   - Toggle Card Border Colour between white and green
-*   - Toggle locked Card Class
 *   - Add or remove from Unlocked Type List Class List
 */
 lockButtons.forEach(button => {
     button.addEventListener('click', function (event) {
         const typeToLock = this.classList[0];
-        const cardToLock = document.querySelector(`#${typeToLock}-card`);
-        cardToLock.classList.toggle('locked');
+        const cardToLock = document.querySelectorAll(`.${typeToLock}-card`);
+        const deleteButtonToLock = document.querySelector(`.${typeToLock}#delete-btn`);
         unlockedTypesList.classList.toggle(`${typeToLock}`)
-        cardToLock.classList.toggle('border-emerald-500');
-        cardToLock.classList.toggle('border-white');
+        deleteButtonToLock.classList.toggle('bg-red-500')
+        deleteButtonToLock.classList.toggle('bg-gray-500')
+        deleteButtonToLock.classList.toggle('border-red-500')
+        deleteButtonToLock.classList.toggle('border-gray-500')
+        deleteButtonToLock.classList.toggle('hover:bg-red-700')
+        deleteButtonToLock.classList.toggle('hover:border-red-700')
+        deleteButtonToLock.disabled = !deleteButtonToLock.disabled;
+        cardToLock.forEach(side => {
+            side.classList.toggle('border-emerald-500');
+            side.classList.toggle('border-black');
+        })
     })
 });
 
@@ -55,8 +65,11 @@ deleteButtons.forEach(button => {
             Change Column number for cards
 */
 confirmDeleteButton.addEventListener('click', function (event) {
-    const cardToDelete = document.querySelector(`#${this.value}-card`);
+    const cardToDelete = document.querySelector(`#${this.value}-card-div`);
+    cols -= 1;
     cardToDelete.classList.toggle('hidden');
+    cardGrid.classList.toggle(`md:grid-cols-${cols}`);
+    cardGrid.classList.toggle(`md:grid-cols-${cols + 1}`);
     screenCover.classList.toggle('hidden');
 })
 
@@ -64,6 +77,20 @@ confirmDeleteButton.addEventListener('click', function (event) {
 cancelDeleteButton.addEventListener('click', function (event) {
     screenCover.classList.toggle('hidden');
 }); 
+
+cardBacks.forEach(card => {
+    card.addEventListener('mouseover', function(event) {
+        const popUpType = this.classList[0].replace('-card','');
+        const popUpShow = document.querySelector(`#${popUpType}-pop-up`);
+        popUpShow.classList.toggle('hidden');
+    })
+
+    card.addEventListener('mouseout', function (event) {
+        const popUpType = this.classList[0].replace('-card','')
+        const popUpHide = document.querySelector(`#${popUpType}-pop-up`);
+        popUpHide.classList.toggle('hidden');
+    })
+})
 
 
 // Create api route for refresh. Then a function 
@@ -77,10 +104,12 @@ let refresher = async () => {
 
         unlockedTypes.forEach(elem => {
             let card = document.getElementById(elem + "-card-div");
-
+            card.classList.toggle("animate-deal");
             card.style.visibility = "hidden";
 
-            media.push(card.querySelector("h4").textContent || "");
+            let popUp = document.getElementById(elem + "-pop-up");
+
+            media.push(popUp.querySelector("h4").textContent || "");
         });
 
         const response = await fetch('/refresh-data', {
@@ -98,28 +127,35 @@ let refresher = async () => {
             unlockedTypes.forEach(elem => {
 
                 let card = document.getElementById(elem + "-card-div");
-
                 let title = document.getElementById(elem + "-title");
-                title.innerText = recommendations[elem][0].title;
-
                 let image = document.getElementById(elem + "-image");
-                image.src = recommendations[elem][0].art;
-
                 let genres = document.getElementById(elem + "-genres");
-                genres.innerText = (recommendations[elem][0].genres.join(", "))
+                console.log(title)
+                if (recommendations[elem].length === 0) {
+                    title.innerText = `Sorry, there are no ${elem} in your future`;
+                    genres.innerText = "";
+                    image.src="";
+                    console.log(title, genres, image)
+                    if (elem === "albums") {
 
-                if (elem === "album") {
-
-                    let artist = document.getElementById(elem + "-artist");
-                    artist.innerText = recommendations[elem][0].artist;
-
+                        let artist = document.getElementById(elem + "-artist");
+                        artist.innerText = ""
+    
+                    } else {
+                        
+                        let description = document.getElementById(elem + "-description");
+                        description.innerText = "";
+    
+                    };
                 } else {
-                    
-                    let description = document.getElementById(elem + "-description");
-                    description.innerText = recommendations[elem][0]["plot" || "description"];
+                
 
-                };
+                title.innerText = recommendations[elem][0].title;
+                image.src = recommendations[elem][0].art;
+                genres.innerText = (recommendations[elem][0].genres.join(", "));
+            };
                 card.style.visibility = "visible";
+                card.classList.toggle("animate-deal");
             });
 
         })
