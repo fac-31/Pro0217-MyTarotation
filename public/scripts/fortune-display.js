@@ -100,12 +100,12 @@ let refresher = async () => {
                 let title = document.getElementById(elem + "-title");
                 let image = document.getElementById(elem + "-image");
                 let genres = document.getElementById(elem + "-genres");
-
+                console.log(title)
                 if (recommendations[elem].length === 0) {
                     title.innerText = `Sorry, there are no ${elem} in your future`;
                     genres.innerText = "";
                     image.src="";
-
+                    console.log(title, genres, image)
                     if (elem === "albums") {
 
                         let artist = document.getElementById(elem + "-artist");
@@ -117,8 +117,6 @@ let refresher = async () => {
                         description.innerText = "";
     
                     };
-
-                    return;
                 } else {
                 
 
