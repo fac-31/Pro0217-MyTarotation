@@ -20,7 +20,7 @@ export const getHomePage = async (req, res) => {
      Full Fortune Experience
   </a>
 
-  <a href="/random"
+  <a id="random-btn" href="/random"
      class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 text-yellow-100 font-semibold text-center border border-yellow-200  px-6 py-3 rounded-xl shadow-lg transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
     Express Fortune
   </a>
