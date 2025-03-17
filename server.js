@@ -103,8 +103,8 @@ app.use((req, res, next) => {
                      px-8 py-3 rounded-lg text-lg font-semibold 
                      shadow-md">Home</a>
             </nav>` : ""}
-            <div class="relative flex flex-col items-center justify-center w-full h-screen max-w-[700px] min-w-[550px] bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12">
-                 <div class="absolute left-0 top-0 h-full w-[10vw] flex items-center justify-center">
+            <div class="relative flex flex-col items-center justify-between w-full h-screen max-w-[700px] min-w-[550px] bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12">
+                 <div class="absolute left-0 top-0 h-full w-fit flex items-center justify-center">
                     <img src="/FortuneTellerImages/pngs/booth-side-l.png" class="h-full max-h-[90vh] md:max-h-[95vh]">
                 </div>
                 <div class="flex flex-col items-center w-full h-full max-w-lg">
@@ -115,7 +115,7 @@ app.use((req, res, next) => {
                         ${content}
                     </div>
                 </div>
-                 <div class="absolute right-0 top-0 h-full w-[10vw] flex items-center justify-center">
+                 <div class="absolute right-0 top-0 h-full w-fit flex items-center justify-center">
                     <img src="/FortuneTellerImages/pngs/booth-side-r.png" class="h-full max-h-[90vh] md:max-h-[95vh]">
                 </div>
             </div>
