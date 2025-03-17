@@ -24,7 +24,7 @@ export const generateCardLayout = async (recommendations) => {
                                     <img id="${type}-image" src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" 
                                             alt="${type} cover" class="w-32 h-32 object-scale-down rounded-md mb-4">
                                     <h4 id="${type}-title" class="font-semibold text-center text-lg mb-2">${item.title}</h4>
-                                    ${type === 'album' ? `
+                                    ${type === 'albums' ? `
                                         <p id="${type}-artist" class="text-md text-gray-600 mb-2">${item.artist}</p>
                                         <p id="${type}-genres" class="text-sm text-gray-500">Genres: ${item.genres.join(', ')}</p>
                                     ` : `

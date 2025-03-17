@@ -77,10 +77,9 @@ let refresher = async () => {
 
         unlockedTypes.forEach(elem => {
             let card = document.getElementById(elem + "-card-div");
-
+            card.classList.toggle("animate-deal");
             card.style.visibility = "hidden";
-
-            media.push(card.querySelector("h4").textContent || "");
+            media.push(card.querySelector("h4")?.textContent ?? "");
         });
 
         const response = await fetch('/refresh-data', {
@@ -98,28 +97,35 @@ let refresher = async () => {
             unlockedTypes.forEach(elem => {
 
                 let card = document.getElementById(elem + "-card-div");
-
                 let title = document.getElementById(elem + "-title");
-                title.innerText = recommendations[elem][0].title;
-
                 let image = document.getElementById(elem + "-image");
-                image.src = recommendations[elem][0].art;
-
                 let genres = document.getElementById(elem + "-genres");
-                genres.innerText = (recommendations[elem][0].genres.join(", "))
+                console.log(title)
+                if (recommendations[elem].length === 0) {
+                    title.innerText = `Sorry, there are no ${elem} in your future`;
+                    genres.innerText = "";
+                    image.src="";
+                    console.log(title, genres, image)
+                    if (elem === "albums") {
 
-                if (elem === "album") {
-
-                    let artist = document.getElementById(elem + "-artist");
-                    artist.innerText = recommendations[elem][0].artist;
-
+                        let artist = document.getElementById(elem + "-artist");
+                        artist.innerText = ""
+    
+                    } else {
+                        
+                        let description = document.getElementById(elem + "-description");
+                        description.innerText = "";
+    
+                    };
                 } else {
-                    
-                    let description = document.getElementById(elem + "-description");
-                    description.innerText = recommendations[elem][0]["plot" || "description"];
+                
 
-                };
+                title.innerText = recommendations[elem][0].title;
+                image.src = recommendations[elem][0].art;
+                genres.innerText = (recommendations[elem][0].genres.join(", "));
+            };
                 card.style.visibility = "visible";
+                card.classList.toggle("animate-deal");
             });
 
         })
