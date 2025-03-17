@@ -103,20 +103,20 @@ app.use((req, res, next) => {
                      px-8 py-3 rounded-lg text-lg font-semibold 
                      shadow-md">Home</a>
             </nav>` : ""}
-            <div class="flex justify-between w-1/2 max-w-[700px] h-fit bg-[#6b5124] rounded-lg">
-                <div class="w-12 h-fit flex items-center justify-center rounded-lg">
-                    <img src="/FortuneTellerImages/pngs/booth-side-l.png">
+            <div class="relative flex flex-col items-center justify-center w-full h-screen max-w-[700px] bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12">
+                 <div class="absolute left-0 top-0 h-full w-[10vw] flex items-center justify-center">
+                    <img src="/FortuneTellerImages/pngs/booth-side-l.png" class="h-full max-h-[90vh] md:max-h-[95vh]">
                 </div>
-                <div class="flex flex-col items-center mt-20">
-                    <div class="w-60 h-fit flex items-center justify-center border-4 border-solid border-black rounded-lg">
-                        <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img">
+                <div class="flex flex-col items-center w-full h-full max-w-lg">
+                    <div class="w-full max-w-[100px] md:max-w-[150px] items-center justify-center border-4 border-solid border-black rounded-lg">
+                        <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img" class="w-full h-auto">
                     </div>
                     <div class="flex flex-col items-center justify-start h-full w-full">
                         ${content}
                     </div>
                 </div>
-                <div class="w-12 h-fit flex items-center justify-center rounded-lg">
-                    <img src="/FortuneTellerImages/pngs/booth-side-r.png">
+                 <div class="absolute right-0 top-0 h-full w-[10vw] flex items-center justify-center">
+                    <img src="/FortuneTellerImages/pngs/booth-side-r.png" class="h-full max-h-[90vh] md:max-h-[95vh]">
                 </div>
             </div>
 
