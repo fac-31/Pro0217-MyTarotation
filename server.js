@@ -90,7 +90,7 @@ app.use((req, res, next) => {
       </style>
         </head>
       
-          <body class=" relative w-screen h-screen flex justify-center m-0 p-0 bg-[#3a0305]">
+          <body class=" relative w-screen h-screen flex justify-center items-center m-0 p-0 bg-[#3a0305]">
             <video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover z-[-1]">
             <source src="/backgroundImages/tent_video.mp4" type="video/mp4" />
             Your browser does not support the video tag.
@@ -103,7 +103,7 @@ app.use((req, res, next) => {
                      px-8 py-3 rounded-lg text-lg font-semibold 
                      shadow-md">Home</a>
             </nav>` : ""}
-            <div class="relative flex flex-col items-center justify-center w-full h-screen max-w-[700px] bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12">
+            <div class="relative flex flex-col items-center justify-center w-full h-screen max-w-[700px] min-w-[550px] bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12">
                  <div class="absolute left-0 top-0 h-full w-[10vw] flex items-center justify-center">
                     <img src="/FortuneTellerImages/pngs/booth-side-l.png" class="h-full max-h-[90vh] md:max-h-[95vh]">
                 </div>
