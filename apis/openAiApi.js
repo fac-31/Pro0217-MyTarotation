@@ -54,31 +54,32 @@ const recommendSchema = z.object({
 
 
 
-export async function getRecommendation(client, z, zodResponseFormat, userInput) {
-   
-    let { age, mood, interests } = userInput;
-    let warningMessage = "";
+export async function getRecommendation(client, z, zodResponseFormat, userInput, refreshInput=null, refreshType=null) {
+    let formattedInput;
+    let formattedRefreshInput;
+    if (userInput) {
+        let { age, mood, interests } = userInput;
+        formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. My interests are ${interests}.`;
 
-   
-
-    if (asdfjkl.default(mood)) {
-        console.warn("Detected gibberish mood. Using fallback.");
-        mood = "happy";
-        warningMessage += "Your mood input was unclear, so we assumed 'happy'. ";
-    }
-
-    if(asdfjkl.default(interests)) {
-        console.warn('"Detected gibberish interests. Using fallback."')
-        interests = interests = "Thriller by Michael Jackson, Inception, The Great Gatsby";
-        warningMessage += "Your interests input was unclear, so we used popular entertainment instead. ";
-    }
-
-
-   
-    // Format input for OpenAI
-    const formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. My interests are ${interests}.`;
+        if (asdfjkl.default(mood)) {
+            console.warn("Detected gibberish mood. Using fallback.");
+            mood = "happy";
+            warningMessage += "Your mood input was unclear, so we assumed 'happy'. ";
+        };
     
-
+        if(asdfjkl.default(interests)) {
+            console.warn('"Detected gibberish interests. Using fallback."')
+            interests = interests = "Thriller by Michael Jackson, Inception, The Great Gatsby";
+            warningMessage += "Your interests input was unclear, so we used popular entertainment instead. ";
+        };
+    } else if (refreshInput.length > 0) {
+        formattedInput = null;
+        formattedRefreshInput = `I am refreshing my recommendations. I am not interested in the following pieces of media; ${refreshInput}. 
+        Please recommend 1 each of the following types, ${refreshType}. The recommendations should follow the same type of genre and feel
+        of the pieces of media I didn't want.`;
+    };
+    let warningMessage = "";
+    console.log(formattedRefreshInput)
     try {
         // Make the request to OpenAI to get recommendations
         let response = await client.chat.completions.create({
@@ -90,7 +91,6 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
                     
                     You are an expert media critic. Based on the user's input, please recommend:
                     - 1 film
-                    - 1 TV show
                     - 1 book
                     - 1 music album
 
@@ -104,14 +104,16 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput)
                     - "down", "sad" → "Sad"
                     - "melancholic", "pensive" → "Reflective"
 
-                    If any information is not available, return null or an empty array [] for that field. Do not leave any field missing from the JSON structure. Do not recommend a piece of media that the user has mentioned.
+                    If any information is not available, return null or an empty array [] for that field. Alternatively, If they
+                    are refreshing their recommendations, return all as null except for their chosen type of media.
+                    Do not leave any field missing from the JSON structure. Do not recommend a piece of media that the user has mentioned.
                     Return the correct starsign if you are able to with the information provided, else return null. 
                    If gibberish was detected, add a note: "Your input was unclear, so we based recommendations on a 'happy' mood with popular entertainment." 
                     `,
                 },
                 {
                     role: "user",
-                    content: formattedInput,
+                    content: formattedInput || formattedRefreshInput,
                 },
             ],
             // Use the zodresponseformat & pass it the final schema with a title.
@@ -203,10 +205,10 @@ export async function matchMood(userInput) {
 }
 
 //right now we don't use req, but we will need to change it when we will implement recommendations based on user input
-export async function handleRecommendations(req, input) { 
+export async function handleRecommendations(req, input, refreshInput, refreshType) { 
   
     try {
-        let aiResponse = await getRecommendation(client, z, zodResponseFormat, input);
+        let aiResponse = await getRecommendation(client, z, zodResponseFormat, input, refreshInput, refreshType);
         if (!aiResponse) throw new Error("No AI response received");
 
         // console.log('AI Response:', aiResponse)

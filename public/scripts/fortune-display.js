@@ -3,6 +3,7 @@ const lockButtons = document.querySelectorAll('#lock-btn');
 const deleteButtons = document.querySelectorAll('#delete-btn');
 const cancelDeleteButton = document.querySelector('#cancel-delete-btn');
 const confirmDeleteButton = document.querySelector('#confirm-delete-btn');
+const refreshButton = document.getElementById("refresh");
 
 // Pop up to confirm recommendation delete and prevent clicking on main page
 const confirmDeletePopUp = document.querySelector('#confirm-delete');
@@ -62,12 +63,70 @@ confirmDeleteButton.addEventListener('click', function (event) {
 // On Click: Hide Confirm Deletion Pop Up
 cancelDeleteButton.addEventListener('click', function (event) {
     screenCover.classList.toggle('hidden');
-})
+}); 
 
-/**
- * > unlockedTypesList.classList
- * Gets array of media types that are not locked (as strings)
- */
-unlockedTypesList.classList.forEach(type => {
-    console.log(type);
-})
+
+// Create api route for refresh. Then a function 
+// to input this into the html. Check styling and done.
+let refresher = async () => {
+    try {
+
+        let unlockedTypes = [...unlockedTypesList.classList];
+
+        let media = [];
+
+        unlockedTypes.forEach(elem => {
+            let card = document.getElementById(elem + "-card-div");
+
+            card.style.visibility = "hidden";
+
+            media.push(card.querySelector("h4").textContent || "");
+        });
+
+        const response = await fetch('/refresh-data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                types: unlockedTypes,
+                titles: media
+        })
+        });
+
+        await response.json().then(data => {
+            let recommendations = data.recommendations;
+            console.log(recommendations)
+            unlockedTypes.forEach(elem => {
+
+                let card = document.getElementById(elem + "-card-div");
+
+                let title = document.getElementById(elem + "-title");
+                title.innerText = recommendations[elem][0].title;
+
+                let image = document.getElementById(elem + "-image");
+                image.src = recommendations[elem][0].art;
+
+                let genres = document.getElementById(elem + "-genres");
+                genres.innerText = (recommendations[elem][0].genres.join(", "))
+
+                if (elem === "album") {
+
+                    let artist = document.getElementById(elem + "-artist");
+                    artist.innerText = recommendations[elem][0].artist;
+
+                } else {
+                    
+                    let description = document.getElementById(elem + "-description");
+                    description.innerText = recommendations[elem][0]["plot" || "description"];
+
+                };
+                card.style.visibility = "visible";
+            });
+
+        })
+    } catch (error) {
+        console.error('Error fetching recommendations:', error);
+    }
+}
+
+// refresh button event listener
+refreshButton.addEventListener("click", refresher) 
