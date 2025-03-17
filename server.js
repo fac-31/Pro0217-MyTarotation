@@ -115,8 +115,8 @@ app.use((req, res, next) => {
                         ${content}
                     </div>
                 </div>
-                 <div class="absolute right-0 top-1/2 transform -translate-y-1/2 w-12 flex items-center justify-center">
-                    <img src="/FortuneTellerImages/pngs/booth-side-r.png" class="h-full max-h-40 md:max-h-60">
+                 <div class="absolute right-0 top-0 h-full w-[10vw] flex items-center justify-center">
+                    <img src="/FortuneTellerImages/pngs/booth-side-r.png" class="h-full max-h-[90vh] md:max-h-[95vh]">
                 </div>
             </div>
 
