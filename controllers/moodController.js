@@ -6,12 +6,31 @@ import { generateCardLayout } from "../utils/generateCardLayout.js";
 // Renders Mood Select Page
 export const getMoodPage = async (req,res) => {
     res.renderWithLayout(`
-        
-        <form class="flex flex-col items-center mt-6" action="/mood" method="get">
-            <label for="mood" class="text-black mb-2">Mood</label>
-            <input type="text" id="mood" name="mood" class="border border-black px-4 py-2 rounded-md" required>
-            <button id="submit-form" class="border border-green-600 text-green-600 px-6 py-3 rounded-lg text-lg mt-6">Get Fortune</button>
-        </form>
+        <div class="flex items-center justify-center mt-6">
+            <form 
+                action="/mood" 
+                method="get"
+                class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 
+                 border border-yellow-600 text-yellow-100
+                 rounded-xl shadow-xl p-6 w-11/12 max-w-2xl">
+                <h2 class="text-2xl font-bold mb-4 text-center">
+                How you doing?
+                </h2>
+                <div class = "mt-6">
+                    <input type="text" id="mood" name="mood" class="bg-purple-800 border border-yellow-500 text-yellow-100
+                            placeholder-yellow-300 rounded-md p-3
+                            focus:outline-none focus:ring-2 focus:ring-yellow-300
+                            w-full" required placeholder = "I'm feeling...">
+                </div>
+                <div class = "mt-6 flex justify-center">
+                    <button id="submit-form" class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
+                            border border-yellow-300 text-yellow-100 
+                            px-8 py-3 rounded-lg text-lg font-semibold 
+                            shadow-md transform transition-transform duration-300
+                            hover:-translate-y-1 hover:shadow-2xl">Get Fortune</button>
+                </div>
+            </form>
+        </div>
         <script src="./scripts/mood-select.js"></script>
     `, { title: "Fortune Teller - Mood", nav: true });
 }

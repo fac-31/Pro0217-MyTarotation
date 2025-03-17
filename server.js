@@ -92,7 +92,10 @@ app.use((req, res, next) => {
         <body class="w-screen h-screen bg-gray-100 flex justify-center m-0 p-0">
             ${nav ? `
             <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
-                <a href="/" class="text-green-600 border border-green-600 px-6 py-3 rounded-lg">Home</a>
+                <a href="/" class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
+                     border border-yellow-300 text-yellow-100 
+                     px-8 py-3 rounded-lg text-lg font-semibold 
+                     shadow-md">Home</a>
             </nav>` : ""}
             <div class="flex justify-between w-1/2 max-w-[700px] h-fit bg-[#5b3e0c] rounded-lg">
                 <div class="w-12 h-fit flex items-center justify-center rounded-lg">
