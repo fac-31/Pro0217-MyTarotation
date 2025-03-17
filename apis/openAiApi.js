@@ -47,19 +47,46 @@ const recommendSchema = z.object({
     starsign: z.string(),
     genres: z.array(z.string()).optional(),
     filmRecommendations: z.array(visualMedia),
-    tvRecommendations: z.array(visualMedia),
     bookRecommendations: z.array(writtenMedia),
     musicRecommendations: z.array(musicMedia)
 });
 
+const refreshSchema = z.object({
+    filmRecommendations: z.array(visualMedia),
+    bookRecommendations: z.array(writtenMedia),
+    musicRecommendations: z.array(musicMedia)
+})
 
 
 export async function getRecommendation(client, z, zodResponseFormat, userInput, refreshInput=null, refreshType=null) {
     let formattedInput;
-    let formattedRefreshInput;
+    let systemInput;
+    let schema;
     if (userInput) {
         let { age, mood, interests } = userInput;
         formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. My interests are ${interests}.`;
+        systemInput = `
+    You are an expert media critic. Based on the user's input, please recommend:
+    - 1 film
+    - 1 book
+    - 1 music album
+
+    The recommendations should be:
+    - Aligned with the user's mood (e.g., based on their emotional state).
+    - The mood should be a **single word** that describes their current emotional state (e.g., "reflective", "energetic", "melancholic").
+    - Each book recommendation should include an **ISBN code** to identify the specific edition of the book.
+
+    If the user's mood is expressed in an unconventional way (e.g., "meh", "blah"), map it to one of the predefined moods:
+    - "meh", "blah" → "Chilled"
+    - "down", "sad" → "Sad"
+    - "melancholic", "pensive" → "Reflective"
+
+    If any information is not available, return null or an empty array [] for that field.
+    Do not leave any field missing from the JSON structure. Do not recommend a piece of media that the user has mentioned.
+    Return the correct starsign if you are able to with the information provided, else return null. 
+   If gibberish was detected, add a note: "Your input was unclear, so we based recommendations on a 'happy' mood with popular entertainment." 
+    `;
+    schema = recommendSchema;
 
         if (asdfjkl.default(mood)) {
             console.warn("Detected gibberish mood. Using fallback.");
@@ -73,13 +100,16 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput,
             warningMessage += "Your interests input was unclear, so we used popular entertainment instead. ";
         };
     } else if (refreshInput.length > 0) {
-        formattedInput = null;
-        formattedRefreshInput = `I am refreshing my recommendations. I am not interested in the following pieces of media; ${refreshInput}. 
-        Please recommend 1 each of the following types, ${refreshType}. The recommendations should follow the same type of genre and feel
-        of the pieces of media I didn't want.`;
+        formattedInput = `I am refreshing my recommendations. I am not interested in the following pieces of media; ${refreshInput}. 
+        Please make sure to recommend media for the following types, ${refreshType}. The recommendations should follow the same 
+        type of genre and feel of the pieces of media I didn't want. I only want one recommendation per type of media`;
+        systemInput = `You are an expert media critic. You must provide a recommendation for each type of media based on the users
+        input. Suggest media that is similiar in nature, genre and feel to the items listed in their input. Only provide one recommendation
+        per type of media.`;
+    schema = refreshSchema;
     };
     let warningMessage = "";
-    console.log(formattedRefreshInput)
+console.log(systemInput, formattedInput)
     try {
         // Make the request to OpenAI to get recommendations
         let response = await client.chat.completions.create({
@@ -87,37 +117,15 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput,
             messages: [
                 {
                     role: "system",
-                    content: `
-                    
-                    You are an expert media critic. Based on the user's input, please recommend:
-                    - 1 film
-                    - 1 book
-                    - 1 music album
-
-                    The recommendations should be:
-                    - Aligned with the user's mood (e.g., based on their emotional state).
-                    - The mood should be a **single word** that describes their current emotional state (e.g., "reflective", "energetic", "melancholic").
-                    - Each book recommendation should include an **ISBN code** to identify the specific edition of the book.
-
-                    If the user's mood is expressed in an unconventional way (e.g., "meh", "blah"), map it to one of the predefined moods:
-                    - "meh", "blah" → "Chilled"
-                    - "down", "sad" → "Sad"
-                    - "melancholic", "pensive" → "Reflective"
-
-                    If any information is not available, return null or an empty array [] for that field. Alternatively, If they
-                    are refreshing their recommendations, return all as null except for their chosen type of media.
-                    Do not leave any field missing from the JSON structure. Do not recommend a piece of media that the user has mentioned.
-                    Return the correct starsign if you are able to with the information provided, else return null. 
-                   If gibberish was detected, add a note: "Your input was unclear, so we based recommendations on a 'happy' mood with popular entertainment." 
-                    `,
+                    content: systemInput,
                 },
                 {
                     role: "user",
-                    content: formattedInput || formattedRefreshInput,
+                    content: formattedInput,
                 },
             ],
             // Use the zodresponseformat & pass it the final schema with a title.
-            response_format: zodResponseFormat(recommendSchema, "recommendations"),
+            response_format: zodResponseFormat(schema, "recommendations"),
         });
 
         // Parse the raw AI response
@@ -132,7 +140,7 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput,
         }
 
         // Response validation via Zod schema
-        const result = recommendSchema.safeParse(parsedJSON);
+        const result = schema.safeParse(parsedJSON);
 
         if (!result.success) {
             console.error("Validation Error:", result.error);
