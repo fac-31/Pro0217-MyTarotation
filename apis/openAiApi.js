@@ -100,16 +100,18 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput,
             warningMessage += "Your interests input was unclear, so we used popular entertainment instead. ";
         };
     } else if (refreshInput.length > 0) {
-        formattedInput = `I am refreshing my recommendations. I am not interested in the following pieces of media; ${refreshInput}. 
+        formattedInput = `I am not interested in the following pieces of media; ${refreshInput}. 
         Please make sure to recommend media for the following types, ${refreshType}. The recommendations should follow the same 
-        type of genre and feel of the pieces of media I didn't want. I only want one recommendation per type of media`;
+        type of genre and feel of the pieces of media I didn't want. I only want one recommendation per type of media. If you recommend
+        a book, please provide an ISBN code.`;
         systemInput = `You are an expert media critic. You must provide a recommendation for each type of media based on the users
         input. Suggest media that is similiar in nature, genre and feel to the items listed in their input. Only provide one recommendation
-        per type of media.`;
+        per type of media. Make sure to provide an ISBN code for any written media`;
     schema = refreshSchema;
     };
+
     let warningMessage = "";
-console.log(systemInput, formattedInput)
+
     try {
         // Make the request to OpenAI to get recommendations
         let response = await client.chat.completions.create({
@@ -219,7 +221,7 @@ export async function handleRecommendations(req, input, refreshInput, refreshTyp
         let aiResponse = await getRecommendation(client, z, zodResponseFormat, input, refreshInput, refreshType);
         if (!aiResponse) throw new Error("No AI response received");
 
-        // console.log('AI Response:', aiResponse)
+        console.log('AI Response:', aiResponse)
         let books = aiResponse.bookRecommendations
         ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))
         : [];

@@ -103,20 +103,24 @@ let refresher = async () => {
 
                 if (recommendations[elem].length === 0) {
                     title.innerText = `Sorry, there are no ${elem} in your future`;
-                    console.log("No ai recieved")
+                    genres.innerText = "";
+                    image.src="";
+
+                    if (elem === "albums") {
+
+                        let artist = document.getElementById(elem + "-artist");
+                        artist.innerText = ""
+    
+                    } else {
+                        
+                        let description = document.getElementById(elem + "-description");
+                        description.innerText = "";
+    
+                    };
+
+                    return;
                 } else {
-                    console.log("ai response is valid")
-                if (elem === "albums") {
-
-                    let artist = document.getElementById(elem + "-artist");
-                    artist.innerText = recommendations[elem][0].artist;
-
-                } else {
-                    
-                    let description = document.getElementById(elem + "-description");
-                    description.innerText = recommendations[elem][0]["plot" || "description"];
-
-                };
+                
 
                 title.innerText = recommendations[elem][0].title;
                 image.src = recommendations[elem][0].art;
