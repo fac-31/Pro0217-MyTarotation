@@ -98,7 +98,7 @@ app.use((req, res, next) => {
 
             ${nav ? `
             <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
-                <a href="/" class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
+                <a href="/"  onclick="sessionStorage.setItem('homeClicked', 'true')" class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
                      border border-yellow-300 text-yellow-100 
                      px-8 py-3 rounded-lg text-lg font-semibold 
                      shadow-md">Home</a>

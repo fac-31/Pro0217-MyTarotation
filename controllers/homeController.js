@@ -62,6 +62,13 @@ export const getHomePage = async (req, res) => {
                 
                 let currentMessage = 0;
                 
+                if (sessionStorage.getItem("homeClicked")) {
+                    // Skip animation and show the final message
+                    greetingText.textContent = messages[messages.length - 1];
+                    buttonContainer.classList.remove("opacity-0"); // Show buttons immediately
+                    return;
+                }
+
                 // Show the initial message
                 greetingText.textContent = messages[currentMessage];
                 
