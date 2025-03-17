@@ -25,7 +25,7 @@ export const generateCardLayout = async (recommendations) => {
                         </div>
                         <div class="${type}-card flip-card-back flex flex-col justify-between border-4 border-solid border-black rounded-lg">
                             ${item ? `
-                                <div class="flex flex-col items-center h-full bg-cover" style="background-image: url(${item.art}); background-position: center;" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
+                                <div class="flex flex-col items-center h-full bg-cover" style="background-image: url(${item?.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}); background-position: center;" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
                                 </div>
                             ` : `<p class="text-gray-500 text-center">No ${type} found</p>`}
                         </div>
@@ -33,16 +33,16 @@ export const generateCardLayout = async (recommendations) => {
                 </div>
                 <div id="${type}-pop-up" class="fixed hidden end-40 w-1/4 min-w-[500px] inset-y-40 h-1/3 bg-white flex justify-between z-20 border-4 border-solid border-black rounded-lg">
                     <div class="grow-0">
-                        <img id="${type}-image" src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" alt="${type} cover" class="w-32 h-32 object-scale-down rounded-md mb-4">
+                        <img id="${type}-image" src="${item?.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" alt="${type} cover" class="w-32 h-32 object-scale-down rounded-md mb-4">
                     </div>
                     <div class="grow flex flex-col justify-around items-center">
-                        <h4 id="${type}-title" class="font-semibold text-center text-lg mb-2">${item.title}</h4>
+                        <h4 id="${type}-title" class="font-semibold text-center text-lg mb-2">${item?.title || `No ${type} found in your future.`}</h4>
                         ${type === 'album' ? `
                             <p id="${type}-artist" class="text-md text-gray-600 mb-2">${item.artist}</p>
                             <p id="${type}-genres" class="text-sm text-gray-500">Genres: ${item.genres.join(', ')}</p>
                         ` : `
-                            <p id="${type}-genres" class="text-sm text-gray-600 mb-2">Genres: ${item.genres.join(', ')}</p>
-                            <p id="${type}-description" class="text-sm text-gray-500 text-center max-h-32 overflow-y-auto">${item.plot || item.description || ''}</p>
+                            <p id="${type}-genres" class="text-sm text-gray-600 mb-2">Genres: ${item?.genres.join(', ')}</p>
+                            <p id="${type}-description" class="text-sm text-gray-500 text-center max-h-32 overflow-y-auto">${item.plot || item?.description || ''}</p>
                         `}
                     </div>
                 </div>
