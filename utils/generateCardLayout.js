@@ -4,12 +4,13 @@ import { randomImage } from "../utils/randomImage.js";
 // Shared card layout
 export const generateCardLayout = async (recommendations) => {
     const cards = [
-        { type: 'movie', item: recommendations.movies?.[0] },
-        { type: 'book', item: recommendations.books?.[0] },
-        { type: 'album', item: recommendations.albums?.[0] }
+        { type: 'movies', item: recommendations.movies?.[0] },
+        { type: 'books', item: recommendations.books?.[0] },
+        { type: 'albums', item: recommendations.albums?.[0] }
     ];
     let images = await randomImage();
     return `
+    <button id="refresh">Refresh</button>
         <div id="card-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }, i) => `
                 <div id="${type}-card-div" class="flip-card h-[225px] w-full min-w-[140px] opacity-0 animate-deal" >
@@ -25,7 +26,7 @@ export const generateCardLayout = async (recommendations) => {
                         <div class="${type}-card flip-card-back flex flex-col justify-between border-4 border-solid border-black rounded-lg">
                             ${item ? `
                                 <div class="flex flex-col items-center h-full bg-cover" style="background-image: url(${item.art}); background-position: center;" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
-                                    <!--img id="" src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" alt="${type} cover" class="h-100%"-->
+                                    <!--img id="${type}-image" src="${item.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" alt="${type} cover" class="h-100%"-->
                                 </div>
                             ` : `<p class="text-gray-500 text-center">No ${type} found</p>`}
                         </div>
@@ -38,17 +39,17 @@ export const generateCardLayout = async (recommendations) => {
                     <div class="grow flex flex-col justify-around items-center">
                         <h4 class="font-semibold text-center text-lg mb-2">${item.title}</h4>
                         ${type === 'album' ? `
-                            <p class="text-md text-gray-600 mb-2">${item.artist}</p>
-                            <p class="text-sm text-gray-500">Genres: ${item.genres.join(', ')}</p>
+                            <p id="${type}-artist" class="text-md text-gray-600 mb-2">${item.artist}</p>
+                            <p id="${type}-genres" class="text-sm text-gray-500">Genres: ${item.genres.join(', ')}</p>
                         ` : `
-                            <p class="text-sm text-gray-600 mb-2">Genres: ${item.genres.join(', ')}</p>
-                            <p class="text-sm text-gray-500 text-center max-h-32 overflow-y-auto">${item.plot || item.description || ''}</p>
+                            <p id="${type}-genres" class="text-sm text-gray-600 mb-2">Genres: ${item.genres.join(', ')}</p>
+                            <p id="${type}-description" class="text-sm text-gray-500 text-center max-h-32 overflow-y-auto">${item.plot || item.description || ''}</p>
                         `}
                     </div>
                 </div>
             `).join('')}
         </div>
-        <div id="unlocked-types-list" class="movie book album"></div>
+        <div id="unlocked-types-list" class="movies books albums"></div>
         <div id="screen-cover" class="hidden absolute w-screen h-screen bg-transparent">
             <div id="confirm-delete" class="absolute bg-white p-8">
                 <p>Confirm that you would like to delete this recommendation from your fortune</p>
@@ -91,3 +92,4 @@ export const generateCardLayout = async (recommendations) => {
         <script type="module" src="./scripts/fortune-display.js"></script>
     `;
 }
+
