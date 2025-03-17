@@ -107,7 +107,9 @@ let refresher = async () => {
 
             card.style.visibility = "hidden";
 
-            media.push(card.querySelector("h4").textContent || "");
+            let popUp = document.getElementById(elem + "-pop-up");
+
+            media.push(popUp.querySelector("h4").textContent || "");
         });
 
         const response = await fetch('/refresh-data', {
