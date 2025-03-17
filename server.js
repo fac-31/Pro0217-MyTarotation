@@ -91,10 +91,8 @@ app.use((req, res, next) => {
         </head>
       
           <body class=" relative w-screen h-screen flex justify-center m-0 p-0 bg-[#3a0305]">
-            <video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover z-[-1]">
-            <source src="/backgroundImages/tent_video.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-            </video>
+            <img src=/backgroundImages/tent.gif class="fixed top-0 left-0 w-full h-full object-cover z-[-1]" />
+
 
             ${nav ? `
             <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
