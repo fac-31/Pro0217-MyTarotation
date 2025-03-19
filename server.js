@@ -1,6 +1,34 @@
 import express from "express";
 import bodyParser from "body-parser";
 import "dotenv/config";
+
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from 'swagger-ui-express';
+
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Express API for MyTarotation',
+    version: '1.0.0',
+  },
+  servers: [
+    {
+      url: 'http://localhost:3000',
+      description: 'Development server',
+    },
+  ],
+};
+
+const options = {
+  swaggerDefinition,
+  // Paths to files containing OpenAPI definitions
+  apis: ['./routes/*.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+// import browserSync from "browser-sync"; 
+
+// const bs = browserSync.create();
 /* Imported here as an example as what happens when the functions are called. 
 You would normally call it in the routes folder to access data from the api endpoints. I think it can also be imported into
 the controllers. */ 
@@ -14,6 +42,9 @@ const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 const PORT = process.env.PORT || 3000;
+
+// Swagger API Documentation Setup
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Parse JSON bodies
 app.use(bodyParser.json());

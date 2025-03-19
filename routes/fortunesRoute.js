@@ -31,6 +31,30 @@ router.get("/mood/:mood?", async (req,res) => {
 router.get("/random", getRandomFortune);
 //router.post("/run-api", runAPI);
 router.get("/test",testRecs)
+
+/**
+ * @swagger
+ * /refresh-data:
+ *  post:
+ *      description: Refresh non locked recommendations
+ *      responses:
+ *          200:
+ *              description: Returns new Recommendations
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                           type: object
+ *                           properties:
+ *                              books:
+ *                                  type: object[]
+ *                                  description: Book Recommendations
+ *                                  example: ['Harry Potter']
+ *                              movies:
+ *                                  type: object[]
+ *                                  description: Movie Recommendations
+ *                                  example: ['Harry Potter']
+ *              
+ */
 router.post("/refresh-data", async (req, res) => {
     try {
         const {types, titles} = req.body;
