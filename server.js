@@ -1,6 +1,31 @@
 import express from "express";
 import bodyParser from "body-parser";
 import "dotenv/config";
+
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from 'swagger-ui-express';
+
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Express API for MyTarotation',
+    version: '1.0.0',
+  },
+  servers: [
+    {
+      url: 'http://localhost:3000',
+      description: 'Development server',
+    },
+  ],
+};
+
+const options = {
+  swaggerDefinition,
+  // Paths to files containing OpenAPI definitions
+  apis: ['./routes/*.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
 // import browserSync from "browser-sync"; 
 
 // const bs = browserSync.create();
@@ -15,6 +40,9 @@ retrieveItem("moods").then(data => (data))
 // App and PORT Setup
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Swagger API Documentation Setup
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Parse JSON bodies
 app.use(bodyParser.json());
