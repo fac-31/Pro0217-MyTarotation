@@ -10,7 +10,10 @@ export const generateCardLayout = async (recommendations) => {
     ];
     let images = await randomImage();
     return `
-    <button id="refresh">Refresh</button>
+    <button id="refresh" class="m-4 bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 text-yellow-100 font-semibold 
+    text-center border border-yellow-200 px-6 py-3 rounded-xl shadow-lg transform transition-transform duration-300 
+    hover:-translate-y-1 hover:shadow-2xl">
+    Refresh</button>
         <div id="card-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }, i) => `
                 <div id="${type}-card-div" class="flip-card h-[225px] w-full min-w-[140px] opacity-0 animate-deal" >
@@ -25,7 +28,7 @@ export const generateCardLayout = async (recommendations) => {
                         </div>
                         <div class="${type}-card flip-card-back flex flex-col justify-between border-4 border-solid border-black rounded-lg">
                             ${item ? `
-                                <div class="flex flex-col items-center h-full bg-cover" style="background-image: url(${item?.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}); background-position: center;" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
+                                <div id="${type}-image-main" class="flex flex-col items-center h-full bg-cover" style="background-image: url(${item?.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}); background-position: center;" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
                                 </div>
                             ` : `<p class="text-gray-500 text-center">No ${type} found</p>`}
                         </div>
@@ -33,7 +36,7 @@ export const generateCardLayout = async (recommendations) => {
                 </div>
                 <div id="${type}-pop-up" class="fixed hidden end-40 w-1/4 min-w-[500px] inset-y-40 h-1/3 bg-white flex justify-between z-20 border-4 border-solid border-black rounded-lg">
                     <div class="grow-0">
-                        <img id="${type}-image" src="${item?.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" alt="${type} cover" class="w-32 h-32 object-scale-down rounded-md mb-4">
+                        <img id="${type}-image-pop" src="${item?.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" alt="${type} cover" class="w-32 h-32 object-scale-down rounded-md mb-4">
                     </div>
                     <div class="grow flex flex-col justify-around items-center">
                         <h4 id="${type}-title" class="font-semibold text-center text-lg mb-2">${item?.title || `No ${type} found in your future.`}</h4>
