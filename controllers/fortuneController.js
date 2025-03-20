@@ -198,6 +198,8 @@ export const postNewFortune = async (req, res) => {
             return res.renderWithLayout(`<p class="text-red-500">No recommendations found.</p>`, { title: "Recommendations" });
         }
 
+  
+
         res.renderWithLayout(await generateCardLayout(recommendations), 
             { title: "Your Fortune", nav: true, fortuneTellerImg: 'success' }
         );

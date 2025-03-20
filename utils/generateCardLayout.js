@@ -6,34 +6,41 @@ export const generateCardLayout = async (recommendations) => {
     const cards = [
         { type: 'movies', item: recommendations.movies?.[0] },
         { type: 'books', item: recommendations.books?.[0] },
-        { type: 'albums', item: recommendations.albums?.[0] }
+        { type: 'albums', item: recommendations.albums?.[0] },
+      
     ];
+
+
+
     let images = await randomImage();
     return `
-    <button id="refresh" class="m-4 bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 text-yellow-100 font-semibold 
-    text-center border border-yellow-200 px-6 py-3 rounded-xl shadow-lg transform transition-transform duration-300 
-    hover:-translate-y-1 hover:shadow-2xl">
-    Refresh your recommendations</button>
-        <div id="card-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto p-4">
-            ${cards.map(({ type, item }, i) => `
-                <div id="${type}-card-div" class="flip-card h-[225px] w-full min-w-[140px] opacity-0 animate-deal" >
-                    <h1 class="text-center font-bold">${type.toUpperCase()}</h1>
-                    <div id="${type}-card" class="flip-card-inner">
-                        <div class="flex justify-between w-full fixed -top-6">
-                            <button id="lock-btn" type="button" class="${type} bg-emerald-500 border-2 border-solid border-emerald-500 rounded-sm p-4 hover:bg-emerald-600 hover:border-emerald-600"></button>
-                            <button id="delete-btn"  type="button" class="${type} bg-red-500 border-2 border-solid border-red-500 rounded-sm p-4 hover:bg-red-700 hover:border-red-700"></button>
-                        </div>
-                        <div class="${type}-card flip-card-front shadow-lg overflow-hidden border-4 border-solid border-black rounded-lg" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
-                            <img src="/Images/${images[i]}" alt="Tarot Card Back" class="w-full h-full object-cover">
-                        </div>
-                        <div class="${type}-card flip-card-back flex flex-col justify-between border-4 border-solid border-black rounded-lg">
-                            ${item ? `
-                                <div id="${type}-image-main" class="flex flex-col items-center h-full bg-cover" style="background-image: url(${item?.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}); background-position: center;" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
-                                </div>
-                            ` : `<p class="text-gray-500 text-center">No ${type} found</p>`}
-                        </div>
-                    </div>
-                </div>
+    ${recommendations.warning ? `<div class="text-red-500 font-semibold text-center mb-4">${recommendations.warning}</div>` : ''}
+    <button id="refresh">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+</svg>
+</button>
+    <div id="card-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 container mx-auto p-4" style="grid-auto-rows: minmax(270px, auto); grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+      ${cards.map(({ type, item }, i) => `
+          <div id="${type}-card-div" class="flip-card w-full opacity-0 animate-deal">
+              <h1 class="text-center font-bold">${type.toUpperCase()}</h1>
+              <div id="${type}-card" class="flip-card-inner">
+                  <div class="flex justify-between w-full fixed -top-6">
+                      <button id="lock-btn" type="button" class="${type} bg-emerald-500 border-2 border-solid border-emerald-500 rounded-sm p-4 hover:bg-emerald-600 hover:border-emerald-600"></button>
+                      <button id="delete-btn" type="button" class="${type} bg-red-500 border-2 border-solid border-red-500 rounded-sm p-4 hover:bg-red-700 hover:border-red-700"></button>
+                  </div>
+                  <div class="${type}-card flip-card-front shadow-lg overflow-hidden border-4 border-solid border-black rounded-lg" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
+                      <img src="/Images/${images[i]}" alt="Tarot Card Back" class="w-full h-full object-cover">
+                  </div>
+                  <div class="${type}-card flip-card-back flex flex-col justify-between border-4 border-solid border-black rounded-lg">
+                      ${item ? `
+                          <div id="${type}-image-main" class="flex flex-col items-center h-full bg-cover" style="background-image: url(${item?.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}); background-position: center;" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
+                          </div>
+                      ` : `<p class="text-gray-500 text-center">No ${type} found</p>`}
+                  </div>
+              </div>
+          </div>
+    
                 <div id="${type}-pop-up" class="fixed hidden end-40 w-1/4 min-w-[500px] inset-y-40 h-1/3 bg-white flex justify-between z-20 border-4 border-solid border-black rounded-lg">
                     <div class="grow-0">
                         <img id="${type}-image-pop" src="${item?.art || `https://via.placeholder.com/100x150?text=No+${type}+Image`}" alt="${type} cover" class="w-32 h-32 object-scale-down rounded-md mb-4">
