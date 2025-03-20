@@ -39,6 +39,8 @@ retrieveItem("moods").then(data => (data))
 */
 // App and PORT Setup
 const app = express();
+app.use(express.json());
+app.use(express.static("public"));
 const PORT = process.env.PORT || 3000;
 
 // Swagger API Documentation Setup
@@ -57,7 +59,15 @@ import { randomImage } from "./utils/randomImage.js";
 // Middleware for shared layout
 app.use((req, res, next) => {
   res.renderWithLayout = (content, options = {}) => {
-    const { title = "Fortune Teller", nav = false, fortuneTellerImg = 'default' } = options;
+    const { title = "Fortune Teller", nav = false, fortuneTellerImg = 'default', useVideoBackground = false } = options;
+
+    const backgroundStyle = useVideoBackground
+    ?
+     `<video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover z-[-1]">
+       <source src="/backgroundImages/tent_video.mp4" type="video/mp4" />
+       Your browser does not support the video tag.
+     </video>`
+     : `<div class="fixed top-0 left-0 w-full h-full bg-[url('/Images/static-bg.png')] bg-no-repeat bg-center bg-cover z-[-1]"></div>`;
 
     const html = `
       <!DOCTYPE html>
@@ -116,40 +126,46 @@ app.use((req, res, next) => {
     transform: rotateY(180deg);
   }
       </style>
-        </head>
-      
-          <body class=" relative w-screen h-screen flex justify-center items-center m-0 p-0 bg-[#3a0305]">
-            <video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover z-[-1]">
-            <source src="/backgroundImages/tent_video.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-            </video>
+       
+  <script>
+    const fortuneTellerImg = 'default'; // Adjust as needed
+  </script>
+</head>
 
-            ${nav ? `
-            <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
-                <a href="/"  onclick="sessionStorage.setItem('homeClicked', 'true')" class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
-                     border border-yellow-300 text-yellow-100 
-                     px-8 py-3 rounded-lg text-lg font-semibold 
-                     shadow-md">Home</a>
-            </nav>` : ""}
-            <div class="relative flex flex-col items-center justify-between w-full h-screen max-w-[700px] min-w-[550px] bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12">
-                 <div class="absolute left-0 top-0 h-full w-fit flex items-center justify-center">
-                    <img src="/FortuneTellerImages/pngs/booth-side-l.png" class="h-full max-h-[90vh] md:max-h-[95vh]">
-                </div>
-                <div class="flex flex-col items-center w-full h-full max-w-lg">
-                    <div class="w-full max-w-[100px] md:max-w-[150px] items-center justify-center border-4 border-solid border-black rounded-lg">
-                        <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="" id="fortuneteller-img" class="w-full h-auto">
-                    </div>
-                    <div class="flex flex-col items-center justify-start h-full w-full">
-                        ${content}
-                    </div>
-                </div>
-                 <div class="absolute right-0 top-0 h-full w-fit flex items-center justify-center">
-                    <img src="/FortuneTellerImages/pngs/booth-side-r.png" class="h-full max-h-[90vh] md:max-h-[95vh]">
-                </div>
-            </div>
 
-        </body>
-        </html>
+<body class="relative w-screen h-screen flex flex-col items-center m-0 p-0 overflow-auto mb-10">
+${backgroundStyle}
+  ${nav ? `
+  <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
+    <a href="/" onclick="sessionStorage.setItem('homeClicked', 'true')" class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
+         border border-yellow-300 text-yellow-100 
+         px-8 py-3 rounded-lg text-lg font-semibold 
+         shadow-md">Home</a>
+  </nav>` : ""}
+
+  <!-- Fortune Teller Section -->
+  <div class="relative flex flex-col items-center justify-center bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12" style="width: calc(100px + 30vw); height: calc(150px + 30vh); max-width: 700px; min-width: 350px; margin-top: 8rem; margin-bottom: 2rem;">
+    <!-- Left Booth Side -->
+    <div class="absolute left-0 top-0 h-full w-fit flex items-center justify-center">
+      <img src="/FortuneTellerImages/pngs/booth-side-l.png" class="h-full max-h-[90vh] md:max-h-[95vh]" alt="Left Booth Side" />
+    </div>
+
+    <!-- Fortune Teller Image -->
+    <div class="w-full max-w-[100px] md:max-w-[150px] border-4 border-solid border-black rounded-lg">
+      <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="Fortune Teller" id="fortuneteller-img" class="w-full h-auto" />
+    </div>
+
+    <!-- Right Booth Side -->
+    <div class="absolute right-0 top-0 h-full w-fit flex items-center justify-center">
+      <img src="/FortuneTellerImages/pngs/booth-side-r.png" class="h-full max-h-[90vh] md:max-h-[95vh]" alt="Right Booth Side" />
+    </div>
+  </div>
+
+  <!-- Content Section Below Booth -->
+<div class="flex flex-col items-center justify-start bg-[#6b5124] border-l-4 border-r-4 border-yellow-300 shadow-xl rounded-lg p-6 md:p-8 lg:p-12 " style="width: calc(100px + 30vw); max-width: 700px; min-width: 50px;">    ${content}
+  </div>
+</body>
+
       `;
 
     res.send(html);
@@ -157,8 +173,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
-app.use(express.static("public"));
 
 // Use Routers
 app.use("/", fortuneRouter);
@@ -178,8 +192,3 @@ app.listen(PORT, () => {
   console.log(`Server is listening at http://localhost:${PORT}`);
 });
 
-// bs.init({
-//   proxy: `http://localhost:${PORT}`,
-//   files: ['public/*/.*'], // Watch for changes in the 'public' folder
-//   reloadDelay: 50,
-// });

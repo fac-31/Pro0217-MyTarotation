@@ -62,6 +62,8 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput,
     let formattedInput;
     let systemInput;
     let schema;
+
+    let warningMessage = "";
     if (userInput) {
         let { age, mood, interests } = userInput;
         formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. My interests are ${interests}.`;
@@ -88,6 +90,7 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput,
     `;
     schema = recommendSchema;
 
+
         if (asdfjkl.default(mood)) {
             console.warn("Detected gibberish mood. Using fallback.");
             mood = "happy";
@@ -96,8 +99,8 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput,
     
         if(asdfjkl.default(interests)) {
             console.warn('"Detected gibberish interests. Using fallback."')
-            interests = interests = "Thriller by Michael Jackson, Inception, The Great Gatsby";
-            warningMessage += "Your interests input was unclear, so we used popular entertainment instead. ";
+            interests =  "Thriller by Michael Jackson, Inception, The Great Gatsby";
+            warningMessage += "Your interests input was unclear, so we used 'Thriller by Michael Jackson, Inception, The Great Gatsby' instead. ";
         };
     } else if (refreshInput.length > 0) {
         formattedInput = `I am not interested in the following pieces of media; ${refreshInput}. 
@@ -110,7 +113,6 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput,
     schema = refreshSchema;
     };
 
-    let warningMessage = "";
 
     try {
         // Make the request to OpenAI to get recommendations

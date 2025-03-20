@@ -113,5 +113,5 @@ export const getHomePage = async (req, res) => {
                 animateGreetings();
             };
         </script>
-    `, { title: "Fortune Teller Home" });
+    `, { title: "Fortune Teller Home", useVideoBackground: true});
 };
