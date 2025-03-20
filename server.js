@@ -1,6 +1,31 @@
 import express from "express";
 import bodyParser from "body-parser";
 import "dotenv/config";
+
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from 'swagger-ui-express';
+
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Express API for MyTarotation',
+    version: '1.0.0',
+  },
+  servers: [
+    {
+      url: 'http://localhost:3000',
+      description: 'Development server',
+    },
+  ],
+};
+
+const options = {
+  swaggerDefinition,
+  // Paths to files containing OpenAPI definitions
+  apis: ['./routes/*.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
 // import browserSync from "browser-sync"; 
 
 // const bs = browserSync.create();
@@ -15,6 +40,9 @@ retrieveItem("moods").then(data => (data))
 // App and PORT Setup
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Swagger API Documentation Setup
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Parse JSON bodies
 app.use(bodyParser.json());
@@ -98,7 +126,7 @@ app.use((req, res, next) => {
 
             ${nav ? `
             <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
-                <a href="/" class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
+                <a href="/"  onclick="sessionStorage.setItem('homeClicked', 'true')" class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
                      border border-yellow-300 text-yellow-100 
                      px-8 py-3 rounded-lg text-lg font-semibold 
                      shadow-md">Home</a>
