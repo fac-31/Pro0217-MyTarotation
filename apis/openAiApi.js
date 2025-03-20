@@ -105,8 +105,8 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput,
     } else if (refreshInput.length > 0) {
         formattedInput = `I am not interested in the following pieces of media; ${refreshInput}. 
         Please make sure to recommend media for the following types, ${refreshType}. The recommendations should follow the same 
-        type of genre and feel of the pieces of media I didn't want. I only want one recommendation per type of media. If you recommend
-        a book, please provide an ISBN code.`;
+        type of genre and feel of the pieces of media I didn't want. I only want one recommendation per type of media and it cannot be
+        one I have mentioned. If you recommend a book, please provide an ISBN code.`;
         systemInput = `You are an expert media critic. You must provide a recommendation for each type of media based on the users
         input. Suggest media that is similiar in nature, genre and feel to the items listed in their input. Only provide one recommendation
         per type of media. Make sure to provide an ISBN code for any written media`;

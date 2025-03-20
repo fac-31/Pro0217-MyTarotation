@@ -127,15 +127,24 @@ let refresher = async () => {
             unlockedTypes.forEach(elem => {
 
                 let card = document.getElementById(elem + "-card-div");
+
                 let title = document.getElementById(elem + "-title");
-                let image = document.getElementById(elem + "-image");
+
+                let imageMain = document.getElementById(elem + "-image-main");
+
+                let imagePop = document.getElementById(elem + "-image-pop");
+
                 let genres = document.getElementById(elem + "-genres");
-                console.log(title)
+                console.log(imageMain.style.backgroundImage)
                 if (recommendations[elem].length === 0) {
                     title.innerText = `Sorry, there are no ${elem} in your future`;
+
                     genres.innerText = "";
-                    image.src="";
-                    console.log(title, genres, image)
+
+                    imageMain.style.backgroundImage = `url(https://via.placeholder.com/100x150?text=No+${elem}+Image})`;
+
+                    imagePop.src = "https://via.placeholder.com/100x150?text=No+${elem}+Image";
+
                     if (elem === "albums") {
 
                         let artist = document.getElementById(elem + "-artist");
@@ -149,12 +158,16 @@ let refresher = async () => {
                     };
                 } else {
                 
-
                 title.innerText = recommendations[elem][0].title;
-                image.src = recommendations[elem][0].art;
+
+                imageMain.style.backgroundImage = `url(${recommendations[elem][0].art ?? `https://via.placeholder.com/100x150?text=No+${elem}+Image`})`;
+                
+                imagePop.src = recommendations[elem][0].art ?? `https://via.placeholder.com/100x150?text=No+${elem}+Image}`;
+
                 genres.innerText = (recommendations[elem][0].genres.join(", "));
             };
                 card.style.visibility = "visible";
+
                 card.classList.toggle("animate-deal");
             });
 
