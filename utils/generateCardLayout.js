@@ -13,7 +13,7 @@ export const generateCardLayout = async (recommendations) => {
     <button id="refresh" class="m-4 bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700 text-yellow-100 font-semibold 
     text-center border border-yellow-200 px-6 py-3 rounded-xl shadow-lg transform transition-transform duration-300 
     hover:-translate-y-1 hover:shadow-2xl">
-    Refresh</button>
+    Refresh your recommendations</button>
         <div id="card-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto p-4">
             ${cards.map(({ type, item }, i) => `
                 <div id="${type}-card-div" class="flip-card h-[225px] w-full min-w-[140px] opacity-0 animate-deal" >
