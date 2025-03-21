@@ -15,7 +15,9 @@ import {
 } from "../controllers/moodController.js";
 import { testRecs } from "../controllers/testController.js";
 
- import { handleRecommendations } from '../apis/openAiApi.js';
+import { handleRecommendations } from '../apis/openAiApi.js';
+
+import { retrieveUnique, saveFortune } from '../storage.js';
 
 // Define different routes
 router.get("/", getHomePage);
@@ -31,7 +33,16 @@ router.get("/mood/:mood?", async (req,res) => {
 router.get("/random", getRandomFortune);
 //router.post("/run-api", runAPI);
 router.get("/test",testRecs)
+router.get('/get-user/:_id', async (req, res) => {
+    const { _id } = req.params;
+    const userData = await retrieveUnique(_id);
 
+    if (!userData) {
+        return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(userData);
+});
 /**
  * @swagger
  * /refresh-data:
@@ -70,6 +81,15 @@ router.post("/refresh-data", async (req, res) => {
         res.status(500).json({ error: "Internal server error" })
     }
 })
+router.post('/save-user', async (req, res) => {
+    const data = req.body;
+    if (!uuid || !data) {
+        return res.status(400).json({ error: "Missing UUID or data" });
+    }
+    
+    await saveFortune(data);
+    res.json({ message: "User data saved successfully" });
+});
 
 // Export router
 export { router }

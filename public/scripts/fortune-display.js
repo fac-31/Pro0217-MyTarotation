@@ -1,9 +1,12 @@
+import { v4 as uuidv4 } from "https://jspm.dev/uuid"
+
 // Lock, Delete and Pop Up Buttons
 const lockButtons = document.querySelectorAll('#lock-btn');
 const deleteButtons = document.querySelectorAll('#delete-btn');
 const cancelDeleteButton = document.querySelector('#cancel-delete-btn');
 const confirmDeleteButton = document.querySelector('#confirm-delete-btn');
 const refreshButton = document.getElementById("refresh");
+const _id = document.getElementById("fortune-display").getAttribute("uuid")
 
 // Pop up to confirm recommendation delete and prevent clicking on main page
 const confirmDeletePopUp = document.querySelector('#confirm-delete');
@@ -24,6 +27,28 @@ const cardBacks = document.querySelectorAll('.flip-card-back');
 *   - Toggle Card Border Colour between white and green
 *   - Add or remove from Unlocked Type List Class List
 */
+async function fetchUserData(_id) {
+    const response = await fetch(`/get-user/${_id}`);
+    const data = await response.json();
+    
+    if (response.ok) {
+        console.log("User Data:", data);
+    } else {
+        console.error("Error:", data.error);
+    }
+}
+
+async function saveUserData(userData) {
+    const response = await fetch('/save-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({data: userData })
+    });
+
+    const result = await response.json();
+    console.log(result);
+}
+
 lockButtons.forEach(button => {
     button.addEventListener('click', function (event) {
         const typeToLock = this.classList[0];
@@ -121,9 +146,9 @@ let refresher = async () => {
         })
         });
 
-        await response.json().then(data => {
+        await response.json().then(async (data) => {
             let recommendations = data.recommendations;
-            console.log(recommendations)
+            console.log(await fetchUserData(_id))
             unlockedTypes.forEach(elem => {
 
                 let card = document.getElementById(elem + "-card-div");
@@ -135,7 +160,7 @@ let refresher = async () => {
                 let imagePop = document.getElementById(elem + "-image-pop");
 
                 let genres = document.getElementById(elem + "-genres");
-                console.log(imageMain.style.backgroundImage)
+
                 if (recommendations[elem].length === 0) {
                     title.innerText = `Sorry, there are no ${elem} in your future`;
 
@@ -179,3 +204,18 @@ let refresher = async () => {
 
 // refresh button event listener
 refreshButton.addEventListener("click", refresher) 
+
+/*
+Change all relevant storage functions to take uuid;
+Import uuid to relevant scripts / function 
+Relevant routes are;
+New fortune - Create uuid and store on form sumbit. Store uuid in page script if possible else local or session storage.
+On delete access storage with uuid and delete relevant. On refresh use uuid to update fortune.
+
+Random fortune - Call random fortune func. Create uuid. Only save on delete or refresh. Null for most data outside of fortune but mood
+stays the same. 
+
+Select mood - Call mood func. Create uuid. Same as Random
+
+Common mood - Cal mood func. Create uuid. Same as Random
+*/

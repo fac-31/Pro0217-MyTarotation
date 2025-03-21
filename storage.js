@@ -135,3 +135,16 @@ export async function retrieveItem(item) {
         console.log("Error getting item :" + error.message)
     };
 };
+
+export async function retrieveUnique(_id) {
+    try {
+        let fortunes = await persist.getItem("fortunes");
+
+        let unique = fortunes.filter(x => x._id == _id);
+
+        return unique;
+
+    } catch (error) {
+        console.log("Error getting unique fortune :" + error.message)
+    };
+}

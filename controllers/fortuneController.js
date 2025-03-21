@@ -200,7 +200,7 @@ export const postNewFortune = async (req, res) => {
 
   
 
-        res.renderWithLayout(await generateCardLayout(recommendations), 
+        res.renderWithLayout(await generateCardLayout(recommendations, _id), 
             { title: "Your Fortune", nav: true, fortuneTellerImg: 'success' }
         );
     

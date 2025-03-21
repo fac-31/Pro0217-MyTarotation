@@ -2,7 +2,7 @@ import { randomImage } from "../utils/randomImage.js";
 
 
 // Shared card layout
-export const generateCardLayout = async (recommendations) => {
+export const generateCardLayout = async (recommendations, _id) => {
     const cards = [
         { type: 'movies', item: recommendations.movies?.[0] },
         { type: 'books', item: recommendations.books?.[0] },
@@ -107,7 +107,7 @@ export const generateCardLayout = async (recommendations) => {
                 display: none;
             }
         </style>
-        <script type="module" src="./scripts/fortune-display.js"></script>
+        <script id="fortune-display" type="module" uuid=${_id} src="./scripts/fortune-display.js"></script>
     `;
 }
 
