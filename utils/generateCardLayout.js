@@ -4,12 +4,11 @@ import { randomImage } from "../utils/randomImage.js";
 // Shared card layout
 export const generateCardLayout = async (recommendations, _id) => {
     const cards = [
-        { type: 'movies', item: recommendations.movies?.[0] },
-        { type: 'books', item: recommendations.books?.[0] },
-        { type: 'albums', item: recommendations.albums?.[0] },
+        { type: 'movies', item: recommendations.movies?.[0] ?? recommendations.movies},
+        { type: 'books', item: recommendations.books?.[0] ?? recommendations.books},
+        { type: 'albums', item: recommendations.albums?.[0] ?? recommendations.albums},
       
     ];
-
 
 
     let images = await randomImage();

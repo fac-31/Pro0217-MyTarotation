@@ -28,25 +28,42 @@ const cardBacks = document.querySelectorAll('.flip-card-back');
 *   - Add or remove from Unlocked Type List Class List
 */
 async function fetchUserData(_id) {
-    const response = await fetch(`/get-user/${_id}`);
-    const data = await response.json();
+    try {
+        const response = await fetch(`/get-user/${_id}`);
     
-    if (response.ok) {
-        console.log("User Data:", data);
-    } else {
-        console.error("Error:", data.error);
-    }
-}
+        if (!response.ok) {
+            console.log(`Http error- Status: ${response.status}`);
+        };
+
+        const data = await response.json();
+
+        console.log("User-data: ", data);
+
+        return data;
+    } catch (error) {
+            console.error("Error getting data: ", error);
+        };
+};
 
 async function saveUserData(userData) {
-    const response = await fetch('/save-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({data: userData })
-    });
+    try {
+        const response = await fetch('/save-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: userData })
+        });
 
-    const result = await response.json();
-    console.log(result);
+        if (!response.ok) {
+            throw new Error(`HTTP error - Status: ${response.status}`);
+        };
+
+        const result = await response.json();
+
+        console.log("Server Response:", result);
+    } catch (error) {
+
+        console.error("Error saving user data:", error);
+    }
 }
 
 lockButtons.forEach(button => {
@@ -148,8 +165,20 @@ let refresher = async () => {
 
         await response.json().then(async (data) => {
             let recommendations = data.recommendations;
-            console.log(await fetchUserData(_id))
+            let prevRecommendations = await fetchUserData(_id);
+            let fortune = {
+                "_id": _id,
+                "name": "",
+                "starsign": "",
+                "mood": "",
+                "books": prevRecommendations.book,
+                "films": prevRecommendations.film,
+                "albums":  prevRecommendations.album            
+            }
+            console.log(recommendations)
             unlockedTypes.forEach(elem => {
+
+                fortune[elem] = recommendations[elem]?.[0];
 
                 let card = document.getElementById(elem + "-card-div");
 
@@ -195,7 +224,8 @@ let refresher = async () => {
 
                 card.classList.toggle("animate-deal");
             });
-
+            
+            await saveUserData(fortune)
         })
     } catch (error) {
         console.error('Error fetching recommendations:', error);

@@ -181,9 +181,9 @@ export const postNewFortune = async (req, res) => {
             name,
             starsign: starsign || starsignFromDoB, 
             mood: recommendations.mood,
-            book: recommendations.books[0],
-            movie: recommendations.movies[0],
-            album: recommendations.albums[0]
+            books: recommendations.books[0],
+            movies: recommendations.movies[0],
+            albums: recommendations.albums[0]
         };
 
         await saveFortune(newFortune);
