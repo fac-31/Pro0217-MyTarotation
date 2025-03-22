@@ -15,6 +15,18 @@
     - Pre-Coffee Fortune - choose a pre-defined mood
     - Everyone's feeling 'X' today - the most common mood.
 
+  ## Design Decisions 💡 
+
+We intentionally built this app with constraints — no middleware and no database — to better understand the core of Node.js and Express.
+
+- Local Persistence with node-persist 🗂️
+  - By storing fortunes directly on the server, we increased the chances of matching a mood to a fortune and reduced the likelihood of errors on key routes.
+
+- Custom HTML Rendering Without a Templating Engine 🛠️
+  - We recreated basic React-like rendering using a custom renderWithLayout function.
+  - Instead of relying on engines like EJS or Handlebars, we wrapped our dynamic content in a reusable HTML layout using pure template literals.
+  - This gave us full control over styling, structure, and animations — including dynamic backgrounds, navigation bars, and tarot booth visuals — all handled server-side
+
   ##  Tech Stack 🛠️
 
   - **Backend**: Node.js with Express
@@ -28,39 +40,25 @@
   - **Testing**: Cypress
   - **API Documentation**: Swagger
 
+## Getting Started 🚀
 
-  ## Design Decisions 💡 
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/Pro0217-MyTarotation.git
+```
 
-We intentionally built this app with constraints — no middleware and no database — to better understand the core of Node.js and Express.
+2. Install dependencies:
+```bash
+npm install
+```
 
-- Local Persistence with node-persist 🗂️
-  - By storing fortunes directly on the server, we increased the chances of matching a mood to a fortune and reduced the likelihood of errors on key routes.
+3. Create a `.env` file with your API keys:
+```env
+API_KEY=your_openai_api_key
+MOVIE_API_KEY=your_omdb_api_key
+```
 
-- Custom HTML Rendering Without a Templating Engine 🛠️
-  - We recreated basic React-like rendering using a custom renderWithLayout function.
-  - Instead of relying on engines like EJS or Handlebars, we wrapped our dynamic content in a reusable HTML layout using pure template literals.
-  - This gave us full control over styling, structure, and animations — including dynamic backgrounds, navigation bars, and tarot booth visuals — all handled server-side
-
-
-  ## Getting Started 🚀
-
-  1. Clone the repository:
-  ```bash
-  git clone https://github.com/yourusername/Pro0217-MyTarotation.git
-  ```
-
-  2. Install dependencies:
-  ```bash
-  npm install
-  ```
-
-  3. Create a `.env` file with your API keys:
-  ```env
-  API_KEY=your_openai_api_key
-  MOVIE_API_KEY=your_omdb_api_key
-  ```
-
-  4. Start the server:
-  ```bash
-  npm run dev
-  ```
+4. Start the server:
+```bash
+npm run dev
+```
