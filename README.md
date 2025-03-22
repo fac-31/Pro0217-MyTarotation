@@ -27,18 +27,18 @@ We intentionally built this app with constraints — no middleware and no databa
   - Instead of relying on engines like EJS or Handlebars, we wrapped our dynamic content in a reusable HTML layout using pure template literals.
   - This gave us full control over styling, structure, and animations — including dynamic backgrounds, navigation bars, and tarot booth visuals — all handled server-side
 
-  ##  Tech Stack 🛠️
+##  Tech Stack 🛠️
 
-  - **Backend**: Node.js with Express
-  - **APIs Integration**:
-    - OpenAI API for intelligent recommendations
-    - OpenLibrary API for book details
-    - OMDB API for movie information
-    - MusicBrainz API for music data
-  - **Data Persistence**: node-persist for local storage
-  - **Styling**: Tailwind CSS
-  - **Testing**: Cypress
-  - **API Documentation**: Swagger
+- **Backend**: Node.js with Express
+- **APIs Integration**:
+  - OpenAI API for intelligent recommendations
+  - OpenLibrary API for book details
+  - OMDB API for movie information
+  - MusicBrainz API for music data
+- **Data Persistence**: node-persist for local storage
+- **Styling**: Tailwind CSS
+- **Testing**: Cypress
+- **API Documentation**: Swagger
 
 ## Getting Started 🚀
 
