@@ -67,7 +67,7 @@ app.use((req, res, next) => {
        <source src="/backgroundImages/tent_video.mp4" type="video/mp4" />
        Your browser does not support the video tag.
      </video>`
-     : `<div class="fixed top-0 left-0 w-full h-full bg-[url('/Images/static-bg.png')] bg-no-repeat bg-center bg-cover z-[-1]"></div>`;
+     : `<div class="fixed top-0 left-0 w-full h-full bg-[url('/backgroundImages/static-bg.png')] bg-no-repeat bg-center bg-cover z-[-1]"></div>`;
 
     const html = `
       <!DOCTYPE html>
