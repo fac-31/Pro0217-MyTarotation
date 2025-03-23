@@ -134,6 +134,23 @@ cardBacks.forEach(card => {
     })
 })
 
+// Flashing cards to show you should turn them over - only shows once
+document.addEventListener("DOMContentLoaded", () => {
+    // Grab all the card containers
+    const cardInners = document.querySelectorAll(".flip-card-inner");
+
+    cardInners.forEach((cardInner) => {
+    cardInner.addEventListener("click", () => {
+        // If it's now flipped, remove the flashing class from the front
+        if (cardInner.classList.contains("flipped")) {
+        const frontSide = cardInner.querySelector(".flip-card-front");
+        frontSide && frontSide.classList.remove("flash-border");
+        }
+    });
+    });
+});
+
+
 
 // Create api route for refresh. Then a function 
 // to input this into the html. Check styling and done.
