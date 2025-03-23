@@ -235,9 +235,7 @@ let refresher = async () => {
 // refresh button event listener
 refreshButton.addEventListener("click", refresher) 
 
-/*
-Change all relevant storage functions to take uuid;
-Import uuid to relevant scripts / function 
+/* 
 Relevant routes are;
 New fortune - Create uuid and store on form sumbit. Store uuid in page script if possible else local or session storage.
 On delete access storage with uuid and delete relevant. On refresh use uuid to update fortune.
@@ -248,4 +246,14 @@ stays the same.
 Select mood - Call mood func. Create uuid. Same as Random
 
 Common mood - Cal mood func. Create uuid. Same as Random
+
+_id is passed through from backend to frontend via generatecard layout. We use this to get the the currently display fortune from storage
+Refresh get new recommendations for unlocked. Displays them. Gets locked fortune data from storage. New fortune data received from
+refresh. Saved under new _id. You need to create that _id the rest is done then it will work as intended on testrec.
+Common mood, select mood & random fortune all work in the same way. 
+
+New fortune will work the same but will not to have a new _id created. url / url param check might work for this and then have it as
+a conditional
+
+Delete functionality is not yet started. Use get data. Delete relevant portion. Then resave.
 */
