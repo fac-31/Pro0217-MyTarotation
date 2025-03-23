@@ -26,7 +26,9 @@ We intentionally built this app with constraints — no middleware and no databa
   - We recreated basic React-like rendering using a custom renderWithLayout function.
   - Instead of relying on engines like EJS or Handlebars, we wrapped our dynamic content in a reusable HTML layout using pure template literals.
   - This gave us full control over styling, structure, and animations — including dynamic backgrounds, navigation bars, and tarot booth visuals — all handled server-side
-
+  
+- Cypress Testing
+  - Using Cypress' End to End testing we have written 5 tests that check all of our routes direct to the correct pages
 ##  Tech Stack 🛠️
 
 - **Backend**: Node.js with Express
