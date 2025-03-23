@@ -21,9 +21,11 @@ export const generateCardLayout = async (recommendations) => {
   <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
 </svg>
 </button>
-    <div id="card-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 container mx-auto p-4" style="grid-auto-rows: minmax(270px, auto); grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+    <div
+      id="card-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full mx-auto p-4"
+    >
       ${cards.map(({ type, item }, i) => `
-          <div id="${type}-card-div" class="flip-card w-full opacity-0 animate-deal">
+          <div id="${type}-card-div" class="flip-card h-full aspect-[3/4] opacity-0 animate-deal">
               <h1 class="text-center font-bold">${type.toUpperCase()}</h1>
               <div id="${type}-card" class="flip-card-inner">
                   <div class="flex justify-between w-full fixed -top-6">
@@ -38,7 +40,7 @@ export const generateCardLayout = async (recommendations) => {
                         </svg>
                     </button>
                   </div>
-                  <div class="${type}-card flip-card-front shadow-lg overflow-hidden border-4 border-solid border-black rounded-lg" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
+                  <div class="${type}-card flip-card-front shadow-lg overflow-hidden border-4 border-solid border-black rounded-lg flash-border" onclick="document.querySelector('#${type}-card.flip-card-inner').classList.toggle('flipped')">
                       <img src="/Images/${images[i]}" alt="Tarot Card Back" class="w-full h-full object-cover">
                   </div>
                   <div class="${type}-card flip-card-back flex flex-col justify-between border-4 border-solid border-black rounded-lg">
@@ -77,6 +79,18 @@ export const generateCardLayout = async (recommendations) => {
             </div>
         </div>
         <style>
+            @keyframes flash-border {
+                0%, 100% {
+                border-color: blue;
+                }
+                50% {
+                border-color: yellow;
+                }
+            }
+            .flash-border {
+                animation: flash-border 2s infinite; /* 1s cycle, infinite repeats */
+            }
+
             .flip-card {
                 perspective: 1000px;
                 cursor: pointer;
