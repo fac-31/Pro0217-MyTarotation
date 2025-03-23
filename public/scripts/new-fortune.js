@@ -1,5 +1,6 @@
 // Buttons
 const submitButton = document.getElementById("submit-form");
+const nextButton = document.getElementById("next-section");
 const changeSignInputButton = document.getElementById("change-sign-input-type");
 
 // Image
@@ -7,6 +8,8 @@ const fortuneTellerImage = document.getElementById("fortuneteller-img");
 
 // Form
 const fortuneForm = document.getElementById("fortune-form");
+const formSectionOne = document.getElementById("form-section-1")
+const formSectionTwo = document.getElementById("form-section-2")
 
 // Input Divs and currently displayed div
 let currentInput = "Date of Birth";
@@ -36,7 +39,7 @@ const swapInput = (swapFrom,swapTo) => {
     swapTo.classList.add("block");
 }
 
-// When the "Use * Instead" button is clicked
+// When the "Use *" button is clicked
 changeSignInputButton.addEventListener("click", event => {
 
     // Change the text of the button to the old input type
@@ -54,6 +57,13 @@ changeSignInputButton.addEventListener("click", event => {
     }
 })
 
+nextButton.addEventListener("click", event => {
+    if (fortuneName.value && (fortuneDoB.value || fortuneSign.value) && fortuneMood.value) {
+        formSectionOne.classList.toggle("hidden");
+        formSectionTwo.classList.toggle("hidden");
+    }
+})
+
 /**
  * Form Submit Event
  * Checks if all the fields have been filled:
@@ -66,7 +76,7 @@ changeSignInputButton.addEventListener("click", event => {
  * If false, prevents the form submission
  */
 fortuneForm.addEventListener("submit", event => {
-    if (fortuneName.value && (fortuneDoB.value || fortuneSign.value) && fortuneMood.value && fortuneInterests.value) {
+    if (fortuneInterests.value) {
         fortuneTellerImage.src = LOADING_IMG;
     } else {
         event.preventDefault();
