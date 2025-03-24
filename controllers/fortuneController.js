@@ -241,8 +241,12 @@ export const getRandomFortune = async (req, res) => {
             books: fortune.books ? [{ title: fortune.books.title, art: fortune.books.art, genres: fortune.books.genres, description: fortune.books.description }] : [],
             albums: fortune.albums ? [{ title: fortune.albums.title, artist: fortune.albums.artist, genres: fortune.albums.genres, art: fortune.albums.art }] : []
         };
+
+        const _id = fortune._id;
+
         console.log("recommed:", recommendations)
-        res.renderWithLayout(await generateCardLayout(recommendations), { 
+
+        res.renderWithLayout(await generateCardLayout(recommendations, _id), { 
             title: "Random Fortune", 
             nav: true, 
             fortuneTellerImg: 'success' 

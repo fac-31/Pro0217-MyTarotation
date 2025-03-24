@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "https://jspm.dev/uuid"
 
 // Lock, Delete and Pop Up Buttons
 const lockButtons = document.querySelectorAll('#lock-btn');
@@ -6,7 +5,7 @@ const deleteButtons = document.querySelectorAll('#delete-btn');
 const cancelDeleteButton = document.querySelector('#cancel-delete-btn');
 const confirmDeleteButton = document.querySelector('#confirm-delete-btn');
 const refreshButton = document.getElementById("refresh");
-const _id = document.getElementById("fortune-display").getAttribute("uuid")
+const _id = document.getElementById("fortune-display").getAttribute("uuid");
 
 // Pop up to confirm recommendation delete and prevent clicking on main page
 const confirmDeletePopUp = document.querySelector('#confirm-delete');
@@ -203,14 +202,13 @@ let refresher = async () => {
             let prevRecommendations = await fetchUserData(_id);
             let fortune = {
                 "_id": _id,
-                "name": "",
-                "starsign": "",
-                "mood": "",
-                "books": prevRecommendations.book,
-                "films": prevRecommendations.film,
-                "albums":  prevRecommendations.album            
+                "name": prevRecommendations.name,
+                "starsign": prevRecommendations.starsign,
+                "mood": prevRecommendations.mood,
+                "books": prevRecommendations.books,
+                "films": prevRecommendations.films,
+                "albums":  prevRecommendations.albums            
             }
-            console.log(recommendations)
             unlockedTypes.forEach(elem => {
 
                 fortune[elem] = recommendations[elem]?.[0];
