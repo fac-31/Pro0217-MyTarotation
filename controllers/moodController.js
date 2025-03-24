@@ -66,9 +66,9 @@ export const getMoodFortune = async (req, res) => {
 
         // Extract recommendations
         const recommendations = {
-            movies: fortune.film ? [{ title: fortune.film.title, art: fortune.film.art, genres: fortune.film.genres, plot: fortune.film.plot }] : [],
-            books: fortune.book ? [{ title: fortune.book.title, art: fortune.book.art, genres: fortune.book.genres, description: fortune.book.description }] : [],
-            albums: fortune.album ? [{ title: fortune.album.title, artist: fortune.album.artist, genres: fortune.album.genres, art: fortune.album.art }] : []
+            movies: fortune.films ? [{ title: fortune.films.title, art: fortune.films.art, genres: fortune.films.genres, plot: fortune.films.plot }] : [],
+            books: fortune.books ? [{ title: fortune.books.title, art: fortune.books.art, genres: fortune.books.genres, description: fortune.books.description }] : [],
+            albums: fortune.albums ? [{ title: fortune.albums.title, artist: fortune.albums.artist, genres: fortune.albums.genres, art: fortune.albums.art }] : []
         };
 
         res.renderWithLayout(await generateCardLayout(recommendations), { 
