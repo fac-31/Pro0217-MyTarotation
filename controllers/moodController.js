@@ -71,7 +71,11 @@ export const getMoodFortune = async (req, res) => {
             albums: fortune.albums ? [{ title: fortune.albums.title, artist: fortune.albums.artist, genres: fortune.albums.genres, art: fortune.albums.art }] : []
         };
 
-        res.renderWithLayout(await generateCardLayout(recommendations), { 
+        const _id = fortune._id;
+
+        console.log(_id);
+
+        res.renderWithLayout(await generateCardLayout(recommendations, _id), { 
             title: `Your Fortune - ${requestMsg}`, 
             nav: true, 
             fortuneTellerImg: 'success' 
