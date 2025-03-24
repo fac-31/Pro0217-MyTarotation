@@ -199,7 +199,10 @@ let refresher = async () => {
 
         await response.json().then(async (data) => {
             let recommendations = data.recommendations;
-            let prevRecommendations = await fetchUserData(_id);
+
+            let prevRecommendations = await fetchUserData(_id) 
+            
+
             let fortune = {
                 "_id": _id,
                 "name": prevRecommendations.name,
