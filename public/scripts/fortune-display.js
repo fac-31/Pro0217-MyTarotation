@@ -272,20 +272,4 @@ Common mood, select mood & random fortune all work in the same way.
 New fortune will work the same but will not to have a new _id created. url / url param check might work for this and then have it as
 a conditional
 
-Delete functionality is not yet started. Use get data. Delete relevant portion. Then resave.
-Something like this;
-async function removeKeyById(targetId, keyToRemove) {
-
-    let fortunes = (await storage.getItem(fortunes));
-
-    newFortunes = fortunes.map(obj => {
-        if (obj.id === targetId) {
-            const { [keyToRemove]: _, ...updatedObj } = obj;
-            return updatedObj;
-        }
-        return obj;
-    });
-
-    await storage.setItem(fortunes, newFortunes);
-}
 */
