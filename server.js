@@ -133,7 +133,7 @@ app.use((req, res, next) => {
 </head>
 
 
-<body class="relative w-screen h-screen flex flex-col items-center m-0 p-0 overflow-auto mb-10">
+<body class="relative w-screen h-screen flex flex-col items-center m-0 p-0 overflow-auto">
 ${backgroundStyle}
   ${nav ? `
   <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
@@ -144,14 +144,14 @@ ${backgroundStyle}
   </nav>` : ""}
 
   <!-- Fortune Teller Section -->
-  <div class="relative flex flex-col items-center justify-center bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12" style="width: calc(100px + 30vw); height: calc(150px + 30vh); max-width: 700px; min-width: 350px; margin-top: 8rem; margin-bottom: 2rem;">
+  <div class="relative flex flex-col items-center justify-center bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12" style="width: calc(100px + 10vw); height: calc(150px + 20vh); max-width: 700px; min-width: 350px; margin-top: 3rem; margin-bottom: 2rem;">
     <!-- Left Booth Side -->
     <div class="absolute left-0 top-0 h-full w-fit flex items-center justify-center">
       <img src="/FortuneTellerImages/pngs/booth-side-l.png" class="h-full max-h-[90vh] md:max-h-[95vh]" alt="Left Booth Side" />
     </div>
 
     <!-- Fortune Teller Image -->
-    <div class="w-full max-w-[100px] md:max-w-[150px] border-4 border-solid border-black rounded-lg">
+    <div class="w-full max-w-[120px] md:max-w-[200px] border-4 border-solid border-black rounded-lg">
       <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="Fortune Teller" id="fortuneteller-img" class="w-full h-auto" />
     </div>
 
@@ -162,7 +162,7 @@ ${backgroundStyle}
   </div>
 
   <!-- Content Section Below Booth -->
-<div class="flex flex-col items-center justify-start bg-[#6b5124] border-l-4 border-r-4 border-yellow-300 shadow-xl rounded-lg p-6 md:p-8 lg:p-12 " style="width: calc(100px + 30vw); max-width: 700px; min-width: 50px;">    ${content}
+<div class="flex flex-col items-center justify-start bg-[#6b5124] border-l-4 border-r-4 border-yellow-300 shadow-xl rounded-lg p-6 md:p-8 lg:p-12 " style="width: calc(100px + 50vw); max-width: 800px; min-width: 50px;">    ${content}
   </div>
 </body>
 

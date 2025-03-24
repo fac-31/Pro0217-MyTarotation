@@ -25,7 +25,6 @@ export const generateCardLayout = async (recommendations, _id) => {
     >
       ${cards.map(({ type, item }, i) => `
           <div id="${type}-card-div" class="flip-card h-full aspect-[3/4] opacity-0 animate-deal">
-              <h1 class="text-center font-bold">${type.toUpperCase()}</h1>
               <div id="${type}-card" class="flip-card-inner">
                   <div class="flex justify-between w-full fixed -top-6">
                     <button id="lock-btn" type="button" class="${type} relative bg-emerald-500 border-2 border-solid border-emerald-500 rounded-sm p-4 text-center hover:bg-emerald-600 hover:border-emerald-600 text-yellow-100">
@@ -49,6 +48,7 @@ export const generateCardLayout = async (recommendations, _id) => {
                       ` : `<p class="text-gray-500 text-center">No ${type} found</p>`}
                   </div>
               </div>
+            <h1 class="text-center font-bold">${type.toUpperCase()}</h1>
           </div>
     
                 <div id="${type}-pop-up" class="fixed hidden end-40 w-1/4 min-w-[500px] inset-y-40 h-1/3 bg-white flex justify-between z-20 border-4 border-solid border-black rounded-lg">
