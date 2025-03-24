@@ -106,14 +106,32 @@ deleteButtons.forEach(button => {
 *   - TODO: Get fortune set from Node persist and delete selected type
             Change Column number for cards
 */
-confirmDeleteButton.addEventListener('click', function (event) {
-    const cardToDelete = document.querySelector(`#${this.value}-card-div`);
-    cols -= 1;
-    cardToDelete.classList.toggle('hidden');
-    cardGrid.classList.toggle(`md:grid-cols-${cols}`);
-    cardGrid.classList.toggle(`md:grid-cols-${cols + 1}`);
-    screenCover.classList.toggle('hidden');
-})
+confirmDeleteButton.addEventListener('click', async function (event) {
+    const fortuneType = this.value;
+    const cardToDelete = document.querySelector(`#${fortuneType}-card-div`);
+    // Get user data from node-persist
+    try {
+        const userData = await fetchUserData(_id); 
+        if (!userData) {
+            throw new Error("No user data returned from the server.");
+        }
+
+        delete userData[fortuneType];
+        // Save updated fortune
+        await saveUserData(userData);
+
+        // Hide card and change column number
+        cols -= 1;
+        cardToDelete.classList.toggle('hidden');
+        cardGrid.classList.toggle(`md:grid-cols-${cols + 1}`);
+        cardGrid.classList.toggle(`md:grid-cols-${cols}`);
+        screenCover.classList.toggle('hidden');
+
+        console.log(`Successfully deleted ${fortuneType} from user data.`);
+    } catch (error) {
+        console.error("Error during delete operation:", error);
+    }
+});
 
 // On Click: Hide Confirm Deletion Pop Up
 cancelDeleteButton.addEventListener('click', function (event) {
