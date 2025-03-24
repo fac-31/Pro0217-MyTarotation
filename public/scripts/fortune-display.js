@@ -1,9 +1,12 @@
+import { v4 as uuidv4 } from "https://jspm.dev/uuid"
+
 // Lock, Delete and Pop Up Buttons
 const lockButtons = document.querySelectorAll('#lock-btn');
 const deleteButtons = document.querySelectorAll('#delete-btn');
 const cancelDeleteButton = document.querySelector('#cancel-delete-btn');
 const confirmDeleteButton = document.querySelector('#confirm-delete-btn');
 const refreshButton = document.getElementById("refresh");
+const _id = document.getElementById("fortune-display").getAttribute("uuid")
 
 // Pop up to confirm recommendation delete and prevent clicking on main page
 const confirmDeletePopUp = document.querySelector('#confirm-delete');
@@ -24,6 +27,45 @@ const cardBacks = document.querySelectorAll('.flip-card-back');
 *   - Toggle Card Border Colour between white and green
 *   - Add or remove from Unlocked Type List Class List
 */
+async function fetchUserData(_id) {
+    try {
+        const response = await fetch(`/get-user/${_id}`);
+    
+        if (!response.ok) {
+            console.log(`Http error- Status: ${response.status}`);
+        };
+
+        const data = await response.json();
+
+        console.log("User-data: ", data);
+
+        return data;
+    } catch (error) {
+            console.error("Error getting data: ", error);
+        };
+};
+
+async function saveUserData(userData) {
+    try {
+        const response = await fetch('/save-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: userData })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error - Status: ${response.status}`);
+        };
+
+        const result = await response.json();
+
+        console.log("Server Response:", result);
+    } catch (error) {
+
+        console.error("Error saving user data:", error);
+    }
+}
+
 lockButtons.forEach(button => {
     button.addEventListener('click', function (event) {
         const typeToLock = this.classList[0];
@@ -64,14 +106,32 @@ deleteButtons.forEach(button => {
 *   - TODO: Get fortune set from Node persist and delete selected type
             Change Column number for cards
 */
-confirmDeleteButton.addEventListener('click', function (event) {
-    const cardToDelete = document.querySelector(`#${this.value}-card-div`);
-    cols -= 1;
-    cardToDelete.classList.toggle('hidden');
-    cardGrid.classList.toggle(`md:grid-cols-${cols}`);
-    cardGrid.classList.toggle(`md:grid-cols-${cols + 1}`);
-    screenCover.classList.toggle('hidden');
-})
+confirmDeleteButton.addEventListener('click', async function (event) {
+    const fortuneType = this.value;
+    const cardToDelete = document.querySelector(`#${fortuneType}-card-div`);
+    // Get user data from node-persist
+    try {
+        const userData = await fetchUserData(_id); 
+        if (!userData) {
+            throw new Error("No user data returned from the server.");
+        }
+
+        delete userData[fortuneType];
+        // Save updated fortune
+        await saveUserData(userData);
+
+        // Hide card and change column number
+        cols -= 1;
+        cardToDelete.classList.toggle('hidden');
+        cardGrid.classList.toggle(`md:grid-cols-${cols + 1}`);
+        cardGrid.classList.toggle(`md:grid-cols-${cols}`);
+        screenCover.classList.toggle('hidden');
+
+        console.log(`Successfully deleted ${fortuneType} from user data.`);
+    } catch (error) {
+        console.error("Error during delete operation:", error);
+    }
+});
 
 // On Click: Hide Confirm Deletion Pop Up
 cancelDeleteButton.addEventListener('click', function (event) {
@@ -138,10 +198,22 @@ let refresher = async () => {
         })
         });
 
-        await response.json().then(data => {
+        await response.json().then(async (data) => {
             let recommendations = data.recommendations;
+            let prevRecommendations = await fetchUserData(_id);
+            let fortune = {
+                "_id": _id,
+                "name": "",
+                "starsign": "",
+                "mood": "",
+                "books": prevRecommendations.book,
+                "films": prevRecommendations.film,
+                "albums":  prevRecommendations.album            
+            }
             console.log(recommendations)
             unlockedTypes.forEach(elem => {
+
+                fortune[elem] = recommendations[elem]?.[0];
 
                 let card = document.getElementById(elem + "-card-div");
 
@@ -152,7 +224,7 @@ let refresher = async () => {
                 let imagePop = document.getElementById(elem + "-image-pop");
 
                 let genres = document.getElementById(elem + "-genres");
-                console.log(imageMain.style.backgroundImage)
+
                 if (recommendations[elem].length === 0) {
                     title.innerText = `Sorry, there are no ${elem} in your future`;
 
@@ -187,7 +259,8 @@ let refresher = async () => {
 
                 card.classList.toggle("animate-deal");
             });
-
+            
+            await saveUserData(fortune)
         })
     } catch (error) {
         console.error('Error fetching recommendations:', error);
@@ -196,3 +269,29 @@ let refresher = async () => {
 
 // refresh button event listener
 refreshButton.addEventListener("click", refresher) 
+
+/* 
+Relevant routes are;
+New fortune - Create uuid and store on form sumbit. Store uuid in page script if possible else local or session storage.
+On delete access storage with uuid and delete relevant. On refresh use uuid to update fortune.
+
+Random fortune - Call random fortune func. Create uuid. Only save on delete or refresh. Null for most data outside of fortune but mood
+stays the same. 
+
+Select mood - Call mood func. Create uuid. Same as Random
+
+Common mood - Cal mood func. Create uuid. Same as Random
+
+_id is passed through from backend to frontend via generatecard layout. We use this to get the the currently display fortune from storage
+Refresh get new recommendations for unlocked. Displays them. Gets locked fortune data from storage. New fortune data received from
+refresh. Saved under new _id. You need to create that _id the rest is done then it will work as intended on testrec.
+Common mood, select mood & random fortune all work in the same way. 
+
+New fortune will work the same but will not to have a new _id created. url / url param check might work for this and then have it as
+a conditional
+
+NEW PLAN;
+
+Only use old passed through id. It updates the old fortune. New fortune we still be as above. 
+
+*/
