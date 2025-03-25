@@ -1,38 +1,37 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import express from "express";
 import bodyParser from "body-parser";
 import "dotenv/config";
-
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from 'swagger-ui-express';
-
 const swaggerDefinition = {
-  openapi: '3.0.0',
-  info: {
-    title: 'Express API for MyTarotation',
-    version: '1.0.0',
-  },
-  servers: [
-    {
-      url: 'http://localhost:3000',
-      description: 'Development server',
+    openapi: '3.0.0',
+    info: {
+        title: 'Express API for MyTarotation',
+        version: '1.0.0',
     },
-  ],
+    servers: [
+        {
+            url: 'http://localhost:3000',
+            description: 'Development server',
+        },
+    ],
 };
-
 const options = {
-  swaggerDefinition,
-  // Paths to files containing OpenAPI definitions
-  apis: ['./routes/*.js'],
+    swaggerDefinition,
+    // Paths to files containing OpenAPI definitions
+    apis: ['./routes/*.js'],
 };
-
 const swaggerSpec = swaggerJSDoc(options);
 // import browserSync from "browser-sync"; 
-
-// const bs = browserSync.create();
-/* Imported here as an example as what happens when the functions are called. 
-You would normally call it in the routes folder to access data from the api endpoints. I think it can also be imported into
-the controllers. */ 
-import { saveMoods, retrieveItem, clear } from "./storage.js";
 /*
 saveMoods("happy");
 retrieveItem("moods").then(data => (data))
@@ -42,34 +41,27 @@ const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 const PORT = process.env.PORT || 3000;
-
 // Swagger API Documentation Setup
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
 // Parse JSON bodies
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 // Import Routers
 import { router as fortuneRouter } from "./routes/fortunesRoute.js";
-
 // Import Other Functions
 import { randomImage } from "./utils/randomImage.js";
-
 // Middleware for shared layout
 app.use((req, res, next) => {
-  res.renderWithLayout = (content, options = {}) => {
-    const { title = "Fortune Teller", nav = false, fortuneTellerImg = 'default', useVideoBackground = false } = options;
-
-    const backgroundStyle = useVideoBackground
-    ?
-     `<video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover z-[-1]">
-       <source src="/backgroundImages/tent_video.mp4" type="video/mp4" />
+    res.renderWithLayout = (content, options = {}) => {
+        const { title = "Fortune Teller", nav = false, fortuneTellerImg = 'default', useVideoBackground = false } = options;
+        const backgroundStyle = useVideoBackground
+            ?
+                `<video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover z-[-1]">
+       <source src="/Images/backgroundImages/tent_video.mp4" type="video/mp4" />
        Your browser does not support the video tag.
      </video>`
-     : `<div class="fixed top-0 left-0 w-full h-full bg-[url('/backgroundImages/static-bg.png')] bg-no-repeat bg-center bg-cover z-[-1]"></div>`;
-
-    const html = `
+            : `<div class="fixed top-0 left-0 w-full h-full bg-[url('/Images/backgroundImages/static-bg.png')] bg-no-repeat bg-center bg-cover z-[-1]"></div>`;
+        const html = `
       <!DOCTYPE html>
       <html lang="en">
       <head>
@@ -147,17 +139,17 @@ ${backgroundStyle}
   <div class="relative flex flex-col items-center justify-center bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12" style="width: calc(100px + 10vw); height: calc(150px + 20vh); max-width: 700px; min-width: 350px; margin-top: 3rem; margin-bottom: 2rem;">
     <!-- Left Booth Side -->
     <div class="absolute left-0 top-0 h-full w-fit flex items-center justify-center">
-      <img src="/FortuneTellerImages/pngs/booth-side-l.png" class="h-full max-h-[90vh] md:max-h-[95vh]" alt="Left Booth Side" />
+      <img src="/Images/FortuneTellerImages/pngs/booth-side-l.png" class="h-full max-h-[90vh] md:max-h-[95vh]" alt="Left Booth Side" />
     </div>
 
     <!-- Fortune Teller Image -->
     <div class="w-full max-w-[120px] md:max-w-[200px] border-4 border-solid border-black rounded-lg">
-      <img src="/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="Fortune Teller" id="fortuneteller-img" class="w-full h-auto" />
+      <img src="/Images/FortuneTellerImages/gifs/CR-${fortuneTellerImg}.gif" alt="Fortune Teller" id="fortuneteller-img" class="w-full h-auto" />
     </div>
 
     <!-- Right Booth Side -->
     <div class="absolute right-0 top-0 h-full w-fit flex items-center justify-center">
-      <img src="/FortuneTellerImages/pngs/booth-side-r.png" class="h-full max-h-[90vh] md:max-h-[95vh]" alt="Right Booth Side" />
+      <img src="/Images/FortuneTellerImages/pngs/booth-side-r.png" class="h-full max-h-[90vh] md:max-h-[95vh]" alt="Right Booth Side" />
     </div>
   </div>
 
@@ -167,28 +159,23 @@ ${backgroundStyle}
 </body>
 
       `;
-
-    res.send(html);
-  };
-  next();
+        res.send(html);
+    };
+    next();
 });
-
-
 // Use Routers
 app.use("/", fortuneRouter);
-
 // API Route for Getting Image
-app.get("/get-image", async (req, res) => {
-  const imageUrl = await randomImage();
-  if (imageUrl) {
-    res.json({ imageUrl });
-  } else {
-    res.status(404).json({ error: "No image found" });
-  }
-});
-
+app.get("/get-image", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const imageUrl = yield randomImage();
+    if (imageUrl) {
+        res.json({ imageUrl });
+    }
+    else {
+        res.status(404).json({ error: "No image found" });
+    }
+}));
 // Run HTTP Server
 app.listen(PORT, () => {
-  console.log(`Server is listening at http://localhost:${PORT}`);
+    console.log(`Server is listening at http://localhost:${PORT}`);
 });
-

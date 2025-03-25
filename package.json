@@ -5,7 +5,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "build": "tsc",
+    "start": "node dist/server.js",
     "dev": "nodemon server.js",
     "test": "cypress open"
   },
@@ -26,7 +27,11 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.13.13",
     "browser-sync": "^3.0.3",
-    "cypress": "^14.2.0"
+    "cypress": "^14.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }
