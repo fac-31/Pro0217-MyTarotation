@@ -167,86 +167,60 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// Function to update cards & update fortune upon refresh
+async function updateCards(data, unlockedTypes) {
+    
+    let recommendations = data.recommendations;
 
-
-// Create api route for refresh. Then a function 
-// to input this into the html. Check styling and done.
-let refresher = async () => {
-    try {
-
-        let unlockedTypes = [...unlockedTypesList.classList];
-
-        let media = [];
-
-        unlockedTypes.forEach(elem => {
-            let card = document.getElementById(elem + "-card-div");
-            card.classList.toggle("animate-deal");
-            card.style.visibility = "hidden";
-
-            let popUp = document.getElementById(elem + "-pop-up");
-
-            media.push(popUp.querySelector("h4").textContent || "");
-        });
-
-        const response = await fetch('/refresh-data', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                types: unlockedTypes,
-                titles: media
-        })
-        });
-
-        await response.json().then(async (data) => {
-            let recommendations = data.recommendations;
-
-            let prevRecommendations = await fetchUserData(_id) 
+    let prevRecommendations = await fetchUserData(_id) 
             
 
-            let fortune = {
-                "_id": _id,
-                "name": prevRecommendations.name,
-                "starsign": prevRecommendations.starsign,
-                "mood": prevRecommendations.mood,
-                "books": prevRecommendations.books,
-                "films": prevRecommendations.films,
-                "albums":  prevRecommendations.albums            
-            }
-            unlockedTypes.forEach(elem => {
+    let fortune = {
+        "_id": _id,
+        "name": prevRecommendations.name,
+        "starsign": prevRecommendations.starsign,
+        "mood": prevRecommendations.mood,
+        "books": prevRecommendations.books,
+        "films": prevRecommendations.films,
+        "albums":  prevRecommendations.albums            
+        };
 
-                fortune[elem] = recommendations[elem]?.[0];
+    unlockedTypes.forEach(elem => {
 
-                let card = document.getElementById(elem + "-card-div");
+        fortune[elem] = recommendations[elem]?.[0];
 
-                let title = document.getElementById(elem + "-title");
+        let card = document.getElementById(elem + "-card-div");
 
-                let imageMain = document.getElementById(elem + "-image-main");
+        let title = document.getElementById(elem + "-title");
 
-                let imagePop = document.getElementById(elem + "-image-pop");
+        let imageMain = document.getElementById(elem + "-image-main");
 
-                let genres = document.getElementById(elem + "-genres");
+        let imagePop = document.getElementById(elem + "-image-pop");
 
-                if (recommendations[elem].length === 0) {
-                    title.innerText = `Sorry, there are no ${elem} in your future`;
+        let genres = document.getElementById(elem + "-genres");
 
-                    genres.innerText = "";
+        if (recommendations[elem].length === 0) {
 
-                    imageMain.style.backgroundImage = `url(https://via.placeholder.com/100x150?text=No+${elem}+Image})`;
+            title.innerText = `Sorry, there are no ${elem} in your future`;
 
-                    imagePop.src = "https://via.placeholder.com/100x150?text=No+${elem}+Image";
+            genres.innerText = "";
 
-                    if (elem === "albums") {
+            imageMain.style.backgroundImage = `url(https://via.placeholder.com/100x150?text=No+${elem}+Image})`;
 
-                        let artist = document.getElementById(elem + "-artist");
-                        artist.innerText = ""
+            imagePop.src = "https://via.placeholder.com/100x150?text=No+${elem}+Image";
+
+            if (elem === "albums") {
+                let artist = document.getElementById(elem + "-artist");
+                
+                artist.innerText = ""
     
-                    } else {
-                        
-                        let description = document.getElementById(elem + "-description");
-                        description.innerText = "";
-    
-                    };
                 } else {
+                    let description = document.getElementById(elem + "-description");
+                    
+                    description.innerText = "";
+    
+                };
+            } else {
                 
                 title.innerText = recommendations[elem][0].title;
 
@@ -256,43 +230,53 @@ let refresher = async () => {
 
                 genres.innerText = (recommendations[elem][0].genres.join(", "));
             };
-                card.style.visibility = "visible";
 
-                card.classList.toggle("animate-deal");
-            });
+        card.style.visibility = "visible";
+
+        card.classList.toggle("animate-deal");
+        });
             
-            await saveUserData(fortune)
+    await saveUserData(fortune)
+};
+
+// Function that makes call to Open AI to get new recommendations. Takes the updateCards func upon the return of the data. 
+// Passed to refresh button event listener.
+let refresher = async () => {
+    try {
+
+        let unlockedTypes = [...unlockedTypesList.classList];
+
+        let media = [];
+
+        unlockedTypes.forEach(elem => {
+            let card = document.getElementById(elem + "-card-div");
+
+            card.classList.toggle("animate-deal");
+
+            card.style.visibility = "hidden";
+
+            let popUp = document.getElementById(elem + "-pop-up");
+
+            media.push(popUp.querySelector("h4").textContent || "");
+        });
+
+        const response = await fetch('/refresh-data', {
+
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                types: unlockedTypes,
+                titles: media
         })
+        });
+
+        await response.json().then((data) => updateCards(data, unlockedTypes));
+
     } catch (error) {
-        console.error('Error fetching recommendations:', error);
-    }
+    console.error('Error fetching recommendations:', error);
 }
+}
+
 
 // refresh button event listener
 refreshButton.addEventListener("click", refresher) 
-
-/* 
-Relevant routes are;
-New fortune - Create uuid and store on form sumbit. Store uuid in page script if possible else local or session storage.
-On delete access storage with uuid and delete relevant. On refresh use uuid to update fortune.
-
-Random fortune - Call random fortune func. Create uuid. Only save on delete or refresh. Null for most data outside of fortune but mood
-stays the same. 
-
-Select mood - Call mood func. Create uuid. Same as Random
-
-Common mood - Cal mood func. Create uuid. Same as Random
-
-_id is passed through from backend to frontend via generatecard layout. We use this to get the the currently display fortune from storage
-Refresh get new recommendations for unlocked. Displays them. Gets locked fortune data from storage. New fortune data received from
-refresh. Saved under new _id. You need to create that _id the rest is done then it will work as intended on testrec.
-Common mood, select mood & random fortune all work in the same way. 
-
-New fortune will work the same but will not to have a new _id created. url / url param check might work for this and then have it as
-a conditional
-
-NEW PLAN;
-
-Only use old passed through id. It updates the old fortune. New fortune we still be as above. 
-
-*/
