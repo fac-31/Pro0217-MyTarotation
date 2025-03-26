@@ -87,7 +87,7 @@ router.post('/save-user', async (req, res) => {
         return res.status(400).json({ error: "Missing UUID or data" });
     }
     
-    //await saveFortune(data);
+    await saveFortune(data);
     console.log("This is what you are trying to save - ", data)
     res.json({ message: "User data saved successfully - ", data });
 });
