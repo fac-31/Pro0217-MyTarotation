@@ -66,7 +66,7 @@ export const getMoodFortune = async (req, res) => {
 
         // Extract recommendations
         const recommendations = {
-            movies: fortune.films ? [{ title: fortune.films.title, art: fortune.films.art, genres: fortune.films.genres, plot: fortune.films.plot }] : [],
+            films: fortune.films ? [{ title: fortune.films.title, art: fortune.films.art, genres: fortune.films.genres, plot: fortune.films.plot }] : [],
             books: fortune.books ? [{ title: fortune.books.title, art: fortune.books.art, genres: fortune.books.genres, description: fortune.books.description }] : [],
             albums: fortune.albums ? [{ title: fortune.albums.title, artist: fortune.albums.artist, genres: fortune.albums.genres, art: fortune.albums.art }] : []
         };

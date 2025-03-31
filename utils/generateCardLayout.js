@@ -4,7 +4,7 @@ import { randomImage } from "../utils/randomImage.js";
 // Shared card layout
 export const generateCardLayout = async (recommendations, _id) => {
     const cards = [
-        { type: 'movies', item: recommendations.movies?.[0] ?? recommendations.movies},
+        { type: 'films', item: recommendations.films?.[0] ?? recommendations.films},
         { type: 'books', item: recommendations.books?.[0] ?? recommendations.books},
         { type: 'albums', item: recommendations.albums?.[0] ?? recommendations.albums},
       
@@ -68,7 +68,7 @@ export const generateCardLayout = async (recommendations, _id) => {
                 </div>
             `).join('')}
         </div>
-        <div id="unlocked-types-list" class="movies books albums"></div>
+        <div id="unlocked-types-list" class="films books albums"></div>
         <div id="screen-cover" class="hidden absolute w-screen h-screen bg-transparent">
             <div id="confirm-delete" class="absolute bg-white p-8">
                 <p>Confirm that you would like to delete this recommendation from your fortune</p>

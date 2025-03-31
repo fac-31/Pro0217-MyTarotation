@@ -197,7 +197,7 @@ export const postNewFortune = async (req, res) => {
             starsign: starsign || starsignFromDoB, 
             mood: recommendations.mood,
             books: recommendations.books[0],
-            movies: recommendations.movies[0],
+            films: recommendations.films[0],
             albums: recommendations.albums[0]
         };
 
@@ -209,7 +209,7 @@ export const postNewFortune = async (req, res) => {
             return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
         }
 
-        if (!recommendations.books?.length && !recommendations.movies?.length) {
+        if (!recommendations.books?.length && !recommendations.films?.length) {
             return res.renderWithLayout(`<p class="text-red-500">No recommendations found.</p>`, { title: "Recommendations" });
         }
 
@@ -234,17 +234,17 @@ export const getRandomFortune = async (req, res) => {
         if (!fortune) {
             return res.renderWithLayout(`<p class="text-red-500">No random fortune available.</p>`, { title: "Random Fortune" });
         }
-
+        
         // Extract recommendations
         const recommendations = {
-            movies: fortune.films ? [{ title: fortune.films.title, art: fortune.films.art, genres: fortune.films.genres, plot: fortune.films.plot }] : [],
+            films: fortune.films ? [{ title: fortune.films.title, art: fortune.films.art, genres: fortune.films.genres, plot: fortune.films.plot }] : [],
             books: fortune.books ? [{ title: fortune.books.title, art: fortune.books.art, genres: fortune.books.genres, description: fortune.books.description }] : [],
             albums: fortune.albums ? [{ title: fortune.albums.title, artist: fortune.albums.artist, genres: fortune.albums.genres, art: fortune.albums.art }] : []
         };
 
         const _id = fortune._id;
 
-        console.log("recommed:", recommendations)
+        console.log("recommend:", await recommendations)
 
         res.renderWithLayout(await generateCardLayout(recommendations, _id), { 
             title: "Random Fortune", 

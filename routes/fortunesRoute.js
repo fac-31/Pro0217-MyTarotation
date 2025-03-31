@@ -60,7 +60,7 @@ router.get('/get-user/:_id', async (req, res) => {
  *                                  type: object[]
  *                                  description: Book Recommendations
  *                                  example: ['Harry Potter']
- *                              movies:
+ *                              films:
  *                                  type: object[]
  *                                  description: Movie Recommendations
  *                                  example: ['Harry Potter']
@@ -82,12 +82,12 @@ router.post("/refresh-data", async (req, res) => {
     }
 })
 router.post('/save-user', async (req, res) => {
-    const data = req.body;
+    const data = req.body.data;
     if (!data) {
         return res.status(400).json({ error: "Missing UUID or data" });
     }
     
-    await saveFortune(data);
+    await saveFortune(data, data._id);
     console.log("This is what you are trying to save - ", data)
     res.json({ message: "User data saved successfully - ", data });
 });

@@ -228,7 +228,7 @@ export async function handleRecommendations(req, input, refreshInput, refreshTyp
         ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))
         : [];
 
-        let movies = aiResponse.filmRecommendations
+        let films = aiResponse.filmRecommendations
         ? await Promise.all([aiResponse.filmRecommendations].flat().map(getFilm))
         : [];
 
@@ -240,7 +240,7 @@ export async function handleRecommendations(req, input, refreshInput, refreshTyp
 
         const recommendations = {
             books: books.filter(Boolean),
-            movies: movies.filter(Boolean),
+            films: films.filter(Boolean),
             albums: albums.filter(Boolean),
             mood: aiResponse.mood, 
             warning: aiResponse.warning
