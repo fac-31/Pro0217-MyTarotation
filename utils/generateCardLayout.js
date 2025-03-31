@@ -59,9 +59,9 @@ export const generateCardLayout = async (recommendations, _id) => {
                         <h4 id="${type}-title" class="font-semibold text-center text-lg mb-2">${item?.title || `No ${type} found in your future.`}</h4>
                         ${type === 'album' ? `
                             <p id="${type}-artist" class="text-md text-gray-600 mb-2">${item?.artist}</p>
-                            <p id="${type}-genres" class="text-sm text-gray-500">Genres: ${item?.genres.join(', ')}</p>
+                            <p id="${type}-genres" class="text-sm text-gray-500">Genres: ${item?.genres?.join(', ')}</p>
                         ` : `
-                            <p id="${type}-genres" class="text-sm text-gray-600 mb-2">Genres: ${item?.genres.join(', ')}</p>
+                            <p id="${type}-genres" class="text-sm text-gray-600 mb-2">Genres: ${item?.genres?.join(', ')}</p>
                             <p id="${type}-description" class="text-sm text-gray-500 text-center max-h-32 overflow-y-auto">${item?.plot || item?.description || ''}</p>
                         `}
                     </div>
