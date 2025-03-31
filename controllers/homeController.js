@@ -1,11 +1,11 @@
-import { getCommonMood } from "../storage.js";  
-
+import { getCommonMood } from "../storage.js";
 
 // Renders Home Page
 export const getHomePage = async (req, res) => {
-    let mood = await getCommonMood() + "";
-    
-    res.renderWithLayout(`
+  let mood = await getCommonMood() + "";
+
+  res.renderWithLayout(
+    `
         <div class="flex flex-col items-center mt-10">
             <div id="greeting-container" class="bg-white rounded-full px-6 py-3 shadow-md h-16 flex items-center justify-center min-w-[280px]">
                 <p id="greeting-text" class="text-blue-600 text-lg font-medium text-center">Hey there good looking</p>
@@ -108,5 +108,7 @@ export const getHomePage = async (req, res) => {
                 animateGreetings();
             };
         </script>
-    `, { title: "Fortune Teller Home", useVideoBackground: true});
+    `,
+    { title: "Fortune Teller Home", useVideoBackground: true },
+  );
 };

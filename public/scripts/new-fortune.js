@@ -8,8 +8,8 @@ const fortuneTellerImage = document.getElementById("fortuneteller-img");
 
 // Form
 const fortuneForm = document.getElementById("fortune-form");
-const formSectionOne = document.getElementById("form-section-1")
-const formSectionTwo = document.getElementById("form-section-2")
+const formSectionOne = document.getElementById("form-section-1");
+const formSectionTwo = document.getElementById("form-section-2");
 
 // Input Divs and currently displayed div
 let currentInput = "Date of Birth";
@@ -32,37 +32,39 @@ const LOADING_IMG = "/FortuneTellerImages/gifs/CR-loading-eyesclosed.gif";
  * @param {HTMLDivElement} swapFrom - the input div to hide
  * @param {HTMLDivElement} swapTo - the input div to show
  */
-const swapInput = (swapFrom,swapTo) => {
-    swapFrom.classList.remove("block");
-    swapFrom.classList.add("hidden");
-    swapTo.classList.remove("hidden");
-    swapTo.classList.add("block");
-}
+const swapInput = (swapFrom, swapTo) => {
+  swapFrom.classList.remove("block");
+  swapFrom.classList.add("hidden");
+  swapTo.classList.remove("hidden");
+  swapTo.classList.add("block");
+};
 
 // When the "Use *" button is clicked
-changeSignInputButton.addEventListener("click", event => {
+changeSignInputButton.addEventListener("click", (event) => {
+  // Change the text of the button to the old input type
+  changeSignInputButton.innerText = `Use ${currentInput}`;
 
-    // Change the text of the button to the old input type
-    changeSignInputButton.innerText = `Use ${currentInput}`
+  // Swap which input div is displayed
+  if (currentInput === "Date of Birth") {
+    currentInput = "Starsign";
+    fortuneDoB.value = fortuneDoB.defaultValue;
+    swapInput(dobDateDiv, starsignDropdownDiv);
+  } else {
+    currentInput = "Date of Birth";
+    fortuneSign.value = fortuneSign.defaultValue;
+    swapInput(starsignDropdownDiv, dobDateDiv);
+  }
+});
 
-    // Swap which input div is displayed
-    if (currentInput === "Date of Birth") {
-        currentInput = "Starsign";
-        fortuneDoB.value = fortuneDoB.defaultValue;
-        swapInput(dobDateDiv,starsignDropdownDiv);
-    } else {
-        currentInput = "Date of Birth";
-        fortuneSign.value = fortuneSign.defaultValue;
-        swapInput(starsignDropdownDiv,dobDateDiv);
-    }
-})
-
-nextButton.addEventListener("click", event => {
-    if (fortuneName.value && (fortuneDoB.value || fortuneSign.value) && fortuneMood.value) {
-        formSectionOne.classList.toggle("hidden");
-        formSectionTwo.classList.toggle("hidden");
-    }
-})
+nextButton.addEventListener("click", (event) => {
+  if (
+    fortuneName.value && (fortuneDoB.value || fortuneSign.value) &&
+    fortuneMood.value
+  ) {
+    formSectionOne.classList.toggle("hidden");
+    formSectionTwo.classList.toggle("hidden");
+  }
+});
 
 /**
  * Form Submit Event
@@ -71,14 +73,14 @@ nextButton.addEventListener("click", event => {
  *      either DoB or Starsign
  *      mood
  *      interests
- * 
+ *
  * If true, changes the fortune teller image to loading
  * If false, prevents the form submission
  */
-fortuneForm.addEventListener("submit", event => {
-    if (fortuneInterests.value) {
-        fortuneTellerImage.src = LOADING_IMG;
-    } else {
-        event.preventDefault();
-    }
-})
+fortuneForm.addEventListener("submit", (event) => {
+  if (fortuneInterests.value) {
+    fortuneTellerImage.src = LOADING_IMG;
+  } else {
+    event.preventDefault();
+  }
+});

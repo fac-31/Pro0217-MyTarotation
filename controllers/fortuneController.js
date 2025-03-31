@@ -1,15 +1,14 @@
-import {v4 as uuidv4} from 'uuid'
+import { v4 as uuidv4 } from "uuid";
 
 import { handleRecommendations } from "../apis/openAiApi.js";
-import { saveMoods, saveFortune, getRandom } from "../storage.js";
+import { getRandom, saveFortune, saveMoods } from "../storage.js";
 import { getAge, getStarsign } from "../utils/helpers.js";
 import { generateCardLayout } from "../utils/generateCardLayout.js";
 
-
-
 // Renders New Fortune Page
 export const getNewFortunePage = async (req, res) => {
-    res.renderWithLayout(`
+  res.renderWithLayout(
+    `
         <div class="flex items-center justify-center w-full">
             <form 
                 id="fortune-form" 
@@ -154,102 +153,127 @@ export const getNewFortunePage = async (req, res) => {
         </div>
   
       <script src="./scripts/new-fortune.js"></script>
-    `, 
-    { title: "Fortune Teller - About You", nav: true });
-  };
-  
+    `,
+    { title: "Fortune Teller - About You", nav: true },
+  );
+};
 
 // Runs when /new Post request is made
 export const postNewFortune = async (req, res) => {
+  try {
+    const { dob, starsign, mood, interests, name } = req.body;
+    // console.log("Received User Input:", req.body);
 
-    try {
-        const { dob, starsign, mood, interests, name } = req.body;
-        // console.log("Received User Input:", req.body);
-        
-        if ((!dob && !starsign) || !mood || !interests) {
-            return res.status(400).json({ err8or: "Missing required fields" });
-        }
-
-        const _id = uuidv4();
-
-        let age;
-        let starsignFromDoB;
-
-        if (dob) {
-            const dateOfBirth = new Date(dob);
-            age = getAge(dateOfBirth);
-            starsignFromDoB = getStarsign(dateOfBirth)
-        } else if (starsign) {
-            age = 25;
-        }
-
-        
-
-        const recommendations = await handleRecommendations(req,{age,mood,interests});
-
-        console.log("Recommendations:", recommendations);
-       
-
-
-        const newFortune = {
-            _id,
-            name,
-            starsign: starsign || starsignFromDoB, 
-            mood: recommendations.mood,
-            books: recommendations.books[0],
-            movies: recommendations.movies[0],
-            albums: recommendations.albums[0]
-        };
-
-        await saveFortune(newFortune);
-        await saveMoods(recommendations.mood);
-
-        
-        if (!recommendations) {
-            return res.renderWithLayout(`<p class="text-red-500">Error fetching recommendations.</p>`, { title: "Error" });
-        }
-
-        if (!recommendations.books?.length && !recommendations.movies?.length) {
-            return res.renderWithLayout(`<p class="text-red-500">No recommendations found.</p>`, { title: "Recommendations" });
-        }
-
-  
-
-        res.renderWithLayout(await generateCardLayout(recommendations, _id), 
-            { title: "Your Fortune", nav: true, fortuneTellerImg: 'success' }
-        );
-    
-    } catch (error) {
-        console.error("Error in runAPI:", error);
-        res.status(500).json({ error: "Error generating fortune" });
+    if ((!dob && !starsign) || !mood || !interests) {
+      return res.status(400).json({ err8or: "Missing required fields" });
     }
-};
 
+    const _id = uuidv4();
+
+    let age;
+    let starsignFromDoB;
+
+    if (dob) {
+      const dateOfBirth = new Date(dob);
+      age = getAge(dateOfBirth);
+      starsignFromDoB = getStarsign(dateOfBirth);
+    } else if (starsign) {
+      age = 25;
+    }
+
+    const recommendations = await handleRecommendations(req, {
+      age,
+      mood,
+      interests,
+    });
+
+    console.log("Recommendations:", recommendations);
+
+    const newFortune = {
+      _id,
+      name,
+      starsign: starsign || starsignFromDoB,
+      mood: recommendations.mood,
+      books: recommendations.books[0],
+      movies: recommendations.movies[0],
+      albums: recommendations.albums[0],
+    };
+
+    await saveFortune(newFortune);
+    await saveMoods(recommendations.mood);
+
+    if (!recommendations) {
+      return res.renderWithLayout(
+        `<p class="text-red-500">Error fetching recommendations.</p>`,
+        { title: "Error" },
+      );
+    }
+
+    if (!recommendations.books?.length && !recommendations.movies?.length) {
+      return res.renderWithLayout(
+        `<p class="text-red-500">No recommendations found.</p>`,
+        { title: "Recommendations" },
+      );
+    }
+
+    res.renderWithLayout(await generateCardLayout(recommendations, _id), {
+      title: "Your Fortune",
+      nav: true,
+      fortuneTellerImg: "success",
+    });
+  } catch (error) {
+    console.error("Error in runAPI:", error);
+    res.status(500).json({ error: "Error generating fortune" });
+  }
+};
 
 // Sends Random Fortune Data and Renders Fortune Told Page
 export const getRandomFortune = async (req, res) => {
-    try {
-        let fortune = await getRandom();
+  try {
+    let fortune = await getRandom();
 
-        if (!fortune) {
-            return res.renderWithLayout(`<p class="text-red-500">No random fortune available.</p>`, { title: "Random Fortune" });
-        }
-
-        // Extract recommendations
-        const recommendations = {
-            movies: fortune.films ? [{ title: fortune.films.title, art: fortune.films.art, genres: fortune.films.genres, plot: fortune.films.plot }] : [],
-            books: fortune.books ? [{ title: fortune.books.title, art: fortune.books.art, genres: fortune.books.genres, description: fortune.books.description }] : [],
-            albums: fortune.albums ? [{ title: fortune.albums.title, artist: fortune.albums.artist, genres: fortune.albums.genres, art: fortune.albums.art }] : []
-        };
-        console.log("recommed:", recommendations)
-        res.renderWithLayout(await generateCardLayout(recommendations), { 
-            title: "Random Fortune", 
-            nav: true, 
-            fortuneTellerImg: 'success' 
-        });
-
-    } catch (error) {
-        console.error("Error fetching random fortune:", error);
-        res.status(500).json({ error: "Error retrieving fortune" });
+    if (!fortune) {
+      return res.renderWithLayout(
+        `<p class="text-red-500">No random fortune available.</p>`,
+        { title: "Random Fortune" },
+      );
     }
+
+    // Extract recommendations
+    const recommendations = {
+      movies: fortune.films
+        ? [{
+          title: fortune.films.title,
+          art: fortune.films.art,
+          genres: fortune.films.genres,
+          plot: fortune.films.plot,
+        }]
+        : [],
+      books: fortune.books
+        ? [{
+          title: fortune.books.title,
+          art: fortune.books.art,
+          genres: fortune.books.genres,
+          description: fortune.books.description,
+        }]
+        : [],
+      albums: fortune.albums
+        ? [{
+          title: fortune.albums.title,
+          artist: fortune.albums.artist,
+          genres: fortune.albums.genres,
+          art: fortune.albums.art,
+        }]
+        : [],
+    };
+    console.log("recommed:", recommendations);
+    res.renderWithLayout(await generateCardLayout(recommendations), {
+      title: "Random Fortune",
+      nav: true,
+      fortuneTellerImg: "success",
+    });
+  } catch (error) {
+    console.error("Error fetching random fortune:", error);
+    res.status(500).json({ error: "Error retrieving fortune" });
+  }
 };

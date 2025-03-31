@@ -1,20 +1,19 @@
 import express from "express";
 import bodyParser from "body-parser";
 import "dotenv/config";
-
 import swaggerJSDoc from "swagger-jsdoc";
-import swaggerUi from 'swagger-ui-express';
+import swaggerUi from "swagger-ui-express";
 
 const swaggerDefinition = {
-  openapi: '3.0.0',
+  openapi: "3.0.0",
   info: {
-    title: 'Express API for MyTarotation',
-    version: '1.0.0',
+    title: "Express API for MyTarotation",
+    version: "1.0.0",
   },
   servers: [
     {
-      url: 'http://localhost:3000',
-      description: 'Development server',
+      url: "http://localhost:3000",
+      description: "Development server",
     },
   ],
 };
@@ -22,17 +21,17 @@ const swaggerDefinition = {
 const options = {
   swaggerDefinition,
   // Paths to files containing OpenAPI definitions
-  apis: ['./routes/*.js'],
+  apis: ["./routes/*.js"],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
-// import browserSync from "browser-sync"; 
+// import browserSync from "browser-sync";
 
 // const bs = browserSync.create();
-/* Imported here as an example as what happens when the functions are called. 
+/* Imported here as an example as what happens when the functions are called.
 You would normally call it in the routes folder to access data from the api endpoints. I think it can also be imported into
-the controllers. */ 
-import { saveMoods, retrieveItem, clear } from "./storage.js";
+the controllers. */
+import { clear, retrieveItem, saveMoods } from "./storage.js";
 /*
 saveMoods("happy");
 retrieveItem("moods").then(data => (data))
@@ -44,7 +43,7 @@ app.use(express.static("public"));
 const PORT = process.env.PORT || 3000;
 
 // Swagger API Documentation Setup
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Parse JSON bodies
 app.use(bodyParser.json());
@@ -59,15 +58,19 @@ import { randomImage } from "./utils/randomImage.js";
 // Middleware for shared layout
 app.use((req, res, next) => {
   res.renderWithLayout = (content, options = {}) => {
-    const { title = "Fortune Teller", nav = false, fortuneTellerImg = 'default', useVideoBackground = false } = options;
+    const {
+      title = "Fortune Teller",
+      nav = false,
+      fortuneTellerImg = "default",
+      useVideoBackground = false,
+    } = options;
 
     const backgroundStyle = useVideoBackground
-    ?
-     `<video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover z-[-1]">
+      ? `<video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover z-[-1]">
        <source src="/backgroundImages/tent_video.mp4" type="video/mp4" />
        Your browser does not support the video tag.
      </video>`
-     : `<div class="fixed top-0 left-0 w-full h-full bg-[url('/backgroundImages/static-bg.png')] bg-no-repeat bg-center bg-cover z-[-1]"></div>`;
+      : `<div class="fixed top-0 left-0 w-full h-full bg-[url('/backgroundImages/static-bg.png')] bg-no-repeat bg-center bg-cover z-[-1]"></div>`;
 
     const html = `
       <!DOCTYPE html>
@@ -135,13 +138,17 @@ app.use((req, res, next) => {
 
 <body class="relative w-screen h-screen flex flex-col items-center m-0 p-0 overflow-auto">
 ${backgroundStyle}
-  ${nav ? `
+  ${
+      nav
+        ? `
   <nav class="w-full flex items-center fixed top-0 left-0 h-16 px-4">
     <a href="/" onclick="sessionStorage.setItem('homeClicked', 'true')" class="bg-gradient-to-tr from-purple-900 via-indigo-800 to-purple-700
          border border-yellow-300 text-yellow-100 
          px-8 py-3 rounded-lg text-lg font-semibold 
          shadow-md">Home</a>
-  </nav>` : ""}
+  </nav>`
+        : ""
+    }
 
   <!-- Fortune Teller Section -->
   <div class="relative flex flex-col items-center justify-center bg-[#6b5124] rounded-lg p-4 md:p-8 lg:p-12" style="width: calc(100px + 10vw); height: calc(150px + 20vh); max-width: 700px; min-width: 350px; margin-top: 3rem; margin-bottom: 2rem;">
@@ -173,7 +180,6 @@ ${backgroundStyle}
   next();
 });
 
-
 // Use Routers
 app.use("/", fortuneRouter);
 
@@ -191,4 +197,3 @@ app.get("/get-image", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is listening at http://localhost:${PORT}`);
 });
-

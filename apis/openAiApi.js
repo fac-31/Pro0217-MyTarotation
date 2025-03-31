@@ -5,69 +5,83 @@ import path from "path";
 import { getFilm } from "./movieApi.js";
 import { getBook } from "./bookApi.js";
 import { getMusic } from "./musicApi.js";
-import asdfjkl from 'asdfjkl';
-
+import asdfjkl from "asdfjkl";
 
 import { zodResponseFormat } from "openai/helpers/zod.mjs";
 
 dotenv.config({ path: path.resolve("../.env") });
 
 const client = new OpenAI({
-  apiKey: process.env.API_KEY, 
+  apiKey: process.env.API_KEY,
 });
 
 // Zod object for visual media.
 const visualMedia = z.object({
-    title: z.string(),
-    genre: z.array(z.string())
+  title: z.string(),
+  genre: z.array(z.string()),
 });
 
 // Zod object for written media.
 const writtenMedia = z.object({
-    title: z.string(),
-    genre: z.array(z.string()),
-    author: z.string().optional(),
-    isbnCode: z.string()
+  title: z.string(),
+  genre: z.array(z.string()),
+  author: z.string().optional(),
+  isbnCode: z.string(),
 });
 
 // Zod object for musical media.
 const musicMedia = z.object({
-    title: z.string(),
-    artist: z.string(),
-    genre: z.array(z.string())
+  title: z.string(),
+  artist: z.string(),
+  genre: z.array(z.string()),
 });
 
 // Array of moods to match against.
-const moods = ["happy", "sad", "angry", "chilled", "reflective", "fearful", "disgusted"];
+const moods = [
+  "happy",
+  "sad",
+  "angry",
+  "chilled",
+  "reflective",
+  "fearful",
+  "disgusted",
+];
 
 // Full schema for the recommendations.
 const recommendSchema = z.object({
-    age: z.number().nullable(),
-    mood: z.enum(moods),
-    starsign: z.string(),
-    genres: z.array(z.string()).optional(),
-    filmRecommendations: z.array(visualMedia),
-    bookRecommendations: z.array(writtenMedia),
-    musicRecommendations: z.array(musicMedia)
+  age: z.number().nullable(),
+  mood: z.enum(moods),
+  starsign: z.string(),
+  genres: z.array(z.string()).optional(),
+  filmRecommendations: z.array(visualMedia),
+  bookRecommendations: z.array(writtenMedia),
+  musicRecommendations: z.array(musicMedia),
 });
 
 const refreshSchema = z.object({
-    filmRecommendations: z.array(visualMedia),
-    bookRecommendations: z.array(writtenMedia),
-    musicRecommendations: z.array(musicMedia)
-})
+  filmRecommendations: z.array(visualMedia),
+  bookRecommendations: z.array(writtenMedia),
+  musicRecommendations: z.array(musicMedia),
+});
 
+export async function getRecommendation(
+  client,
+  z,
+  zodResponseFormat,
+  userInput,
+  refreshInput = null,
+  refreshType = null,
+) {
+  let formattedInput;
+  let systemInput;
+  let schema;
 
-export async function getRecommendation(client, z, zodResponseFormat, userInput, refreshInput=null, refreshType=null) {
-    let formattedInput;
-    let systemInput;
-    let schema;
-
-    let warningMessage = "";
-    if (userInput) {
-        let { age, mood, interests } = userInput;
-        formattedInput = `I am ${age} years old. I'm currently feeling ${mood}. My interests are ${interests}.`;
-        systemInput = `
+  let warningMessage = "";
+  if (userInput) {
+    let { age, mood, interests } = userInput;
+    formattedInput =
+      `I am ${age} years old. I'm currently feeling ${mood}. My interests are ${interests}.`;
+    systemInput = `
     You are an expert media critic. Based on the user's input, please recommend:
     - 1 film
     - 1 book
@@ -90,167 +104,179 @@ export async function getRecommendation(client, z, zodResponseFormat, userInput,
     `;
     schema = recommendSchema;
 
+    if (asdfjkl.default(mood)) {
+      console.warn("Detected gibberish mood. Using fallback.");
+      mood = "happy";
+      warningMessage += "Your mood input was unclear, so we assumed 'happy'. ";
+    }
 
-        if (asdfjkl.default(mood)) {
-            console.warn("Detected gibberish mood. Using fallback.");
-            mood = "happy";
-            warningMessage += "Your mood input was unclear, so we assumed 'happy'. ";
-        };
-    
-        if(asdfjkl.default(interests)) {
-            console.warn('"Detected gibberish interests. Using fallback."')
-            interests =  "Thriller by Michael Jackson, Inception, The Great Gatsby";
-            warningMessage += "Your interests input was unclear, so we used 'Thriller by Michael Jackson, Inception, The Great Gatsby' instead. ";
-        };
-    } else if (refreshInput.length > 0) {
-        formattedInput = `I am not interested in the following pieces of media; ${refreshInput}. 
+    if (asdfjkl.default(interests)) {
+      console.warn('"Detected gibberish interests. Using fallback."');
+      interests = "Thriller by Michael Jackson, Inception, The Great Gatsby";
+      warningMessage +=
+        "Your interests input was unclear, so we used 'Thriller by Michael Jackson, Inception, The Great Gatsby' instead. ";
+    }
+  } else if (refreshInput.length > 0) {
+    formattedInput =
+      `I am not interested in the following pieces of media; ${refreshInput}. 
         Please make sure to recommend media for the following types, ${refreshType}. The recommendations should follow the same 
         type of genre and feel of the pieces of media I didn't want. I only want one recommendation per type of media and it cannot be
         one I have mentioned. If you recommend a book, please provide an ISBN code.`;
-        systemInput = `You are an expert media critic. You must provide a recommendation for each type of media based on the users
+    systemInput =
+      `You are an expert media critic. You must provide a recommendation for each type of media based on the users
         input. Suggest media that is similiar in nature, genre and feel to the items listed in their input. Only provide one recommendation
         per type of media. Make sure to provide an ISBN code for any written media`;
     schema = refreshSchema;
-    };
+  }
 
+  try {
+    // Make the request to OpenAI to get recommendations
+    let response = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: systemInput,
+        },
+        {
+          role: "user",
+          content: formattedInput,
+        },
+      ],
+      // Use the zodresponseformat & pass it the final schema with a title.
+      response_format: zodResponseFormat(schema, "recommendations"),
+    });
 
+    // Parse the raw AI response
+    const parsedData = response.choices[0].message.content;
+
+    // Parse response into JSON
+    let parsedJSON;
     try {
-        // Make the request to OpenAI to get recommendations
-        let response = await client.chat.completions.create({
-            model: "gpt-4o", 
-            messages: [
-                {
-                    role: "system",
-                    content: systemInput,
-                },
-                {
-                    role: "user",
-                    content: formattedInput,
-                },
-            ],
-            // Use the zodresponseformat & pass it the final schema with a title.
-            response_format: zodResponseFormat(schema, "recommendations"),
-        });
-
-        // Parse the raw AI response
-        const parsedData = response.choices[0].message.content;
-
-        // Parse response into JSON
-        let parsedJSON;
-        try {
-            parsedJSON = JSON.parse(parsedData);
-        } catch (error) {
-            throw new Error("AI response is not valid JSON.");
-        }
-
-        // Response validation via Zod schema
-        const result = schema.safeParse(parsedJSON);
-
-        if (!result.success) {
-            console.error("Validation Error:", result.error);
-            throw new Error("Invalid AI response format");
-        }
-
-       return {
-            ...result.data,
-            warning: warningMessage,
-        };
+      parsedJSON = JSON.parse(parsedData);
     } catch (error) {
-        console.error("Error fetching recommendations:", error.message);
-        return null;
+      throw new Error("AI response is not valid JSON.");
     }
+
+    // Response validation via Zod schema
+    const result = schema.safeParse(parsedJSON);
+
+    if (!result.success) {
+      console.error("Validation Error:", result.error);
+      throw new Error("Invalid AI response format");
+    }
+
+    return {
+      ...result.data,
+      warning: warningMessage,
+    };
+  } catch (error) {
+    console.error("Error fetching recommendations:", error.message);
+    return null;
+  }
 }
 
 const closestMoodSchema = z.object({
-    closestMood: z.enum(moods)
+  closestMood: z.enum(moods),
 });
 
 export async function matchMood(userInput) {
-    // Test input. Will eventually be user input.
-   
-    const input = userInput || "happy";
+  // Test input. Will eventually be user input.
 
-    try {
-        // Make the request to OpenAI to get recommendations
-        let response = await client.chat.completions.create({
-            model: "gpt-4o", 
-            messages: [
-                {
-                    role: "system",
-                    content: `
-                    You need to match the user's inputed mood to the closest one of these predefined moods: ${moods.join(", ")}
+  const input = userInput || "happy";
+
+  try {
+    // Make the request to OpenAI to get recommendations
+    let response = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `
+                    You need to match the user's inputed mood to the closest one of these predefined moods: ${
+            moods.join(", ")
+          }
                     `,
-                },
-                {
-                    role: "user",
-                    content: input,
-                },
-            ],
-            // Use the zodresponseformat & pass it the final schema with a title.
-            response_format: zodResponseFormat(closestMoodSchema, "closestMood"),
-        });
+        },
+        {
+          role: "user",
+          content: input,
+        },
+      ],
+      // Use the zodresponseformat & pass it the final schema with a title.
+      response_format: zodResponseFormat(closestMoodSchema, "closestMood"),
+    });
 
-        // Parse the raw AI response
-        const parsedData = response.choices[0].message.content;
+    // Parse the raw AI response
+    const parsedData = response.choices[0].message.content;
 
-        // Parse response into JSON
-        let parsedJSON;
-        try {
-            parsedJSON = JSON.parse(parsedData);
-        } catch (error) {
-            throw new Error("AI response is not valid JSON.");
-        }
-
-        // Response validation via Zod schema
-        const result = closestMoodSchema.safeParse(parsedJSON);
-
-        if (!result.success) {
-            console.error("Validation Error:", result.error);
-            throw new Error("Invalid AI response format");
-        }
-
-        return result.data;
+    // Parse response into JSON
+    let parsedJSON;
+    try {
+      parsedJSON = JSON.parse(parsedData);
     } catch (error) {
-        console.error("Error fetching recommendations:", error.message);
-        return null;
+      throw new Error("AI response is not valid JSON.");
     }
+
+    // Response validation via Zod schema
+    const result = closestMoodSchema.safeParse(parsedJSON);
+
+    if (!result.success) {
+      console.error("Validation Error:", result.error);
+      throw new Error("Invalid AI response format");
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error("Error fetching recommendations:", error.message);
+    return null;
+  }
 }
 
 //right now we don't use req, but we will need to change it when we will implement recommendations based on user input
-export async function handleRecommendations(req, input, refreshInput, refreshType) { 
-  
-    try {
-        let aiResponse = await getRecommendation(client, z, zodResponseFormat, input, refreshInput, refreshType);
-        if (!aiResponse) throw new Error("No AI response received");
+export async function handleRecommendations(
+  req,
+  input,
+  refreshInput,
+  refreshType,
+) {
+  try {
+    let aiResponse = await getRecommendation(
+      client,
+      z,
+      zodResponseFormat,
+      input,
+      refreshInput,
+      refreshType,
+    );
+    if (!aiResponse) throw new Error("No AI response received");
 
-        console.log('AI Response:', aiResponse)
-        let books = aiResponse.bookRecommendations
-        ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))
-        : [];
+    console.log("AI Response:", aiResponse);
+    let books = aiResponse.bookRecommendations
+      ? await Promise.all([aiResponse.bookRecommendations].flat().map(getBook))
+      : [];
 
-        let movies = aiResponse.filmRecommendations
-        ? await Promise.all([aiResponse.filmRecommendations].flat().map(getFilm))
-        : [];
+    let movies = aiResponse.filmRecommendations
+      ? await Promise.all([aiResponse.filmRecommendations].flat().map(getFilm))
+      : [];
 
-        let albums = aiResponse.musicRecommendations
-        ? await Promise.all([aiResponse.musicRecommendations].flat().map(getMusic))
-        : [];
+    let albums = aiResponse.musicRecommendations
+      ? await Promise.all(
+        [aiResponse.musicRecommendations].flat().map(getMusic),
+      )
+      : [];
 
-        
+    const recommendations = {
+      books: books.filter(Boolean),
+      movies: movies.filter(Boolean),
+      albums: albums.filter(Boolean),
+      mood: aiResponse.mood,
+      warning: aiResponse.warning,
+    };
 
-        const recommendations = {
-            books: books.filter(Boolean),
-            movies: movies.filter(Boolean),
-            albums: albums.filter(Boolean),
-            mood: aiResponse.mood, 
-            warning: aiResponse.warning
-        };
-
-        return recommendations; 
-
-    } catch (error) {
-        console.error("Error handling recommendations:", error);
-        return null; 
-    }
+    return recommendations;
+  } catch (error) {
+    console.error("Error handling recommendations:", error);
+    return null;
+  }
 }
-
