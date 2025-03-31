@@ -49,7 +49,7 @@ async function saveUserData(userData) {
         const response = await fetch('/save-user', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: userData })
+            body: JSON.stringify({data: userData})
         });
 
         if (!response.ok) {
@@ -172,17 +172,16 @@ async function updateCards(data, unlockedTypes) {
     
     let recommendations = data.recommendations;
 
-    let prevRecommendations = await fetchUserData(_id) 
-            
-
+    let prevRecommendations = await fetchUserData(_id);
+    
     let fortune = {
         "_id": _id,
         "name": prevRecommendations.name,
         "starsign": prevRecommendations.starsign,
         "mood": prevRecommendations.mood,
-        "books": prevRecommendations.books,
-        "films": prevRecommendations.films,
-        "albums":  prevRecommendations.albums            
+        "books": typeof recommendations.books === "object" ? recommendations.books : prevRecommendations.books,
+        "films": typeof recommendations.films === "object" ? recommendations.films : prevRecommendations.films,
+        "albums":  typeof recommendations.albums === "object" ? recommendations.albums : prevRecommendations.albums            
         };
 
     unlockedTypes.forEach(elem => {
@@ -236,7 +235,7 @@ async function updateCards(data, unlockedTypes) {
         card.classList.toggle("animate-deal");
         });
             
-    await saveUserData(fortune)
+    await saveUserData(fortune, _id)
 };
 
 // Function that makes call to Open AI to get new recommendations. Takes the updateCards func upon the return of the data. 

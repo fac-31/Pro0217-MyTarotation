@@ -18,7 +18,7 @@ import schedule from 'node-schedule'
             "albums":{"title":"In the Aeroplane Over the Sea","artist":"Neutral Milk Hotel",
             "genres":["alternative rock","brass band","folk rock"],
             "art":"http://coverartarchive.org/release/023fcf90-dca7-4a4e-a4e2-ed0eaba78f9e/8579764982.jpg"}},
-            {"_id":"f008a9be-dd74-4796-9264-c58e5c6c64f5","name":"Scott","starsign":"cancer","mood":"happy",
+            {"_id":"f008a9be-dd74-4796-9265-c58e5c6c64f5","name":"Scott","starsign":"cancer","mood":"happy",
             "books":{"title":"Fight Club","art":"https://covers.openlibrary.org/b/id/7890578-M.jpg",
             "description":"A man who struggles with insomnia meets a colorful extremist, and they create a secret organization together.\r\n\r\nChuck Palahniuk showed himself to be his generation’s most visionary satirist in this, his first book. Fight Club’s estranged narrator leaves his lackluster job when he comes under the thrall of Tyler Durden, an enigmatic young man who holds secret after-hours boxing matches in the basement of bars. There, two men fight \"as long as they have to.\" This is a gloriously original work that exposes the darkness at the core of our modern world.",
             "genres":["fiction","millennialism","young men"]},
@@ -32,13 +32,18 @@ import schedule from 'node-schedule'
     }
 })();
 
-export async function saveFortune(fortune) {
+export async function saveFortune(fortune, _id) {
     try {
-        let fortunes = await persist.getItem("fortunes") || []; 
-        fortunes.push(fortune); 
-        await persist.setItem("fortunes", fortunes); 
+        console.log("id: ", _id)
+        let fortunes = await persist.getItem("fortunes") || [];
+        let selected = fortunes.filter(x => {
+            console.log(x._id !== _id)
+            return x._id !== _id});
+        selected.push(fortune); 
+        await persist.setItem("fortunes", selected); 
+         console.log("Filtered: ", selected)
         // console.log("New fortune saved:", fortune);
-        return fortune;
+        return selected;
     } catch (error) {
         console.error("Error saving fortune:", error.message);
     }
